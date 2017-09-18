@@ -1,0 +1,35 @@
+{
+  "name": "scintil",
+  "version": "0.0.1",
+  "description": "A procedural texture generator.",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "node devServer.js"
+  },
+  "author": "Talin <viridia@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bind-decorator": "^1.0.11",
+    "css-loader": "^0.28.7",
+    "gl-matrix": "^2.4.0",
+    "mobx": "^3.2.2",
+    "node-sass": "^4.5.3",
+    "preact": "^8.2.5",
+    "preact-mobx": "^0.1.4",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "ts-loader": "^2.3.7",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.5.2",
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.8.2"
+  },
+  "devDependencies": {
+    "@types/gl-matrix": "^2.3.0",
+    "@types/webgl-ext": "0.0.29",
+    "@types/webpack-env": "^1.13.1",
+    "tslint": "^5.7.0",
+    "tslint-config-airbnb": "^5.3.0",
+    "tslint-react": "^3.2.0"
+  }
+}

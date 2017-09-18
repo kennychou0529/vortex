@@ -1,0 +1,45 @@
+body {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  align-content: stretch;
+  font-family: "PT Sans", sans-serif;
+  margin: 0;
+}
+
+#root {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+}
+
+// #inspector {
+//   position: relative;
+//   display: flex;
+//   flex-direction: column;
+//   order: 2;
+//   background-color: #ccc;
+//   min-width: 200px;
+//
+//   > .property-editor {
+//   }
+//
+//   > .preview {
+//     display: block;
+//     width: 100%;
+//     // height: 300px;
+//     background-color: red;
+//     border-bottom: 100%;
+//   }
+// }
+//
+// #graph {
+//   .node {
+//     > .label {
+//       color: #ddd;
+//       position: absolute;
+//       left: 105%;
+//       top: 40px;
+//     }
+//   }
+// }

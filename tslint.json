@@ -1,0 +1,47 @@
+{
+  "extends": ["tslint:latest", "tslint-config-airbnb", "tslint-react"],
+  "rules": {
+    "align": [true, "parameters", "statements", "members", "elements"],
+    "arrow-parens": false,
+    "forin": true,
+    "function-name": [
+      true, {
+      "method-regex": "^[a-z][\\w\\d]+$",
+      "private-method-regex": "^[a-z][\\w\\d]+$",
+      "protected-method-regex": "^[a-z][\\w\\d]+$",
+      "static-method-regex": "^[A-Z_\\d]+$",
+      "function-regex": "^[A-Za-z][\\w\\d]+$"
+    }],
+    "import-name": false,
+    "interface-name": [true, "never-prefix"],
+    "jsdoc-format": false,
+    "jsx-no-lambda": false,
+    "jsx-no-multiline-js": false,
+    "literal-spacing": [true, { "array": ["never"], "object": ["always"], "import": ["always"] }],
+    "max-line-length": [true, 100],
+    "no-bitwise": false,
+    "no-consecutive-blank-lines": true,
+    "no-console": false,
+    "no-submodule-imports": false,
+    "no-trailing-whitespace": true,
+    "no-var-requires": false,
+    "object-literal-sort-keys": false,
+    "object-shorthand-properties-first": false,
+    "only-arrow-functions": false,
+    "space-before-function-paren": [true, "anonymous"],
+    "quotemark": [true, "single", "jsx-double"],
+    "prefer-array-literal": false,
+    "prefer-conditional-expression": false,
+    "react-tsx-curly-spacing": [true, "never", { "allowMultiline": true }],
+    "ter-arrow-parens": false,
+    "ter-prefer-arrow-callback": false,
+    "triple-equals": true,
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-leading-underscore",
+      "allow-pascal-case"
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+@import '../../styles/colors';
+
+$graphDkBg: darken($graphBg, 2%);
+
+#graph {
+  position: relative;
+  flex: 1;
+  background-color: $graphBg;
+  background-image:
+    linear-gradient(45deg, $graphDkBg 25%, transparent 25%, transparent 75%, $graphDkBg 75%, $graphDkBg),
+    linear-gradient(45deg, $graphDkBg 25%, transparent 25%, transparent 75%, $graphDkBg 75%, $graphDkBg);
+  background-size:50px 50px;
+  background-position:0 0, 25px 25px;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+}
