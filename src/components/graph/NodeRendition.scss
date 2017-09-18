@@ -1,3 +1,5 @@
+@import '../../styles/colors';
+
 #graph .node {
   font-size: 13px;
   position: absolute;
@@ -10,9 +12,11 @@
     border: 2px solid black;
     width: 90px;
     box-shadow: 1px 3px 5px rgba(0, 0, 0, .3);
-    // when selected
-    // box-shadow: 0 0 1px 4px #00cc00;
     z-index: 10;
+
+    &.selelcted {
+      box-shadow: 0 0 1px 4px #00cc00;
+    }
 
     > header {
       border-bottom: 1px solid #888;
@@ -21,10 +25,9 @@
 
     > .preview {
       border-top: 1px solid #eee;
-      > .content {
-        height: 80px;
+      > canvas {
         margin: 5px;
-        background-color: blue;
+        background-color: lighten($graphBg, 20%);
       }
     }
   }

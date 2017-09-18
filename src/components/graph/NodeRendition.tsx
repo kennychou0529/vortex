@@ -1,5 +1,6 @@
 import { Component, h } from 'preact';
 import Node from '../../graph/Node';
+import RenderedImage from '../render/RenderedImage';
 
 import './NodeRendition.scss';
 
@@ -19,7 +20,7 @@ export default class NodeRendition extends Component<Props, undefined> {
         <div className="body">
           <header>{node.name}</header>
           <section className="preview">
-            <section className="content" />
+            <RenderedImage width={80} height={80} node={node} />
           </section>
         </div>
         <div className="connectors input left" />

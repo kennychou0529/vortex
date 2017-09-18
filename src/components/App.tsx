@@ -1,8 +1,10 @@
 import { Component, h } from 'preact';
 import Graph from '../graph/Graph';
 import Node from '../graph/Node';
+import { Operator } from '../graph/Operator';
 import GraphView from './graph/GraphView';
 import PropertyPanel from './PropertyPanel';
+import Renderer from './render/Renderer';
 import ToolPanel from './ToolPanel';
 
 import './App.scss';
@@ -11,22 +13,35 @@ interface State {
   graph: Graph;
 }
 
-const catalog = require.context('../graph/operators', false, /[A-Za-z0-9_]/);
-const operatorNames = catalog.keys().filter(key => !key.endsWith('.ts'));
+const catalog = require.context('../graph/operators', false, /[A-Za-z0-9_]\.ts$/);
+const operators: Operator[] = catalog.keys().map(k => (catalog(k) as any).default as Operator);
+// const operatorNames = catalog.keys();
 
 export default class App extends Component<undefined, State> {
+  private renderer: Renderer;
+
   constructor() {
     super();
+    this.renderer = new Renderer();
     this.state = {
       graph: new Graph(),
     };
 
-    console.log(operatorNames);
-    const node = new Node((catalog('./Bricks') as any).default);
+    const node = new Node(operators[0]);
     node.x = 20;
     node.y = 20;
-
     this.state.graph.nodes.push(node);
+
+    const node2 = new Node(operators[0]);
+    node2.x = 250;
+    node2.y = 120;
+    this.state.graph.nodes.push(node2);
+  }
+
+  public getChildContext() {
+    return {
+      renderer: this.renderer,
+    };
   }
 
   public render(props: any, { graph }: State): any {
