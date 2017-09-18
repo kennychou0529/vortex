@@ -1,4 +1,5 @@
 import { observable } from 'mobx';
+import Renderer from '../render/Renderer';
 import InputTerminal from './InputTerminal';
 import { Operator } from './Operator';
 import OutputTerminal from './OutputTerminal';
@@ -16,14 +17,21 @@ export default class Node {
   public inputs: InputTerminal[] = [];
   public outputs: OutputTerminal[] = [];
 
+  // Node parameters
+  @observable public paramValues: { [name: string]: any } = {};
+
   // Preview needs recalculation
   public modified: boolean;
 
   // Defines what this node does.
   public readonly operator: Operator;
 
+  // GL resources allocated by the operator for this node.
+  private resources: any;
+
   constructor(operator: Operator) {
     this.operator = operator;
+    this.resources = {};
     (operator.inputs || []).forEach(input => {
       this.inputs.push(new InputTerminal(this));
     });
@@ -35,6 +43,14 @@ export default class Node {
   // The human-readable name of this node.
   public get name(): string {
     return this.operator.name;
+  }
+
+  public render(renderer: Renderer) {
+    this.operator.render(renderer, this, this.resources);
+  }
+
+  public destroy(renderer: Renderer) {
+    this.operator.cleanup(renderer, this, this.resources);
   }
 
   // TODO: serialize

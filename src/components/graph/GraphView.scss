@@ -13,4 +13,5 @@ $graphDkBg: darken($graphBg, 2%);
   background-position:0 0, 25px 25px;
   border-left: 1px solid black;
   border-right: 1px solid black;
+  user-select: none;
 }

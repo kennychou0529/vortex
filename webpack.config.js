@@ -44,10 +44,10 @@ module.exports = {
         ],
         loader: 'source-map-loader',
       },
-      // {
-      //   test: /\.(glsl|vs|fs)$/, // WebGL shaders
-      //   loader: 'webpack-glsl-loader'
-      // },
+      {
+        test: /\.(glsl|vs|fs)$/, // WebGL shaders
+        loader: 'webpack-glsl-loader'
+      },
       {
         test: /\.scss$/, // SASS
         loaders: ['style-loader', 'css-loader', 'sass-loader'],

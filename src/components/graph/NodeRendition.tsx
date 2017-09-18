@@ -1,6 +1,6 @@
 import { Component, h } from 'preact';
 import Node from '../../graph/Node';
-import RenderedImage from '../render/RenderedImage';
+import RenderedImage from '../RenderedImage';
 
 import './NodeRendition.scss';
 
@@ -15,6 +15,7 @@ export default class NodeRendition extends Component<Props, undefined> {
       left: `${node.x}px`,
       top: `${node.y}px`,
     };
+
     return (
       <div className="node" style={style}>
         <div className="body">

@@ -10,21 +10,6 @@
   <section class="preview">&nbsp;</section>
 </aside>
 <section id="graph">
-  <div class="nodes">
-    <div class="node">
-      <div class="body">
-        <header>Simplex Noise</header>
-        <section class="preview">
-          <section class="content"></section>
-        </section>
-      </div>
-      <div class="connectors input left">
-      </div>
-      <div class="connectors output right">
-        <div class="connector">Out</div>
-      </div>
-    </div>
-  </div>
   <div class="arcs">
     <svg
         className="connector"

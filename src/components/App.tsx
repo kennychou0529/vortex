@@ -2,9 +2,9 @@ import { Component, h } from 'preact';
 import Graph from '../graph/Graph';
 import Node from '../graph/Node';
 import { Operator } from '../graph/Operator';
+import Renderer from '../render/Renderer';
 import GraphView from './graph/GraphView';
 import PropertyPanel from './PropertyPanel';
-import Renderer from './render/Renderer';
 import ToolPanel from './ToolPanel';
 
 import './App.scss';
@@ -13,9 +13,9 @@ interface State {
   graph: Graph;
 }
 
+// TODO: Move to registry
 const catalog = require.context('../graph/operators', false, /[A-Za-z0-9_]\.ts$/);
 const operators: Operator[] = catalog.keys().map(k => (catalog(k) as any).default as Operator);
-// const operatorNames = catalog.keys();
 
 export default class App extends Component<undefined, State> {
   private renderer: Renderer;

@@ -22,7 +22,8 @@
     "ts-node": "^3.3.0",
     "typescript": "^2.5.2",
     "webpack": "^3.6.0",
-    "webpack-dev-server": "^2.8.2"
+    "webpack-dev-server": "^2.8.2",
+    "webpack-glsl-loader": "^1.0.1"
   },
   "devDependencies": {
     "@types/gl-matrix": "^2.3.0",
