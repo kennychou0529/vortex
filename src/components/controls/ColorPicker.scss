@@ -1,0 +1,71 @@
+.color-picker {
+  display: flex;
+  > .sliders {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex: 1;
+
+    .gradient-slider {
+      margin-bottom: 4px;
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      // &.hue {
+      //   background: linear-gradient(to right,
+      //     #f00 9px,
+      //     #ff0 calc(9px + (100% - 18px) * 1 / 6),
+      //     #0f0 calc(9px + (100% - 18px) * 2 / 6),
+      //     #0ff calc(9px + (100% - 18px) * 3 / 6),
+      //     #00f calc(9px + (100% - 18px) * 4 / 6),
+      //     #f0f calc(9px + (100% - 18px) * 5 / 6),
+      //     #f00 calc(100% - 9px));
+      // }
+
+      // &.saturation {
+      //   background: linear-gradient(to right,
+      //     #fff 9px,
+      //     #fff calc(9px + (100% - 18px) * 1 / 6),
+      //     #f00 calc(9px + (100% - 18px) * 5 / 6),
+      //     #f00 calc(100% - 9px));
+      // }
+      //
+      // &.lightness {
+      //   background: linear-gradient(to right,
+      //     #000 9px,
+      //     #000 calc(9px + (100% - 18px) * 1 / 6),
+      //     #f00 calc(9px + (100% - 18px) * 3 / 6),
+      //     #fff calc(9px + (100% - 18px) * 5 / 6),
+      //     #fff calc(100% - 9px));
+      // }
+    }
+  }
+
+  > .color {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin-left: 4px;
+
+    > .swatch {
+      flex: 1;
+      width: 70px;
+      border: 1px solid #777;
+      border-radius: 6px;
+      background-color: #cf4;
+      margin-bottom: 3px;
+    }
+
+    > .hex {
+      font-size: 13px;
+      font-family: monospace;
+      text-align: center;
+      border: 1px solid #777;
+      border-radius: 6px;
+      margin: 0;
+      width: 72px;
+      height: 22px;
+    }
+  }
+}

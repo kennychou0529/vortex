@@ -10,7 +10,10 @@
   "license": "MIT",
   "dependencies": {
     "bind-decorator": "^1.0.11",
+    "classnames": "^2.2.5",
     "css-loader": "^0.28.7",
+    "float-hsl2rgb": "^1.0.2",
+    "float-rgb2hsl": "^1.0.1",
     "gl-matrix": "^2.4.0",
     "mobx": "^3.2.2",
     "node-sass": "^4.5.3",
@@ -26,6 +29,7 @@
     "webpack-glsl-loader": "^1.0.1"
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.3",
     "@types/gl-matrix": "^2.3.0",
     "@types/webgl-ext": "0.0.29",
     "@types/webpack-env": "^1.13.1",

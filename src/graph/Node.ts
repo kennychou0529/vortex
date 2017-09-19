@@ -20,6 +20,9 @@ export default class Node {
   // Node parameters
   @observable public paramValues: { [name: string]: any } = {};
 
+  // Node selection state
+  @observable public selected: boolean = false;
+
   // Preview needs recalculation
   public modified: boolean;
 

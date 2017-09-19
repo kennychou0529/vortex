@@ -34,12 +34,17 @@ export interface Output {
   type: DataType;
 }
 
-export enum ParamType {
+export enum ParameterType {
   INTEGER,  // Integer
   FLOAT,    // Floating-point
   COLOR,    // Color
   COLOR_GRADIENT,  // Color gradient
   ENUM,     // Enumeration
+}
+
+export interface EnumValue {
+  name: string;
+  value: number;
 }
 
 export interface Parameter {
@@ -50,12 +55,13 @@ export interface Parameter {
   name: string;
 
   // Parameter type
-  type: ParamType;
+  type: ParameterType;
 
   // Type-specific constraints
+  default?: any;
   minVal?: number;
   maxVal?: number;
-  enumVals: Array<{ name: string, value: number }>;
+  enumVals?: EnumValue[];
 }
 
 /** Defines a type of node. */

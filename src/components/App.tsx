@@ -30,12 +30,12 @@ export default class App extends Component<undefined, State> {
     const node = new Node(operators[0]);
     node.x = 20;
     node.y = 20;
-    this.state.graph.nodes.push(node);
+    this.state.graph.add(node);
 
     const node2 = new Node(operators[0]);
     node2.x = 250;
     node2.y = 120;
-    this.state.graph.nodes.push(node2);
+    this.state.graph.add(node2);
   }
 
   public getChildContext() {
@@ -49,7 +49,7 @@ export default class App extends Component<undefined, State> {
       <section id="app">
         <ToolPanel />
         <GraphView graph={graph} />
-        <PropertyPanel />
+        <PropertyPanel graph={graph} />
       </section>
     );
   }
