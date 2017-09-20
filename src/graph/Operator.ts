@@ -35,11 +35,11 @@ export interface Output {
 }
 
 export enum ParameterType {
-  INTEGER,  // Integer
+  INTEGER,  // Integer or enumeration
   FLOAT,    // Floating-point
   COLOR,    // Color
   COLOR_GRADIENT,  // Color gradient
-  ENUM,     // Enumeration
+  GROUP,    // Named group of params
 }
 
 export interface EnumValue {
@@ -59,9 +59,13 @@ export interface Parameter {
 
   // Type-specific constraints
   default?: any;
-  minVal?: number;
-  maxVal?: number;
-  enumVals?: EnumValue[];
+  min?: number;
+  max?: number;
+  increment?: number;
+  precision?: number;
+  logScale?: boolean;
+  enumVals?: EnumValue[]; // For enumerations
+  children?: Parameter[];  // If this is a group
 }
 
 /** Defines a type of node. */

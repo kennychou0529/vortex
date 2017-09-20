@@ -1,5 +1,6 @@
 import { mat4 } from 'gl-matrix';
 import Node from '../graph/Node';
+import { Parameter, ParameterType } from '../graph/Operator';
 
 export interface ShaderResource {
   program: WebGLProgram;
@@ -40,11 +41,34 @@ export default class Renderer {
 
     const gl = this.gl;
     gl.viewport(0, 0, width, height);
-    gl.clearColor(0.0, 0.0, 0.4, 1.0);  // Clear to black, fully opaque
+    // gl.clearColor(0.0, 0.0, 0.4, 1.0);  // Clear to black, fully opaque
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     node.render(this);
     out.drawImage(this.canvas, 0, 0);
+  }
+
+  public setShaderUniforms(
+    params: Parameter[],
+    resource: ShaderResource,
+    paramValues: Map<string, any> = new Map(),
+    paramPrefix: string) {
+    const gl = this.gl;
+    for (const param of params) {
+      const value = paramValues.has(param.id)
+          ? paramValues.get(param.id)
+          : param.default !== undefined ? param.default : 0;
+      switch (param.type) {
+        case ParameterType.INTEGER:
+          gl.uniform1i(
+            gl.getUniformLocation(resource.program, `u${paramPrefix}_${param.id}`),
+            value);
+        case ParameterType.FLOAT:
+          gl.uniform1f(
+            gl.getUniformLocation(resource.program, `u${paramPrefix}_${param.id}`),
+            value);
+      }
+    }
   }
 
   public executeShaderProgram(

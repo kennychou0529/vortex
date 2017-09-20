@@ -1,4 +1,4 @@
-import { vec4 } from 'gl-matrix';
+// import { vec4 } from 'gl-matrix';
 import Renderer from '../../render/Renderer';
 import Node from '../Node';
 import { DataType, Operator, Output, Parameter, ParameterType } from '../Operator';
@@ -16,76 +16,76 @@ class Bricks implements Operator {
       id: 'count_x',
       name: 'Count X',
       type: ParameterType.INTEGER,
-      minVal: 1,
-      maxVal: 16,
+      min: 1,
+      max: 16,
       default: 2,
     },
     {
       id: 'count_y',
       name: 'Count Y',
       type: ParameterType.INTEGER,
-      minVal: 1,
-      maxVal: 16,
+      min: 1,
+      max: 16,
       default: 4,
     },
     {
       id: 'spacing_x',
       name: 'Spacing X',
       type: ParameterType.FLOAT,
-      minVal: 0,
-      maxVal: .5,
+      min: 0,
+      max: .5,
       default: .025,
     },
     {
       id: 'spacing_y',
       name: 'Spacing Y',
       type: ParameterType.FLOAT,
-      minVal: 0,
-      maxVal: .5,
+      min: 0,
+      max: .5,
       default: .05,
     },
     {
       id: 'blur_x',
       name: 'Blur X',
       type: ParameterType.FLOAT,
-      minVal: 0,
-      maxVal: .5,
-      default: .01,
+      min: 0,
+      max: .5,
+      default: .1,
     },
     {
       id: 'blur_y',
       name: 'Blur Y',
       type: ParameterType.FLOAT,
-      minVal: 0,
-      maxVal: .5,
-      default: .02,
+      min: 0,
+      max: .5,
+      default: .2,
     },
     {
       id: 'offset_x',
       name: 'Offset X',
       type: ParameterType.FLOAT,
-      minVal: 0,
-      maxVal: .5,
+      min: 0,
+      max: .5,
     },
     {
       id: 'offset_y',
       name: 'Offset Y',
       type: ParameterType.FLOAT,
-      minVal: 0,
-      maxVal: .5,
+      min: 0,
+      max: .5,
     },
     {
       id: 'stagger',
       name: 'Stagger',
       type: ParameterType.FLOAT,
-      minVal: 0,
-      maxVal: 1,
+      min: 0,
+      max: 1,
       default: .5,
     },
     {
       id: 'corner',
       name: 'Corner Shape',
-      type: ParameterType.ENUM,
+      type: ParameterType.INTEGER,
       enumVals: [
         { name: 'Square', value: 1 },
         { name: 'Mitered', value: 2 },
@@ -104,9 +104,7 @@ class Bricks implements Operator {
     }
 
     renderer.executeShaderProgram(resources.shader, gl => {
-      gl.uniform4fv(
-        gl.getUniformLocation(resources.shader.program, 'uColor'),
-        vec4.fromValues(1, 0, 0, 1));
+      renderer.setShaderUniforms(this.params, resources.shader, node.paramValues, 'Bricks');
     });
   }
 

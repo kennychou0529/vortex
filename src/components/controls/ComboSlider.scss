@@ -1,0 +1,86 @@
+@import '../../styles/colors';
+
+$arrowWidth: 25px;
+
+.combo-slider {
+  display: inline-flex;
+  position: relative;
+  align-items: stretch;
+  position: relative;
+  border: 1px solid $controlBorder;
+  border-top: none;
+  height: 20px;
+  min-width: 64px;
+  // background-color: $comboBg;
+  overflow: hidden;
+  user-select: none;
+  cursor: pointer;
+
+  &:first-child {
+    border-top: 1px solid $controlBorder;
+    border-radius: 6px 6px 0 0;
+  }
+
+  &:last-child {
+    border-radius: 0 0 6px 6px;
+  }
+
+  > .left, > .right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $arrowWidth;
+    &:after {
+      position: relative;
+      font-size: 12px;
+      top: -2px;
+      color: darken($comboBg, 60%);
+      .selected {
+        color: #000;
+      }
+    }
+    &:hover {
+      background-color: lighten($comboBg, 10%);
+    }
+  }
+
+  > .left:after {
+    content: "\25c0";
+  }
+
+  > .right:after {
+    content: "\25b6";
+  }
+
+  .center {
+    display: block;
+    position: relative;
+    flex: 1;
+    font-size: 14px;
+    text-align: center;
+    vertical-align: middle;
+
+    > input {
+      display: none;
+      background-color: transparent;
+      position: absolute;
+      text-align: center;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      border: none;
+    }
+  }
+
+  &.textActive > .center {
+    > .name, > .value {
+      display: none;
+    }
+
+    > input {
+      display: block;
+    }
+  }
+}

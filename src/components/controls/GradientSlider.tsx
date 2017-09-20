@@ -10,7 +10,6 @@ interface Props {
   max: number;
   className?: string;
   colors: string[];
-  // style?: { [name: string]: any };
   onChange: (value: number) => void;
 }
 

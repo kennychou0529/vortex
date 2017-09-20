@@ -4,6 +4,8 @@ import InputTerminal from './InputTerminal';
 import { Operator } from './Operator';
 import OutputTerminal from './OutputTerminal';
 
+type Watcher = () => void;
+
 /** A node in the graph. */
 export default class Node {
   // Unique ID of this node
@@ -18,7 +20,7 @@ export default class Node {
   public outputs: OutputTerminal[] = [];
 
   // Node parameters
-  @observable public paramValues: { [name: string]: any } = {};
+  @observable public paramValues: Map<string, any> = new Map();
 
   // Node selection state
   @observable public selected: boolean = false;
@@ -31,6 +33,9 @@ export default class Node {
 
   // GL resources allocated by the operator for this node.
   private resources: any;
+
+  // List of entities that need to be notified when any of the node properties change.
+  private watchers: Set<Watcher> = new Set();
 
   constructor(operator: Operator) {
     this.operator = operator;
@@ -54,6 +59,29 @@ export default class Node {
 
   public destroy(renderer: Renderer) {
     this.operator.cleanup(renderer, this, this.resources);
+  }
+
+  public setModified() {
+    if (!this.modified) {
+      this.modified = true;
+      for (const out of this.outputs) {
+        out.node.setModified();
+      }
+      window.requestAnimationFrame(() => {
+        if (this.modified) {
+          this.modified = false;
+          this.watchers.forEach(watcher => { watcher(); });
+        }
+      });
+    }
+  }
+
+  public watch(watcher: Watcher) {
+    this.watchers.add(watcher);
+  }
+
+  public unwatch(watcher: Watcher) {
+    this.watchers.delete(watcher);
   }
 
   // TODO: serialize
