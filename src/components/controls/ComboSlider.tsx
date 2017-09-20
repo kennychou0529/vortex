@@ -1,10 +1,11 @@
 import bind from 'bind-decorator';
 import * as classNames from 'classnames';
 import { Component, h } from 'preact';
+import MomentaryButton from './MomentaryButton';
 
 import './ComboSlider.scss';
 
-// TODO: arrow auto-increment, log scale testing, auto-focus on input, prepop input
+// TODO: log scale testing
 
 interface Props {
   name: string;
@@ -23,13 +24,12 @@ interface State {
   leftDown: boolean;
   rightDown: boolean;
   textActive: boolean;
-  inputValue: string;
 }
 
 export default class ComboSlider extends Component<Props, State> {
   private element: HTMLElement;
   private centerEl: HTMLElement;
-  private inputEl: HTMLElement;
+  private inputEl: HTMLFormElement;
   private dragOrigin: number;
   private dragValue: number;
   private pointerId: number = -1;
@@ -40,7 +40,6 @@ export default class ComboSlider extends Component<Props, State> {
       leftDown: false,
       rightDown: false,
       textActive: false,
-      inputValue: '',
     };
   }
 
@@ -55,7 +54,7 @@ export default class ComboSlider extends Component<Props, State> {
 
   public render(
       { name, value, min = 0, max, className, enumVals }: Props,
-      { textActive, leftDown, rightDown, inputValue }: State) {
+      { textActive, leftDown, rightDown }: State) {
     const percent = enumVals ? 100 : (value - min) * 100 / (max - min);
     const style = {
       backgroundImage:
@@ -68,9 +67,10 @@ export default class ComboSlider extends Component<Props, State> {
           ref={el => { this.element = el as HTMLElement; }}
           style={style}
       >
-        <div
-            className={classNames('left', { active: leftDown })}
-            onMouseDown={this.onLeftDown}
+        <MomentaryButton
+            className="left"
+            onChange={this.onLeftChange}
+            onHeld={this.onLeftHeld}
         />
         <div
             className="center"
@@ -79,44 +79,82 @@ export default class ComboSlider extends Component<Props, State> {
         >
             <span className="name">{name}: </span><span className="value">{displayVal}</span>
             <input
-              type="text"
-              autofocus={true}
-              value={inputValue}
-              onBlur={this.onBlurInput}
-              ref={el => { this.inputEl = el as HTMLElement; }}
+                type="text"
+                autofocus={true}
+                onKeyDown={this.onInputKey}
+                onBlur={this.onBlurInput}
+                ref={el => { this.inputEl = el as HTMLFormElement; }}
             />
         </div>
-        <div
-            className={classNames('right', { active: rightDown })}
-            onMouseDown={this.onRightDown}
+        <MomentaryButton
+            className="right"
+            onChange={this.onRightChange}
+            onHeld={this.onRightHeld}
         />
       </div>
     );
   }
 
   @bind
-  private onLeftDown(e: MouseEvent) {
+  private onLeftChange(active: boolean) {
+    if (active) {
+      const { value, increment = 1 } = this.props;
+      this.setValue(value - increment);
+    }
+  }
+
+  @bind
+  private onLeftHeld() {
     const { value, increment = 1 } = this.props;
     this.setValue(value - increment);
   }
 
   @bind
-  private onRightDown(e: MouseEvent) {
+  private onRightChange(active: boolean) {
+    if (active) {
+      const { value, increment = 1 } = this.props;
+      this.setValue(value + increment);
+    }
+  }
+
+  @bind
+  private onRightHeld() {
     const { value, increment = 1 } = this.props;
     this.setValue(value + increment);
   }
 
   @bind
   private onDoubleClick(e: MouseEvent) {
-    this.setState({ textActive: true });
-    window.setTimeout(() => {
-      this.inputEl.focus();
-    }, 5);
+    const { value, enumVals } = this.props;
+    if (!enumVals) {
+      this.inputEl.value = value.toString();
+      this.inputEl.select();
+      this.setState({ textActive: true });
+      window.setTimeout(() => {
+        this.inputEl.focus();
+      }, 5);
+    }
   }
 
   @bind
   private onBlurInput(e: FocusEvent) {
     this.setState({ textActive: false });
+    const newValue = parseFloat(this.inputEl.value);
+    if (!isNaN(newValue)) {
+      this.setValue(newValue);
+    }
+  }
+
+  @bind
+  private onInputKey(e: KeyboardEvent) {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      const newValue = parseFloat(this.inputEl.value);
+      if (!isNaN(newValue)) {
+        this.setValue(newValue);
+        this.setState({ textActive: false });
+      }
+    }
   }
 
   @bind

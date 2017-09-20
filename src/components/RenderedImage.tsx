@@ -17,6 +17,14 @@ export default class RenderedImage extends Component<Props, undefined> {
     this.props.node.watch(this.updateCanvas);
   }
 
+  public componentDidUpdate(prevProps: Props) {
+    if (prevProps.node !== this.props.node) {
+      prevProps.node.unwatch(this.updateCanvas);
+      this.updateCanvas();
+      this.props.node.watch(this.updateCanvas);
+    }
+  }
+
   public componentWillUnmount() {
     this.props.node.unwatch(this.updateCanvas);
   }

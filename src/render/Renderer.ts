@@ -63,10 +63,12 @@ export default class Renderer {
           gl.uniform1i(
             gl.getUniformLocation(resource.program, `u${paramPrefix}_${param.id}`),
             value);
+          break;
         case ParameterType.FLOAT:
           gl.uniform1f(
             gl.getUniformLocation(resource.program, `u${paramPrefix}_${param.id}`),
             value);
+          break;
       }
     }
   }
