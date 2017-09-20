@@ -14,4 +14,11 @@ $graphDkBg: darken($graphBg, 2%);
   border-left: 1px solid black;
   border-right: 1px solid black;
   user-select: none;
+  overflow: hidden;
+
+  > .scroll {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
 }
