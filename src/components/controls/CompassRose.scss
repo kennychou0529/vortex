@@ -1,5 +1,6 @@
 $arrowWidth: 24px;
 $compassWidth: 90px;
+$centerWidth: 16px;
 $margin: 16px;
 
 .compass-rose {
@@ -20,8 +21,8 @@ $margin: 16px;
       opacity: .6;
     }
 
-    &.selected {
-      opacity: .8;
+    &.active {
+      opacity: .9;
     }
 
     &.north {
@@ -58,6 +59,21 @@ $margin: 16px;
   }
 
   > .center {
-    color: white;
+    position: absolute;
+    width: $centerWidth;
+    height: $centerWidth;
+    background-color: white;
+    border-radius: 50%;
+    left: ($compassWidth - $centerWidth) / 2;
+    top: ($compassWidth - $centerWidth) / 2;
+    opacity: .3;
+
+    &:hover {
+      opacity: .6;
+    }
+
+    &.active {
+      opacity: .9;
+    }
   }
 }

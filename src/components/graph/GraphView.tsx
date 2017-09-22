@@ -157,8 +157,8 @@ export default class GraphView extends Component<Props, State> {
   @bind
   private onDragEnter(e: DragEvent) {
     this.setState({
-      dragX: e.clientX - this.base.offsetLeft,
-      dragY: e.clientY - this.base.offsetTop,
+      dragX: e.clientX - this.base.offsetLeft - this.state.xScroll,
+      dragY: e.clientY - this.base.offsetTop - this.state.yScroll,
       dragOver: true,
     });
   }
@@ -166,9 +166,9 @@ export default class GraphView extends Component<Props, State> {
   @bind
   private onDragOver(e: DragEvent) {
     this.setState({
-      dragX: e.clientX - this.base.offsetLeft,
-      dragY: e.clientY - this.base.offsetTop,
-      // dragOver: true,
+      dragX: e.clientX - this.base.offsetLeft - this.state.xScroll,
+      dragY: e.clientY - this.base.offsetTop - this.state.yScroll,
+      dragOver: true,
     });
   }
 

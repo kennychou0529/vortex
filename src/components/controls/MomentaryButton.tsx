@@ -3,10 +3,11 @@ import * as classNames from 'classnames';
 import { Component, h } from 'preact';
 
 interface Props {
-  className: string;
-  onChange: (active: boolean) => void;
+  className?: string;
+  onChange?: (active: boolean) => void;
   onHeld?: () => void;
   children?: JSX.Element | JSX.Element[];
+  delay?: number;
 }
 
 interface State {
@@ -31,8 +32,10 @@ export default class MomentaryButton extends Component<Props, State> {
 
   public componentWillUpdate(nextProps: Props, nextState: State) {
     if (nextState.active !== this.state.active) {
-      this.props.onChange(nextState.active);
-      let pause = 8;
+      if (this.props.onChange) {
+        this.props.onChange(nextState.active);
+      }
+      let pause = this.props.delay !== undefined ? this.props.delay : 8;
       if (nextState.active && this.props.onHeld) {
         this.timer = window.setInterval(() => {
           if (pause > 0) {
@@ -58,7 +61,7 @@ export default class MomentaryButton extends Component<Props, State> {
 
   public render({ className, children }: Props, { active }: State) {
     return (
-      <div className={classNames(className, { active: true })}>
+      <div className={classNames(className, { active })}>
         {children}
       </div>
     );

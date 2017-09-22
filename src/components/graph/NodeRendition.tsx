@@ -16,7 +16,6 @@ interface Props {
   onScroll: (dx: number, dy: number) => void;
 }
 
-// TODO: drag
 /** A visual representation of a node in the graph. */
 @observer
 export default class NodeRendition extends Component<Props, undefined> {
