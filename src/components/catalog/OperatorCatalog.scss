@@ -1,0 +1,34 @@
+@import '../../styles/colors';
+
+.operator-catalog {
+  border: 1px inset;
+  margin: 8px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  background-color: $listBg;
+  user-select: none;
+  overflow-y: scroll;
+
+  > .row {
+    display: flex;
+    padding: 0 4px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $listBgHover;
+    }
+
+    &.selected {
+      background-color: $listBgSelected;
+    }
+
+    > .group {
+      width: 30%;
+    }
+
+    > .name {
+      width: 70%;
+    }
+  }
+}

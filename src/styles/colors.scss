@@ -1,6 +1,10 @@
 $panelBg: #ccd;
 $graphBg: #667;
 
+$listBg: lighten($panelBg, 5%);
+$listBgHover: lighten($listBg, 5%);
+$listBgSelected: darken($listBg, 10%);
+
 $controlBorder: #444;
 $comboBg: darken($panelBg, 8%);
 

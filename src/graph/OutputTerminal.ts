@@ -13,7 +13,7 @@ export default class OutputTerminal extends AbstractTerminal {
 
   /** Delete a connection from the list of connections. */
   public disconnect(connection: Connection): boolean {
-    const index = this.connections.findIndex(conn => conn === connection);
+    const index = this.connections.findIndex(conn => conn.dest === connection.dest);
     if (index >= 0) {
       this.connections.splice(index, 1);
       return true;

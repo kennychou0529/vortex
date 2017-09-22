@@ -12,6 +12,7 @@
     "bind-decorator": "^1.0.11",
     "classnames": "^2.2.5",
     "css-loader": "^0.28.7",
+    "file-loader": "^0.11.2",
     "float-hsl2rgb": "^1.0.2",
     "float-rgb2hsl": "^1.0.1",
     "gl-matrix": "^2.4.0",

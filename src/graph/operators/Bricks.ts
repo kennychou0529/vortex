@@ -4,7 +4,7 @@ import Node from '../Node';
 import { DataType, Operator, Output, Parameter, ParameterType } from '../Operator';
 
 class Bricks implements Operator {
-  public readonly group: string = 'generators';
+  public readonly group: string = 'pattern';
   public readonly name: string = 'Bricks';
   public readonly outputs: Output[] = [{
     id: 'out',

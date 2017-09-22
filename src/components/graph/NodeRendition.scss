@@ -6,6 +6,7 @@
   cursor: pointer;
 
   > .body {
+    position: relative;
     background: linear-gradient(to bottom, #fff 0%, #ccc 3%, #aaa 100%);
     width: 100px;
     border-radius: 6px;
@@ -29,6 +30,6 @@
   }
 
   &.selected > .body {
-    box-shadow: 0 0 1px 4px #00cc00;
+    box-shadow: 0 0 2px 3px rgba(0, 200, 0, .7);
   }
 }

@@ -1,6 +1,7 @@
 import bind from 'bind-decorator';
 import { action } from 'mobx';
 import { Component, h } from 'preact';
+import { observer } from 'preact-mobx';
 import Graph from '../../graph/Graph';
 import Node from '../../graph/Node';
 import Terminal from '../../graph/Terminal';
@@ -24,6 +25,7 @@ interface State {
   dragOver: boolean;
 }
 
+@observer
 export default class GraphView extends Component<Props, State> {
   private scrollEl: HTMLElement;
 
@@ -58,13 +60,13 @@ export default class GraphView extends Component<Props, State> {
           onDragEnter={this.onDragEnter}
           onDragOver={this.onDragOver}
           onDragLeave={this.onDragLeave}
+          onDrop={this.onDrop}
       >
         <section className="backdrop" onMouseDown={this.onMouseDown} />
         <div
           className="scroll"
           style={{ left: `${xScroll}px`, top: `${yScroll}px` }}
           ref={el => { this.scrollEl = el as HTMLElement; }}
-          // onDragLeave={this.onDragLeave}
         >
           {graph.nodes.map(node => (
               <NodeRendition node={node} graph={graph} onScroll={this.onScroll} />))}
@@ -116,18 +118,18 @@ export default class GraphView extends Component<Props, State> {
       let dragEnd: Terminal;
       // Input on the left, output on the right.
       if ((dragOrigin && dragOrigin.output) || (dragTarget && !dragTarget.output)) {
-        dragStart = dragTarget;
-        dragEnd = dragOrigin;
-      } else {
         dragStart = dragOrigin;
         dragEnd = dragTarget;
+      } else {
+        dragStart = dragTarget;
+        dragEnd = dragOrigin;
       }
       return (
         <ConnectionRendition
-            ts={dragOrigin}
+            ts={dragStart}
             xs={dragX}
             ys={dragY}
-            te={dragTarget}
+            te={dragEnd}
             xe={dragX}
             ye={dragY}
             pending={!dragOrigin || !dragTarget}
@@ -156,6 +158,9 @@ export default class GraphView extends Component<Props, State> {
 
   @bind
   private onDragEnter(e: DragEvent) {
+    if (e.dataTransfer.types.indexOf('application/x-scintil-operator') >= 0) {
+      e.preventDefault();
+    }
     this.setState({
       dragX: e.clientX - this.base.offsetLeft - this.state.xScroll,
       dragY: e.clientY - this.base.offsetTop - this.state.yScroll,
@@ -165,6 +170,9 @@ export default class GraphView extends Component<Props, State> {
 
   @bind
   private onDragOver(e: DragEvent) {
+    if (e.dataTransfer.types.indexOf('application/x-scintil-operator') >= 0) {
+      e.preventDefault();
+    }
     this.setState({
       dragX: e.clientX - this.base.offsetLeft - this.state.xScroll,
       dragY: e.clientY - this.base.offsetTop - this.state.yScroll,
@@ -175,6 +183,18 @@ export default class GraphView extends Component<Props, State> {
   @bind
   private onDragLeave(e: DragEvent) {
     this.setState({ dragOver: false });
+  }
+
+  @action.bound
+  private onDrop(e: DragEvent) {
+    const data = e.dataTransfer.getData('application/x-scintil-operator');
+    if (data) {
+      const op = this.context.registry.get(data);
+      const node = new Node(op);
+      node.x = e.clientX - this.base.offsetLeft - this.state.xScroll - 45;
+      node.y = e.clientY - this.base.offsetTop - this.state.yScroll - 60;
+      this.props.graph.add(node);
+    }
   }
 
   @bind

@@ -1,6 +1,6 @@
 import bind from 'bind-decorator';
 import * as classNames from 'classnames';
-// import { action } from 'mobx';
+import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
 import Graph from '../../graph/Graph';
@@ -53,7 +53,6 @@ export default class TerminalRendition extends Component<Props, State> {
   @bind
   private onDragStart(e: DragEvent) {
     const { node, terminal } = this.props;
-    console.log('drag');
     this.context.setDragOrigin(terminal);
     e.dataTransfer.dropEffect = 'none';
     e.dataTransfer.setDragImage(new Image(), 0, 0);
@@ -93,7 +92,7 @@ export default class TerminalRendition extends Component<Props, State> {
     }
   }
 
-  @bind
+  @action.bound
   private onDrop(e: DragEvent) {
     const { node } = this.props;
     const origin = this.context.getDragOrigin();
