@@ -36,6 +36,8 @@ export default class App extends Component<undefined, State> {
     node2.x = 250;
     node2.y = 120;
     this.state.graph.add(node2);
+
+    this.state.graph.connect(node, 'out', node2, 'a');
   }
 
   public getChildContext() {

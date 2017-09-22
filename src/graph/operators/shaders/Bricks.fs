@@ -14,6 +14,7 @@ uniform int uBricks_corner;
 varying highp vec2 vTextureCoord;
 
 vec4 bricks(
+    vec2 uv,
     int xCount,
     int yCount,
     float xSpacing,
@@ -24,22 +25,19 @@ vec4 bricks(
     float yOffset,
     float stagger,
     int corner) {
-  float y = (vTextureCoord.y + yOffset) * float(yCount);
+  float y = (uv.y + yOffset) * float(yCount);
   float yr = floor(y);
   float yi = floor(y + 0.5);
   float yf = smoothstep(ySpacing, ySpacing + yBlur, abs(y - yi));
-  float x = (vTextureCoord.x + xOffset) * float(xCount) + (floor(yr * 0.5) * 2.0 == yr ? stagger : 0.0);
+  float x = (uv.x + xOffset) * float(xCount) + (floor(yr * 0.5) * 2.0 == yr ? stagger : 0.0);
   float xi = floor(x + 0.5);
   float xf = smoothstep(xSpacing, xSpacing + xBlur, abs(x - xi));
   float value;
-  if (corner == 1) {
-    // Mitered
+  if (corner == 1) { // Mitered
     value = max(0., (xf + yf) - 1.0);
-  } else if (corner == 2) {
-    // Rounded
+  } else if (corner == 2) { // Rounded
     value = max(0., 1. - sqrt((1.-xf) * (1.-xf) + (1.-yf) * (1.-yf)));
-  } else {
-    // Sqare
+  } else { // Sqare
     value = min(xf, yf);
   }
   return vec4(vec3(1.0, 1.0, 1.0) * value, 1);
@@ -47,6 +45,7 @@ vec4 bricks(
 
 void main() {
   gl_FragColor = bricks(
+      vTextureCoord,
       uBricks_count_x,
       uBricks_count_y,
       uBricks_spacing_x,

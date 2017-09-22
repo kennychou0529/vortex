@@ -6,6 +6,7 @@ import { observer } from 'preact-mobx';
 import Graph from '../../graph/Graph';
 import Node from '../../graph/Node';
 import RenderedImage from '../RenderedImage';
+import TerminalRendition from './TerminalRendition';
 
 import './NodeRendition.scss';
 
@@ -36,7 +37,7 @@ export default class NodeRendition extends Component<Props, undefined> {
     this.body.removeEventListener('pointerdown', this.onPointerDown);
   }
 
-  public render({ node }: Props): any {
+  public render({ node, graph }: Props): any {
     const style = {
       left: `${node.x}px`,
       top: `${node.y}px`,
@@ -54,10 +55,10 @@ export default class NodeRendition extends Component<Props, undefined> {
             <RenderedImage width={80} height={80} node={node} />
           </section>
         </div>
-        <div className="connectors input left" />
-        <div className="connectors output right">
-          <div className="connector">Out</div>
-        </div>
+        {node.inputs && node.inputs.map(input => (
+            <TerminalRendition node={node} graph={graph} terminal={input} />))}
+        {node.outputs && node.outputs.map(output => (
+            <TerminalRendition node={node} graph={graph} terminal={output} />))}
       </div>
     );
   }

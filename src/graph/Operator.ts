@@ -75,6 +75,7 @@ export interface Operator {
   inputs?: Input[];
   outputs?: Output[];
   params?: Parameter[];
+  description?: string;
 
   // Render a node with the specified renderer.
   render(renderer: Renderer, node: Node, resources: any): void;

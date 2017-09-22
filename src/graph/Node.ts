@@ -3,6 +3,7 @@ import Renderer from '../render/Renderer';
 import InputTerminal from './InputTerminal';
 import { Operator } from './Operator';
 import OutputTerminal from './OutputTerminal';
+import Terminal from './Terminal';
 
 type Watcher = () => void;
 
@@ -40,11 +41,15 @@ export default class Node {
   constructor(operator: Operator) {
     this.operator = operator;
     this.resources = {};
+    let y = 30;
     (operator.inputs || []).forEach(input => {
-      this.inputs.push(new InputTerminal(this));
+      this.inputs.push(new InputTerminal(this, input.name, input.id, -18, y));
+      y += 36;
     });
+    y = 30;
     (operator.outputs || []).forEach(output => {
-      this.outputs.push(new OutputTerminal(this));
+      this.outputs.push(new OutputTerminal(this, output.name, output.id, 92, y));
+      y += 36;
     });
   }
 
@@ -59,6 +64,18 @@ export default class Node {
 
   public destroy(renderer: Renderer) {
     this.operator.cleanup(renderer, this, this.resources);
+  }
+
+  public findInputTerminal(id: string): InputTerminal {
+    return this.inputs.find(t => t.id === id);
+  }
+
+  public findOutputTerminal(id: string): OutputTerminal {
+    return this.outputs.find(t => t.id === id);
+  }
+
+  public findTerminal(id: string): Terminal {
+    return this.findInputTerminal(id) || this.findInputTerminal(id);
   }
 
   public setModified() {

@@ -87,20 +87,23 @@ class Bricks implements Operator {
       name: 'Corner Shape',
       type: ParameterType.INTEGER,
       enumVals: [
-        { name: 'Square', value: 1 },
-        { name: 'Mitered', value: 2 },
-        { name: 'Rounded', value: 3 },
+        { name: 'Square', value: 0 },
+        { name: 'Mitered', value: 1 },
+        { name: 'Rounded', value: 2 },
       ],
       default: 0,
     },
   ];
+  public readonly description = `
+Generates a pattern consisting of alternating rows of bricks.
+`;
 
   // Render a node with the specified renderer.
   public render(renderer: Renderer, node: Node, resources: any) {
     if (!resources.shader) {
       resources.shader = renderer.compileShaderProgram(
-        require('./Basic.vs'),
-        require('./Bricks.fs'));
+        require('./shaders/Basic.vs'),
+        require('./shaders/Bricks.fs'));
     }
 
     renderer.executeShaderProgram(resources.shader, gl => {

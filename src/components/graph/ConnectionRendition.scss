@@ -1,0 +1,24 @@
+@import '../../styles/colors';
+
+.connector {
+  stroke-width: 6px;
+  stroke: $connectorStroke;
+  fill: transparent;
+  cursor: move;
+  .pending & {
+    stroke: darken(desaturate($connectorStroke, 50%), 10%);
+  }
+}
+
+.connector-outline {
+  stroke-width: 9px;
+  stroke: $connectorOutlineStroke;
+  fill: transparent;
+}
+
+.connector-shadow {
+  stroke-width: 9px;
+  stroke: $connectorShadowStroke;
+  fill: transparent;
+  opacity: 0.5;
+}
