@@ -1,6 +1,7 @@
 # TODO:
 
-* Editing connectors
+* Render a filter
+* Editing existing connectors
 * Deleting connectors
 * Making connectors actually do stuff.
 * Finish compass rose
@@ -10,7 +11,6 @@
 * Component palette
 * Component palette drag and drop
 * Delete components
-* Save current diagram in local storage
 * Import / Export diagrams
 * Undo / Redo
 * Export image

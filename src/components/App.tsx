@@ -1,3 +1,5 @@
+import * as keyboardJs from 'keyboardjs';
+import { action } from 'mobx';
 import { Component, h } from 'preact';
 import Graph from '../graph/Graph';
 import Node from '../graph/Node';
@@ -28,10 +30,9 @@ export default class App extends Component<undefined, State> {
     const savedGraph = localStorage.getItem('workingGraph');
     if (savedGraph) {
       try {
-        this.state.graph.fromJs(JSON.parse(savedGraph), this.registry);
-        console.log('node deserialization succeeded', this.state.graph.nodes.length);
+        // this.state.graph.fromJs(JSON.parse(savedGraph), this.registry);
       } catch (e) {
-        console.log('node deserialization failed:', e);
+        console.error('node deserialization failed:', e);
       }
     }
 
@@ -62,6 +63,11 @@ export default class App extends Component<undefined, State> {
     };
   }
 
+  public componentWillMount() {
+    keyboardJs.bind('delete', this.onDelete);
+    keyboardJs.bind('backspace', this.onDelete);
+  }
+
   public render(props: any, { graph }: State): any {
     return (
       <section id="app">
@@ -70,5 +76,10 @@ export default class App extends Component<undefined, State> {
         <PropertyPanel graph={graph} />
       </section>
     );
+  }
+
+  @action.bound
+  private onDelete(e: KeyboardEvent) {
+    this.state.graph.deleteSelection();
   }
 }

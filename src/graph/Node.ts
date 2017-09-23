@@ -28,6 +28,7 @@ export default class Node {
 
   // Preview needs recalculation
   public modified: boolean;
+  @observable public deleted: true;
 
   // Defines what this node does.
   public readonly operator: Operator;
@@ -90,6 +91,13 @@ export default class Node {
           this.watchers.forEach(watcher => { watcher(); });
         }
       });
+    }
+  }
+
+  public setDeleted() {
+    if (!this.deleted) {
+      this.deleted = true;
+      this.watchers.forEach(watcher => { watcher(); });
     }
   }
 

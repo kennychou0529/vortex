@@ -114,8 +114,10 @@ Generates a pattern consisting of alternating rows of bricks.
 
   // Release any GL resources we were holding on to.
   public cleanup(renderer: Renderer, node: Node, resources: any) {
-    renderer.deleteShaderProgram(resources.shader);
-    delete resources.shader;
+    if (resources.shader) {
+      renderer.deleteShaderProgram(resources.shader);
+      delete resources.shader;
+    }
   }
 }
 

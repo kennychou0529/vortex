@@ -1,4 +1,4 @@
-import { computed, observable } from 'mobx';
+import { action, computed, observable } from 'mobx';
 import Bounds from './Bounds';
 import Connection from './Connection';
 import InputTerminal from './InputTerminal';
@@ -91,6 +91,27 @@ export default class Graph {
   /** Clear the current selection. */
   public clearSelection() {
     this.nodes.forEach(n => { n.selected = false; });
+  }
+
+  @action
+  public deleteSelection() {
+    // Disconnect all selected nodes
+    this.selection.forEach(node => {
+      node.outputs.forEach(output => {
+        output.connections.forEach(connection => {
+          output.disconnect(connection);
+        });
+      });
+      node.inputs.forEach(input => {
+        if (input.connection) {
+          input.connection.source.disconnect(input.connection);
+        }
+      });
+      // Release any rendering resources
+      node.setDeleted();
+    });
+    // Delete all selected nodes
+    this.nodes = this.nodes.filter(n => !n.selected);
   }
 
   public toJs(): any {

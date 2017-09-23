@@ -45,6 +45,10 @@ export default class RenderedImage extends Component<Props, undefined> {
     const { node, width, height } = this.props;
     const renderer: Renderer = this.context.renderer;
     const context = this.canvas.getContext('2d');
-    renderer.render(node, width, height, context);
+    if (node.deleted) {
+      node.destroy(renderer);
+    } else {
+      renderer.render(node, width, height, context);
+    }
   }
 }

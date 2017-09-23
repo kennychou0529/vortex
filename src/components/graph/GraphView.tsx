@@ -69,7 +69,7 @@ export default class GraphView extends Component<Props, State> {
           ref={el => { this.scrollEl = el as HTMLElement; }}
         >
           {graph.nodes.map(node => (
-              <NodeRendition node={node} graph={graph} onScroll={this.onScroll} />))}
+              <NodeRendition key={node.id} node={node} graph={graph} onScroll={this.onScroll} />))}
           <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox={`0 0 ${bounds.width} ${bounds.height}`}

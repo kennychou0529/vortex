@@ -63,8 +63,10 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
 
   // Release any GL resources we were holding on to.
   public cleanup(renderer: Renderer, node: Node, resources: any) {
-    renderer.deleteShaderProgram(resources.shader);
-    delete resources.shader;
+    if (resources.shader) {
+      renderer.deleteShaderProgram(resources.shader);
+      delete resources.shader;
+    }
   }
 }
 

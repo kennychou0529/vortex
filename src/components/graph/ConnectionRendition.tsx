@@ -19,6 +19,10 @@ interface Props {
 @observer
 export default class ConnectionRendition extends Component<Props, undefined> {
   public render({ ts, xs, ys, te, xe, ye, pending }: Props) {
+    // This just forces MobX to re-render us when a node gets deleted.
+    if (ts && ts.node.deleted || te && te.node.deleted) {
+      return;
+    }
     const x0 = ts ? ts.x + ts.node.x + 10 : xs;
     const y0 = ts ? ts.y + ts.node.y + 15 : ys;
     const x1 = te ? te.x + te.node.x + 10 : xe;
@@ -42,6 +46,6 @@ export default class ConnectionRendition extends Component<Props, undefined> {
   private onMouseDown(e: MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    console.log('wire');
+    console.log('wire click');
   }
 }
