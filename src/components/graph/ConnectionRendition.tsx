@@ -2,7 +2,7 @@ import bind from 'bind-decorator';
 import * as classNames from 'classnames';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
-import Terminal from '../../graph/Terminal';
+import { Terminal } from '../../graph';
 
 import './ConnectionRendition.scss';
 

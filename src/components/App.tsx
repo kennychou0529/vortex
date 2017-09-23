@@ -1,9 +1,8 @@
 import * as keyboardJs from 'keyboardjs';
 import { action } from 'mobx';
 import { Component, h } from 'preact';
-import Graph from '../graph/Graph';
-import Node from '../graph/Node';
-import Registry from '../graph/Registry';
+import { Graph, GraphNode } from '../graph';
+import { Registry } from '../operators';
 import Renderer from '../render/Renderer';
 import GraphView from './graph/GraphView';
 import PropertyPanel from './PropertyPanel';
@@ -37,12 +36,12 @@ export default class App extends Component<undefined, State> {
     }
 
     if (this.state.graph.nodes.length === 0) {
-      const node = new Node(this.registry.get('pattern.bricks'));
+      const node = new GraphNode(this.registry.get('pattern_bricks'));
       node.x = 20;
       node.y = 20;
       this.state.graph.add(node);
 
-      const node2 = new Node(this.registry.get('filter.blend'));
+      const node2 = new GraphNode(this.registry.get('filter_blend'));
       node2.x = 250;
       node2.y = 120;
       this.state.graph.add(node2);

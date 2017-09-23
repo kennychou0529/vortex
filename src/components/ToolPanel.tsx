@@ -1,6 +1,6 @@
 import bind from 'bind-decorator';
 import { Component, h } from 'preact';
-import { Operator } from '../graph/Operator';
+import { Operator } from '../operators';
 import OperatorCatalog from './catalog/OperatorCatalog';
 import OperatorDetails from './catalog/OperatorDetails';
 

@@ -3,15 +3,14 @@ import * as classNames from 'classnames';
 import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
-import Graph from '../../graph/Graph';
-import Node from '../../graph/Node';
+import { Graph, GraphNode } from '../../graph';
 import RenderedImage from '../RenderedImage';
 import TerminalRendition from './TerminalRendition';
 
 import './NodeRendition.scss';
 
 interface Props {
-  node: Node;
+  node: GraphNode;
   graph: Graph;
   onScroll: (dx: number, dy: number) => void;
 }

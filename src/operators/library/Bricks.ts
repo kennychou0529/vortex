@@ -1,12 +1,15 @@
 // import { vec4 } from 'gl-matrix';
-import Renderer from '../../render/Renderer';
-import Node from '../Node';
-import { DataType, Operator, Output, Parameter, ParameterType } from '../Operator';
+import { DataType, Operator, Output, Parameter, ParameterType } from '..';
+import { GraphNode } from '../../graph';
+import { Expr } from '../../render/Expr';
+import Renderer, { ShaderResource } from '../../render/Renderer';
+import ShaderAssembly from '../../render/ShaderAssembly';
 
-class Bricks implements Operator {
-  public readonly group: string = 'pattern';
-  public readonly name: string = 'Bricks';
-  public readonly id: string = 'pattern.bricks';
+interface Resources {
+  shader: ShaderResource;
+}
+
+class Bricks extends Operator {
   public readonly outputs: Output[] = [{
     id: 'out',
     name: 'Out',
@@ -99,21 +102,47 @@ class Bricks implements Operator {
 Generates a pattern consisting of alternating rows of bricks.
 `;
 
+  private commonSrc: string = require('./shaders/bricks.glsl');
+
+  constructor() {
+    super('pattern', 'Bricks', 'pattern_bricks');
+  }
+
   // Render a node with the specified renderer.
-  public render(renderer: Renderer, node: Node, resources: any) {
+  public render(renderer: Renderer, node: GraphNode, resources: Resources) {
     if (!resources.shader) {
+      const fragmentSrc = this.build(node);
       resources.shader = renderer.compileShaderProgram(
         require('./shaders/Basic.vs'),
-        require('./shaders/Bricks.fs'));
+        fragmentSrc);
     }
 
     renderer.executeShaderProgram(resources.shader, gl => {
-      renderer.setShaderUniforms(this.params, resources.shader, node.paramValues, 'Bricks');
+      renderer.setShaderUniforms(
+          this.params,
+          resources.shader.program,
+          node.paramValues,
+          this.uniformPrefix(node.id));
     });
   }
 
+  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
+    if (assembly.start(node.id)) {
+      assembly.declareUniforms(this, node.id, this.params);
+      assembly.addCommon(this.id, this.commonSrc);
+      assembly.finish(node.id);
+    }
+
+    // TODO: type conversion
+    const args = [
+      assembly.literal('vTextureCoord'),
+      ...this.params.map(param => assembly.ident(this.uniformName(node.id, param.id))),
+    ];
+    return assembly.call('bricks', args);
+  }
+
   // Release any GL resources we were holding on to.
-  public cleanup(renderer: Renderer, node: Node, resources: any) {
+  public cleanup(renderer: Renderer, node: GraphNode, resources: Resources) {
     if (resources.shader) {
       renderer.deleteShaderProgram(resources.shader);
       delete resources.shader;

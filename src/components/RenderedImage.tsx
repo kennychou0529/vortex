@@ -1,10 +1,10 @@
 import bind from 'bind-decorator';
 import { Component, h } from 'preact';
-import Node from '../graph/Node';
+import { ChangeType, GraphNode } from '../graph';
 import Renderer from '../render/Renderer';
 
 interface Props {
-  node: Node;
+  node: GraphNode;
   width: number;
   height: number;
 }
@@ -13,14 +13,14 @@ export default class RenderedImage extends Component<Props, undefined> {
   private canvas: HTMLCanvasElement;
 
   public componentDidMount() {
-    this.updateCanvas();
+    this.updateCanvas(ChangeType.CONNECTION_CHANGED);
     this.props.node.watch(this.updateCanvas);
   }
 
   public componentDidUpdate(prevProps: Props) {
     if (prevProps.node !== this.props.node) {
       prevProps.node.unwatch(this.updateCanvas);
-      this.updateCanvas();
+      this.updateCanvas(ChangeType.CONNECTION_CHANGED);
       this.props.node.watch(this.updateCanvas);
     }
   }
@@ -41,14 +41,14 @@ export default class RenderedImage extends Component<Props, undefined> {
   }
 
   @bind
-  private updateCanvas() {
+  private updateCanvas(change: ChangeType) {
     const { node, width, height } = this.props;
     const renderer: Renderer = this.context.renderer;
     const context = this.canvas.getContext('2d');
     if (node.deleted) {
       node.destroy(renderer);
     } else {
-      renderer.render(node, width, height, context);
+      renderer.render(node, width, height, context, change === ChangeType.CONNECTION_CHANGED);
     }
   }
 }

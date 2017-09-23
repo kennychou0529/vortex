@@ -1,10 +1,10 @@
 import { h } from 'preact';
-import Node from '../../graph/Node';
-import { ParameterType } from '../../graph/Operator';
+import { GraphNode } from '../../graph';
+import { ParameterType } from '../../operators';
 import ScalarProperty from './ScalarProperty';
 
 interface Props {
-  node: Node;
+  node: GraphNode;
 }
 
 export default function PropertyEditor({ node }: Props) {

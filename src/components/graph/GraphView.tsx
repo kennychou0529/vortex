@@ -2,9 +2,7 @@ import bind from 'bind-decorator';
 import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
-import Graph from '../../graph/Graph';
-import Node from '../../graph/Node';
-import Terminal from '../../graph/Terminal';
+import { Graph, GraphNode, Terminal } from '../../graph';
 import CompassRose from '../controls/CompassRose';
 import ConnectionRendition from './ConnectionRendition';
 import NodeRendition from './NodeRendition';
@@ -93,7 +91,7 @@ export default class GraphView extends Component<Props, State> {
     );
   }
 
-  private renderNodeConnections(node: Node) {
+  private renderNodeConnections(node: GraphNode) {
     const result: JSX.Element[] = [];
     for (const output of node.outputs) {
       for (const connection of output.connections) {
@@ -190,7 +188,7 @@ export default class GraphView extends Component<Props, State> {
     const data = e.dataTransfer.getData('application/x-scintil-operator');
     if (data) {
       const op = this.context.registry.get(data);
-      const node = new Node(op);
+      const node = new GraphNode(op);
       node.x = e.clientX - this.base.offsetLeft - this.state.xScroll - 45;
       node.y = e.clientY - this.base.offsetTop - this.state.yScroll - 60;
       this.props.graph.add(node);

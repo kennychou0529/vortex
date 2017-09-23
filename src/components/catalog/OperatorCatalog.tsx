@@ -1,6 +1,5 @@
 import { Component, h } from 'preact';
-import { Operator } from '../../graph/Operator';
-import Registry from '../../graph/Registry';
+import { Operator, Registry } from '../../operators';
 import OperatorCatalogEntry from './OperatorCatalogEntry';
 
 import './OperatorCatalog.scss';

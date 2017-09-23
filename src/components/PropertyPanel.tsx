@@ -1,7 +1,6 @@
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
-import Graph from '../graph/Graph';
-// import Node from '../graph/Node';
+import { Graph } from '../graph';
 import PropertyEditor from './propedit/PropertyEditor';
 import RenderedImage from './RenderedImage';
 

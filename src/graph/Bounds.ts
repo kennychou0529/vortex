@@ -1,5 +1,5 @@
 /** Represents a rectangular bounding box. */
-export default class Bounds {
+export class Bounds {
   public xMin: number;
   public xMax: number;
   public yMin: number;

@@ -1,6 +1,6 @@
 import { mat4 } from 'gl-matrix';
-import Node from '../graph/Node';
-import { Parameter, ParameterType } from '../graph/Operator';
+import { GraphNode } from '../graph';
+import { Parameter, ParameterType } from '../operators';
 
 export interface ShaderResource {
   program: WebGLProgram;
@@ -31,46 +31,30 @@ export default class Renderer {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.unitSquare);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
+    // TODO: Create vertex arrays for 2x2, 3x3 etc.
+
     this.viewMatrix = mat4.create();
     mat4.identity(this.viewMatrix);
   }
 
-  public render(node: Node, width: number, height: number, out: CanvasRenderingContext2D) {
+  public render(
+      node: GraphNode,
+      width: number,
+      height: number, out: CanvasRenderingContext2D,
+      rebuildShader: boolean = false) {
     this.canvas.width = width;
     this.canvas.height = height;
 
     const gl = this.gl;
     gl.viewport(0, 0, width, height);
-    // gl.clearColor(0.0, 0.0, 0.4, 1.0);  // Clear to black, fully opaque
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
     gl.clear(gl.COLOR_BUFFER_BIT);
 
+    if (rebuildShader) {
+      node.destroy(this);
+    }
     node.render(this);
     out.drawImage(this.canvas, 0, 0);
-  }
-
-  public setShaderUniforms(
-    params: Parameter[],
-    resource: ShaderResource,
-    paramValues: Map<string, any> = new Map(),
-    paramPrefix: string) {
-    const gl = this.gl;
-    for (const param of params) {
-      const value = paramValues.has(param.id)
-          ? paramValues.get(param.id)
-          : param.default !== undefined ? param.default : 0;
-      switch (param.type) {
-        case ParameterType.INTEGER:
-          gl.uniform1i(
-            gl.getUniformLocation(resource.program, `u${paramPrefix}_${param.id}`),
-            value);
-          break;
-        case ParameterType.FLOAT:
-          gl.uniform1f(
-            gl.getUniformLocation(resource.program, `u${paramPrefix}_${param.id}`),
-            value);
-          break;
-      }
-    }
   }
 
   public executeShaderProgram(
@@ -90,14 +74,33 @@ export default class Renderer {
     gl.vertexAttribPointer(textureCoords, 2, gl.FLOAT, false, 4 * 4, 2 * 4);
     gl.enableVertexAttribArray(textureCoords);
 
-    // Set up the view transform
-    // gl.uniformMatrix4fv(
-    //   gl.getUniformLocation(resource.program, 'uViewMatrix'), false, this.viewMatrix);
     if (setShaderVars) {
       setShaderVars(gl);
     }
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+
+  public setShaderUniforms(
+    params: Parameter[],
+    program: WebGLProgram,
+    paramValues: Map<string, any> = new Map(),
+    paramPrefix: string) {
+    const gl = this.gl;
+    for (const param of params) {
+      const value = paramValues.has(param.id)
+          ? paramValues.get(param.id)
+          : param.default !== undefined ? param.default : 0;
+      const uniformName = `${paramPrefix}_${param.id}`;
+      switch (param.type) {
+        case ParameterType.INTEGER:
+          gl.uniform1i(gl.getUniformLocation(program, uniformName), value);
+          break;
+        case ParameterType.FLOAT:
+          gl.uniform1f(gl.getUniformLocation(program, uniformName), value);
+          break;
+      }
+    }
   }
 
   public compileShaderProgram(vsSource: string, fsSource: string): ShaderResource {

@@ -1,20 +1,20 @@
 import { action, computed, observable } from 'mobx';
-import Bounds from './Bounds';
-import Connection from './Connection';
-import InputTerminal from './InputTerminal';
-import Node from './Node';
-import OutputTerminal from './OutputTerminal';
-import Registry from './Registry';
-import Terminal from './Terminal';
+import { Registry } from '../operators';
+import { Bounds } from './Bounds';
+import { Connection } from './Connection';
+import { ChangeType, GraphNode } from './GraphNode';
+import { InputTerminal } from './InputTerminal';
+import { OutputTerminal } from './OutputTerminal';
+import { Terminal } from './Terminal';
 
 const DOC_WIDTH = 4000;
 
-export default class Graph {
+export class Graph {
   public name: string;
-  @observable public nodes: Node[];
+  @observable public nodes: GraphNode[];
   @observable public bounds: Bounds;
 
-  private nodeCount = 1;
+  private nodeCount = 0;
 
   constructor() {
     this.name = 'untitled';
@@ -23,7 +23,7 @@ export default class Graph {
   }
 
   /** Add a node to the list. */
-  public add(node: Node) {
+  public add(node: GraphNode) {
     if (node.id === undefined) {
       this.nodeCount += 1;
       node.id = this.nodeCount;
@@ -34,7 +34,7 @@ export default class Graph {
   }
 
   /** Locate a node by id. */
-  public findNode(id: number): Node {
+  public findNode(id: number): GraphNode {
     return this.nodes.find(n => n.id === id);
   }
 
@@ -44,9 +44,10 @@ export default class Graph {
     return node && node.findTerminal(terminalId);
   }
 
-  public connect(srcNode: Node | number, srcTerm: string, dstNode: Node | number, dstTerm: string) {
-    const sn: Node = typeof(srcNode) === 'number' ? this.findNode(srcNode) : srcNode;
-    const dn: Node = typeof(dstNode) === 'number' ? this.findNode(dstNode) : dstNode;
+  public connect(
+      srcNode: GraphNode | number, srcTerm: string, dstNode: GraphNode | number, dstTerm: string) {
+    const sn: GraphNode = typeof(srcNode) === 'number' ? this.findNode(srcNode) : srcNode;
+    const dn: GraphNode = typeof(dstNode) === 'number' ? this.findNode(dstNode) : dstNode;
     if (sn && dn) {
       const st: OutputTerminal = sn.findOutputTerminal(srcTerm);
       const dt: InputTerminal = dn.findInputTerminal(dstTerm);
@@ -81,10 +82,12 @@ export default class Graph {
     };
     src.connections.push(conn);
     dst.connection = conn;
+    src.node.notifyChange(ChangeType.CONNECTION_CHANGED);
+    dst.node.notifyChange(ChangeType.CONNECTION_CHANGED);
   }
 
   /** Return a list of all selected nodes. */
-  @computed public get selection(): Node[] {
+  @computed public get selection(): GraphNode[] {
     return this.nodes.filter(node => node.selected);
   }
 
@@ -145,7 +148,7 @@ export default class Graph {
       this.name = json.name;
     }
     json.nodes.forEach((node: any) => {
-      const n = new Node(registry.get(node.operator));
+      const n = new GraphNode(registry.get(node.operator));
       n.id = node.id;
       n.x = node.x;
       n.y = node.y;

@@ -1,8 +1,8 @@
-import Node from './Node';
+import { GraphNode } from './GraphNode';
 
-export default interface Terminal {
-  // Node this terminal belongs to
-  readonly node: Node;
+export interface Terminal {
+  // GraphNode this terminal belongs to
+  readonly node: GraphNode;
 
   // Id of terminal within that node.
   readonly id: string;

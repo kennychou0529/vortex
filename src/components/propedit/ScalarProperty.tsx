@@ -1,13 +1,13 @@
 import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
-import Node from '../../graph/Node';
-import { Parameter, ParameterType } from '../../graph/Operator';
+import { ChangeType, GraphNode } from '../../graph';
+import { Parameter, ParameterType } from '../../operators';
 import ComboSlider from '../controls/ComboSlider';
 
 interface Props {
   parameter: Parameter;
-  node: Node;
+  node: GraphNode;
 }
 
 @observer
@@ -47,6 +47,6 @@ export default class ScalarProperty extends Component<Props, undefined> {
   private onChange(value: number) {
     const { parameter, node } = this.props;
     node.paramValues.set(parameter.id, value);
-    node.setModified();
+    node.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
   }
 }

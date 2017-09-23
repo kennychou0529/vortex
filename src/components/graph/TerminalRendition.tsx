@@ -3,15 +3,13 @@ import * as classNames from 'classnames';
 import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
-import Graph from '../../graph/Graph';
-import Node from '../../graph/Node';
-import Terminal from '../../graph/Terminal';
+import { Graph, GraphNode, Terminal } from '../../graph';
 import DragType from './DragType';
 
 import './TerminalRendition.scss';
 
 interface Props {
-  node: Node;
+  node: GraphNode;
   graph: Graph;
   terminal: Terminal;
 }

@@ -1,14 +1,21 @@
 import { observable } from 'mobx';
+import { Operator } from '../operators';
 import Renderer from '../render/Renderer';
-import InputTerminal from './InputTerminal';
-import { Operator } from './Operator';
-import OutputTerminal from './OutputTerminal';
-import Terminal from './Terminal';
+import { InputTerminal } from './InputTerminal';
+import { OutputTerminal } from './OutputTerminal';
+import { Terminal } from './Terminal';
 
-type Watcher = () => void;
+export enum ChangeType {
+  NONE,
+  PARAM_VALUE_CHANGED,
+  CONNECTION_CHANGED,
+  NODE_DELETED,
+}
+
+type Watcher = (change: ChangeType) => void;
 
 /** A node in the graph. */
-export default class Node {
+export class GraphNode {
   // Unique ID of this node within the graph
   public id: number;
 
@@ -27,7 +34,6 @@ export default class Node {
   @observable public selected: boolean = false;
 
   // Preview needs recalculation
-  public modified: boolean;
   @observable public deleted: true;
 
   // Defines what this node does.
@@ -38,6 +44,7 @@ export default class Node {
 
   // List of entities that need to be notified when any of the node properties change.
   private watchers: Set<Watcher> = new Set();
+  private changeInProgress: ChangeType = ChangeType.NONE;
 
   constructor(operator: Operator) {
     this.operator = operator;
@@ -79,16 +86,63 @@ export default class Node {
     return this.findInputTerminal(id) || this.findInputTerminal(id);
   }
 
-  public setModified() {
-    if (!this.modified) {
-      this.modified = true;
-      for (const out of this.outputs) {
-        out.node.setModified();
+  /** Visit all nodes which transitively feed into this node's inputs.
+      Return 'false' from the callback to signal that the visitor should not traverse any
+      deeper into the graph.
+  */
+  public visitUpstreamNodes(callback: (node: GraphNode, termId: string) => boolean | void) {
+    const visited = new Set<number>();
+    const visit = (node: GraphNode): void => {
+      if (!visited.has(node.id)) {
+        visited.add(node.id);
+        for (const input of this.inputs) {
+          const connection = input.connection;
+          if (connection && connection.source) {
+            if (callback(connection.source.node, connection.source.id) !== false) {
+              visit(input.connection.source.node);
+            }
+          }
+        }
+      }
+    };
+    visit(this);
+  }
+
+  /** Visit all nodes which transitively depend on this node's outputs.
+      Return 'false' from the callback to signal that the visitor should not traverse any
+      deeper into the graph.
+  */
+  public visitDownstreamNodes(callback: (node: GraphNode, termId: string) => boolean | void) {
+    const visited = new Set<number>();
+    const visit = (node: GraphNode): void => {
+      if (!visited.has(node.id)) {
+        visited.add(node.id);
+        for (const output of this.outputs) {
+          for (const connection of output.connections) {
+            if (connection.dest) {
+              if (callback(connection.dest.node, connection.dest.id) !== false) {
+                visit(connection.source.node);
+              }
+            }
+          }
+        }
+      }
+    };
+    visit(this);
+  }
+
+  public notifyChange(change: ChangeType) {
+    if (this.changeInProgress !== change) {
+      this.changeInProgress = change;
+      if (change !== ChangeType.NODE_DELETED) {
+        this.visitDownstreamNodes((node, termId) => {
+          node.notifyChange(change);
+        });
       }
       window.requestAnimationFrame(() => {
-        if (this.modified) {
-          this.modified = false;
-          this.watchers.forEach(watcher => { watcher(); });
+        if (this.changeInProgress !== ChangeType.NONE) {
+          this.watchers.forEach(watcher => { watcher(this.changeInProgress); });
+          this.changeInProgress = ChangeType.NONE;
         }
       });
     }
@@ -97,7 +151,7 @@ export default class Node {
   public setDeleted() {
     if (!this.deleted) {
       this.deleted = true;
-      this.watchers.forEach(watcher => { watcher(); });
+      this.notifyChange(ChangeType.NODE_DELETED);
     }
   }
 

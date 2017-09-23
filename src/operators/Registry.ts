@@ -1,11 +1,11 @@
 import { Operator } from './Operator';
 
 /** Maintains the list of operators. */
-export default class Registry {
+export class Registry {
   private operators = new Map<string, Operator>();
 
   constructor() {
-    const catalog = require.context('./operators', false, /[A-Za-z0-9_]\.ts$/);
+    const catalog = require.context('./library', false, /[A-Za-z0-9_]\.ts$/);
     catalog.keys().forEach(k => {
       if (k.endsWith('.ts') && k.startsWith('./')) {
         const op = (catalog(k) as any).default as Operator;

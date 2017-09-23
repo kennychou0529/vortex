@@ -1,5 +1,5 @@
 import { Component, h } from 'preact';
-import { Operator } from '../../graph/Operator';
+import { Operator } from '../../operators';
 
 import './OperatorDetails.scss';
 

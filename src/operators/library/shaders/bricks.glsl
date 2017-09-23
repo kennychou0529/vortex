@@ -1,18 +1,3 @@
-precision mediump float;
-
-uniform int uBricks_count_x;
-uniform int uBricks_count_y;
-uniform float uBricks_spacing_x;
-uniform float uBricks_spacing_y;
-uniform float uBricks_blur_x;
-uniform float uBricks_blur_y;
-uniform float uBricks_offset_x;
-uniform float uBricks_offset_y;
-uniform float uBricks_stagger;
-uniform int uBricks_corner;
-
-varying highp vec2 vTextureCoord;
-
 vec4 bricks(
     vec2 uv,
     int xCount,
@@ -41,19 +26,4 @@ vec4 bricks(
     value = min(xf, yf);
   }
   return vec4(vec3(1.0, 1.0, 1.0) * value, 1);
-}
-
-void main() {
-  gl_FragColor = bricks(
-      vTextureCoord,
-      uBricks_count_x,
-      uBricks_count_y,
-      uBricks_spacing_x,
-      uBricks_spacing_y,
-      uBricks_blur_x,
-      uBricks_blur_y,
-      uBricks_offset_x,
-      uBricks_offset_y,
-      uBricks_stagger,
-      uBricks_corner);
 }
