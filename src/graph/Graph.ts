@@ -4,6 +4,7 @@ import Connection from './Connection';
 import InputTerminal from './InputTerminal';
 import Node from './Node';
 import OutputTerminal from './OutputTerminal';
+import Registry from './Registry';
 import Terminal from './Terminal';
 
 const DOC_WIDTH = 4000;
@@ -13,7 +14,7 @@ export default class Graph {
   @observable public nodes: Node[];
   @observable public bounds: Bounds;
 
-  private nodeCount = 0;
+  private nodeCount = 1;
 
   constructor() {
     this.name = 'untitled';
@@ -23,25 +24,29 @@ export default class Graph {
 
   /** Add a node to the list. */
   public add(node: Node) {
-    this.nodeCount += 1;
-    node.id = `n${this.nodeCount}`;
+    if (node.id === undefined) {
+      this.nodeCount += 1;
+      node.id = this.nodeCount;
+    } else {
+      this.nodeCount = Math.max(this.nodeCount, node.id + 1);
+    }
     this.nodes.push(node);
   }
 
   /** Locate a node by id. */
-  public findNode(id: string): Node {
+  public findNode(id: number): Node {
     return this.nodes.find(n => n.id === id);
   }
 
   /** Locate a terminal by id. */
-  public findTerminal(nodeId: string, terminalId: string): Terminal {
+  public findTerminal(nodeId: number, terminalId: string): Terminal {
     const node = this.findNode(nodeId);
     return node && node.findTerminal(terminalId);
   }
 
-  public connect(srcNode: Node | string, srcTerm: string, dstNode: Node | string, dstTerm: string) {
-    const sn: Node = typeof(srcNode) === 'string' ? this.findNode(srcNode) : srcNode;
-    const dn: Node = typeof(dstNode) === 'string' ? this.findNode(dstNode) : dstNode;
+  public connect(srcNode: Node | number, srcTerm: string, dstNode: Node | number, dstTerm: string) {
+    const sn: Node = typeof(srcNode) === 'number' ? this.findNode(srcNode) : srcNode;
+    const dn: Node = typeof(dstNode) === 'number' ? this.findNode(dstNode) : dstNode;
     if (sn && dn) {
       const st: OutputTerminal = sn.findOutputTerminal(srcTerm);
       const dt: InputTerminal = dn.findInputTerminal(dstTerm);
@@ -86,5 +91,54 @@ export default class Graph {
   /** Clear the current selection. */
   public clearSelection() {
     this.nodes.forEach(n => { n.selected = false; });
+  }
+
+  public toJs(): any {
+    const connections: any[] = [];
+    this.nodes.forEach(node => {
+      node.outputs.forEach(output => {
+        output.connections.forEach(connection => {
+          connections.push({
+            source: {
+              node: connection.source.node.id,
+              terminal: connection.source.id,
+            },
+            destination: {
+              node: connection.dest.node.id,
+              terminal: connection.dest.id,
+            },
+          });
+        });
+      });
+    });
+    return {
+      name: this.name,
+      nodes: this.nodes.map(node => node.toJs()),
+      connections,
+    };
+  }
+
+  // TODO: schema validation
+  public fromJs(json: any, registry: Registry) {
+    if (typeof json.name === 'string') {
+      this.name = json.name;
+    }
+    json.nodes.forEach((node: any) => {
+      const n = new Node(registry.get(node.operator));
+      n.id = node.id;
+      n.x = node.x;
+      n.y = node.y;
+      n.operator.params.forEach(param => {
+        if (param.id in node.params) {
+          n.paramValues.set(param.id, node.params[param.id]);
+        }
+      });
+      this.add(n);
+    });
+    json.connections.forEach((connection: any) => {
+      this.connect(
+        connection.source.node, connection.source.terminal,
+        connection.destination.node, connection.destination.terminal);
+    });
   }
 }

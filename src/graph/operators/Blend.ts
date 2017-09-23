@@ -6,6 +6,7 @@ import { DataType, Input, Operator, Output, Parameter, ParameterType } from '../
 class Blend implements Operator {
   public readonly group: string = 'filter';
   public readonly name: string = 'Blend';
+  public readonly id: string = 'filter.blend';
   public readonly inputs: Input[] = [
     {
       id: 'a',

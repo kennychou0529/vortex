@@ -14,12 +14,12 @@ interface Props {
 
 export default class OperatorCatalogEntry extends Component<Props, undefined> {
   public render({ operator, selected }: Props) {
-    const { group, name } = operator;
+    const { id, group, name } = operator;
     return (
       <div
           className={classNames('row', { selected })}
-          key={`${group}/${name}`}
-          data-id={`${group}/${name}`}
+          key={`${id}`}
+          data-id={`${id}`}
           onClick={this.onClick}
           onDragStart={this.onDragStart}
           draggable={true}
@@ -38,9 +38,9 @@ export default class OperatorCatalogEntry extends Component<Props, undefined> {
 
   @bind
   private onDragStart(e: DragEvent) {
-    const { group, name } = this.props.operator;
+    const { id } = this.props.operator;
     e.dataTransfer.dropEffect = 'copy';
     e.dataTransfer.setDragImage(this.props.img, 45, 60);
-    e.dataTransfer.setData('application/x-scintil-operator', `${group}/${name}`);
+    e.dataTransfer.setData('application/x-scintil-operator', `${id}`);
   }
 }

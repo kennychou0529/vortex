@@ -72,6 +72,7 @@ export interface Parameter {
 export interface Operator {
   group: string;  // Which group, e.g. 'math', 'generator', 'filter', 'display'
   name: string;   // Type name, e.g. 'noise'
+  id: string;     // Unique id of this operator
   inputs?: Input[];
   outputs?: Output[];
   params?: Parameter[];

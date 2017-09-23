@@ -6,6 +6,7 @@ import { DataType, Operator, Output, Parameter, ParameterType } from '../Operato
 class Bricks implements Operator {
   public readonly group: string = 'pattern';
   public readonly name: string = 'Bricks';
+  public readonly id: string = 'pattern.bricks';
   public readonly outputs: Output[] = [{
     id: 'out',
     name: 'Out',

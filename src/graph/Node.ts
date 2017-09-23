@@ -9,8 +9,8 @@ type Watcher = () => void;
 
 /** A node in the graph. */
 export default class Node {
-  // Unique ID of this node
-  public id: string;
+  // Unique ID of this node within the graph
+  public id: number;
 
   // Node coordinates
   @observable public x: number = 0;
@@ -101,5 +101,21 @@ export default class Node {
     this.watchers.delete(watcher);
   }
 
-  // TODO: serialize
+  public toJs(): any {
+    const params: any = {};
+    this.operator.params.forEach(param => {
+      if (this.paramValues.has(param.id)) {
+        params[param.id] = this.paramValues.get(param.id);
+      } else if (param.default !== undefined) {
+        params[param.id] = param.default;
+      }
+    });
+    return {
+      id: this.id,
+      x: this.x,
+      y: this.y,
+      operator: this.operator.id,
+      params,
+    };
+  }
 }

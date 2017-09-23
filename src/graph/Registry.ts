@@ -9,8 +9,7 @@ export default class Registry {
     catalog.keys().forEach(k => {
       if (k.endsWith('.ts') && k.startsWith('./')) {
         const op = (catalog(k) as any).default as Operator;
-        const id = `${op.group}/${op.name}`;
-        this.operators.set(id, op);
+        this.operators.set(op.id, op);
       }
     });
   }
