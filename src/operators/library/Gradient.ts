@@ -1,4 +1,3 @@
-// import { vec4 } from 'gl-matrix';
 import { DataType, Operator, Output, Parameter, ParameterType } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
@@ -30,12 +29,26 @@ class Gradient extends Operator {
       ],
       default: 0,
     },
+    {
+      id: 'color',
+      name: 'Gradient color',
+      type: ParameterType.COLOR_GRADIENT,
+      max: 32,
+      default: [
+        {
+          value: [0, 0, 0, 1],
+          position: 0,
+        },
+        {
+          value: [1, 1, 1, 1],
+          position: 1,
+        },
+      ],
+    },
   ];
   public readonly description = `
 Generates a simple gradient.
 `;
-
-  private commonSrc: string = require('./shaders/gradient.glsl');
 
   constructor() {
     super('generator', 'Gradient', 'generator_gradient');
@@ -70,14 +83,18 @@ Generates a simple gradient.
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
     if (assembly.start(node.id)) {
       assembly.declareUniforms(this, node.id, this.params);
-      assembly.addCommon(this.id, this.commonSrc);
+      assembly.addCommon('gradient-color.glsl', require('./shaders/gradient-color.glsl'));
+      assembly.addCommon('gradient.glsl', require('./shaders/gradient.glsl'));
       assembly.finish(node.id);
     }
 
     // TODO: type conversion
+    const colorName = this.uniformName(node.id, 'color');
     const args = [
       assembly.literal('vTextureCoord'),
-      ...this.params.map(param => assembly.ident(this.uniformName(node.id, param.id))),
+      assembly.ident(this.uniformName(node.id, 'type')),
+      assembly.ident(`${colorName}_colors`),
+      assembly.ident(`${colorName}_positions`),
     ];
     return assembly.call('gradient', args);
   }

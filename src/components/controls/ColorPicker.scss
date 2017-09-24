@@ -1,3 +1,8 @@
+@import '../../styles/colors';
+
+$dark: #888;
+$light: #ccc;
+
 .color-picker {
   display: flex;
   > .sliders {
@@ -12,33 +17,14 @@
         margin-bottom: 0;
       }
 
-      // &.hue {
-      //   background: linear-gradient(to right,
-      //     #f00 9px,
-      //     #ff0 calc(9px + (100% - 18px) * 1 / 6),
-      //     #0f0 calc(9px + (100% - 18px) * 2 / 6),
-      //     #0ff calc(9px + (100% - 18px) * 3 / 6),
-      //     #00f calc(9px + (100% - 18px) * 4 / 6),
-      //     #f0f calc(9px + (100% - 18px) * 5 / 6),
-      //     #f00 calc(100% - 9px));
-      // }
-
-      // &.saturation {
-      //   background: linear-gradient(to right,
-      //     #fff 9px,
-      //     #fff calc(9px + (100% - 18px) * 1 / 6),
-      //     #f00 calc(9px + (100% - 18px) * 5 / 6),
-      //     #f00 calc(100% - 9px));
-      // }
-      //
-      // &.lightness {
-      //   background: linear-gradient(to right,
-      //     #000 9px,
-      //     #000 calc(9px + (100% - 18px) * 1 / 6),
-      //     #f00 calc(9px + (100% - 18px) * 3 / 6),
-      //     #fff calc(9px + (100% - 18px) * 5 / 6),
-      //     #fff calc(100% - 9px));
-      // }
+      &.alpha {
+        background-color: $light;
+        background-image:
+          linear-gradient(45deg, $dark 25%, transparent 25%, transparent 75%, $dark 75%, $dark),
+          linear-gradient(45deg, $dark 25%, transparent 25%, transparent 75%, $dark 75%, $dark);
+        background-size: 14px 14px;
+        background-position: 0 0, 7px 7px;
+      }
     }
   }
 
@@ -58,7 +44,7 @@
     }
 
     > .hex {
-      font-size: 13px;
+      font-size: 11px;
       font-family: monospace;
       text-align: center;
       border: 1px solid #777;

@@ -124,8 +124,8 @@ export default class ShaderAssembly {
   public addUniform(op: Operator, nodeId: number, param: Parameter) {
     const uniformName = op.uniformName(nodeId, param);
     if (param.type === ParameterType.COLOR_GRADIENT) {
-      this.out.push(`uniform vec4[] ${uniformName}_colors;`);
-      this.out.push(`uniform float[] ${uniformName}_stops;`);
+      this.out.push(`uniform vec4 ${uniformName}_colors[32];`);
+      this.out.push(`uniform float ${uniformName}_positions[32];`);
     } else {
       this.out.push(`uniform ${this.paramDataType(param.type)} ${uniformName};`);
     }

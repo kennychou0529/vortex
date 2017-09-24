@@ -1,0 +1,66 @@
+@import '../../styles/colors';
+
+.color-gradient-editor {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  > .color-stops {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin: 4px 0 8px 0;
+
+    > .caption {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid $controlBorder;
+      border-top-right-radius: 6px;
+      border-top-left-radius: 6px;
+      background-color: $comboBg;
+      font-size: 14px;
+      height: 24px;
+    }
+
+    > .gradient {
+      position: relative;
+      height: 32px;
+      border: 1px solid $controlBorder;
+      border-top: none;
+
+      > .color-stop-dragger {
+        position: absolute;
+        bottom: -3px;
+        z-index: 10;
+        cursor: pointer;
+
+        > svg {
+          position: relative;
+          left: -8px;
+
+          > path {
+            stroke: #000;
+            stroke-width: 1px;
+            stroke-line-join: round;
+          }
+        }
+
+        &.selected > .swatch {
+          border-color: #fff;
+        }
+
+        > .swatch {
+          position: absolute;
+          background-color: red;
+          border-radius: 1px;
+          width: 7px;
+          height: 8px;
+          border: 1px solid black;
+          left: -4px;
+          top: 10px;
+        }
+      }
+    }
+  }
+}

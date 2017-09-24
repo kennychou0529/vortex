@@ -1,4 +1,8 @@
-vec4 gradient(vec2 uv, int type) {
+vec4 gradient(
+    vec2 uv,
+    int type,
+    vec4 color_colors[32],
+    float color_positions[32]) {
   float t = 0.0;
   if (type == 0) {
     t = uv.x;
@@ -15,5 +19,6 @@ vec4 gradient(vec2 uv, int type) {
   } else {
     t = 1. - max(abs(uv.x - 0.5), abs(uv.y - 0.5)) * 2.0;
   }
-  return vec4(vec3(1.0, 1.0, 1.0) * t, 1);
+  return gradientColor(t, color_colors, color_positions);
+  // return vec4(vec3(1.0, 1.0, 1.0) * t, 1);
 }

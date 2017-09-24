@@ -154,6 +154,9 @@ export default class ComboSlider extends Component<Props, State> {
         this.setValue(newValue);
         this.setState({ textActive: false });
       }
+    } else if (e.keyCode === 27) {
+      e.preventDefault();
+      this.setState({ textActive: false });
     }
   }
 

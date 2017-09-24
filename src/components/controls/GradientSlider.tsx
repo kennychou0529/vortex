@@ -10,6 +10,7 @@ interface Props {
   max: number;
   className?: string;
   colors: string[];
+  disabled?: boolean;
   onChange: (value: number) => void;
 }
 
@@ -26,12 +27,12 @@ export default class GradientSlider extends Component<Props, undefined> {
     this.endDragging();
   }
 
-  public render({ value, max, min = 0, className, colors }: Props) {
+  public render({ value, max, min = 0, className, colors, disabled }: Props) {
     const gradient = `linear-gradient(to right, ${colors.join(', ')})`;
     return (
       <div
-          className={classNames('gradient-slider', className)}
-          ref={el => { this.element = el as HTMLElement; }}
+          className={classNames('gradient-slider', className, { disabled })}
+          ref={(el: HTMLElement) => { this.element = el; }}
       >
         <div className="bg">
           <div className="left" style={{ backgroundColor: colors[0] }} />

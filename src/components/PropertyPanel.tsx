@@ -18,6 +18,15 @@ export default class PropertyPanel extends Component<Props, undefined> {
     return (
       <aside id="property-panel">
         {selectedNode && <PropertyEditor node={selectedNode} />}
+        <section className="buttons">
+          <section className="button-group">
+            <button>1x1</button>
+            <button>2x2</button>
+            <button>3x3</button>
+          </section>
+          <div className="spacer" />
+          <button>Shader source...</button>
+        </section>
         {selectedNode && <RenderedImage node={selectedNode} width={320} height={320} />}
       </aside>
     );

@@ -16,11 +16,13 @@ export default class ScalarProperty extends Component<Props, undefined> {
     const value = node.paramValues.has(parameter.id)
         ? node.paramValues.get(parameter.id)
         : (parameter.default !== undefined ? parameter.default : 0);
+    let actual = value;
     let min: number = parameter.min;
     let max: number = parameter.max !== undefined ? parameter.max : min + 1;
     if (parameter.enumVals) {
       min = 0;
       max = parameter.enumVals.length - 1;
+      actual = parameter.enumVals.findIndex(e => e.value === value);
     }
     const precision = parameter.type === ParameterType.INTEGER
         ? 0
@@ -31,7 +33,7 @@ export default class ScalarProperty extends Component<Props, undefined> {
     return (
       <ComboSlider
           name={parameter.name}
-          value={value}
+          value={actual}
           max={max}
           min={min}
           increment={increment}
@@ -46,7 +48,11 @@ export default class ScalarProperty extends Component<Props, undefined> {
   @action.bound
   private onChange(value: number) {
     const { parameter, node } = this.props;
-    node.paramValues.set(parameter.id, value);
+    if (parameter.enumVals) {
+      node.paramValues.set(parameter.id, parameter.enumVals[value].value);
+    } else {
+      node.paramValues.set(parameter.id, value);
+    }
     node.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
   }
 }

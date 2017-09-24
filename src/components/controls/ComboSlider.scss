@@ -9,9 +9,8 @@ $arrowWidth: 25px;
   position: relative;
   border: 1px solid $controlBorder;
   border-top: none;
-  height: 20px;
+  height: 24px;
   min-width: 64px;
-  // background-color: $comboBg;
   overflow: hidden;
   user-select: none;
   cursor: pointer;
@@ -35,7 +34,7 @@ $arrowWidth: 25px;
     &:after {
       position: relative;
       font-size: 12px;
-      top: -2px;
+      top: -1px;
       color: darken($comboBg, 60%);
       .selected {
         color: #000;
@@ -55,12 +54,18 @@ $arrowWidth: 25px;
   }
 
   .center {
-    display: block;
+    display: flex;
     position: relative;
+    align-items: center;
+    justify-content: center;
     flex: 1;
     font-size: 14px;
     text-align: center;
     vertical-align: middle;
+
+    > .name {
+      margin-right: 4px;
+    }
 
     > input {
       display: none;

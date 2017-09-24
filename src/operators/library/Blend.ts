@@ -1,4 +1,3 @@
-// import { vec4 } from 'gl-matrix';
 import { DataType, Input, Operator, Output, Parameter, ParameterType } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
@@ -33,21 +32,42 @@ class Blend extends Operator {
       name: 'Operator',
       type: ParameterType.INTEGER,
       enumVals: [
-        { name: 'Identity', value: 0 },
         { name: 'Add', value: 1 },
         { name: 'Subtract', value: 2 },
         { name: 'Multiply', value: 3 },
         { name: 'Difference', value: 4 },
-        { name: 'Screen', value: 5 },
-        { name: 'Overlay', value: 6 },
-        { name: 'Dodge', value: 7 },
-        { name: 'Burn', value: 8 },
+        { name: 'Lighten', value: 10 },
+        { name: 'Darken', value: 11 },
+        { name: 'Screen', value: 20 },
+        { name: 'Overlay', value: 21 },
+        { name: 'Color Dodge', value: 22 },
+        { name: 'Color Burn', value: 23 },
       ],
-      default: 0,
+      default: 1,
+    },
+    {
+      id: 'strength',
+      name: 'Strength',
+      type: ParameterType.FLOAT,
+      min: 0,
+      max: 1,
+      default: 1,
+    },
+    {
+      id: 'norm',
+      name: 'Normalize',
+      type: ParameterType.INTEGER,
+      enumVals: [
+        { name: 'Off', value: 0 },
+        { name: 'On', value: 1 },
+      ],
+      default: 1,
     },
   ];
   public readonly description = `
 Blends two source images, similar to layer operations in GIMP or PhotoShop.
+* *strength* affects how much of the original image shows through.
+* *normalize* controls whether the result is clamped to a [0..1] range.
 `;
 
   private commonSrc: string = require('./shaders/blend.glsl');
@@ -95,7 +115,9 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
     const inputA = assembly.readInputValue(node, 'a');
     const inputB = assembly.readInputValue(node, 'b');
     const op = assembly.ident(this.uniformName(node.id, 'op'));
-    return assembly.call('blend', [inputA, inputB, op]);
+    const strength = assembly.ident(this.uniformName(node.id, 'strength'));
+    const norm = assembly.ident(this.uniformName(node.id, 'norm'));
+    return assembly.call('blend', [inputA, inputB, op, strength, norm]);
   }
 
   // Release any GL resources we were holding on to.

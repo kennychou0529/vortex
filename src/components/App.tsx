@@ -1,4 +1,5 @@
-import * as keyboardJs from 'keyboardjs';
+// import * as combokeys from 'combokeys';
+// import * as keyboardJs from 'keyboardjs';
 import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { Graph, GraphNode } from '../graph';
@@ -10,6 +11,8 @@ import ToolPanel from './ToolPanel';
 
 import './App.scss';
 
+const Combokeys: any = require('combokeys');
+
 interface State {
   graph: Graph;
 }
@@ -17,11 +20,13 @@ interface State {
 export default class App extends Component<undefined, State> {
   private renderer: Renderer;
   private registry: Registry;
+  private combokeys: any;
 
   constructor() {
     super();
     this.registry = new Registry();
     this.renderer = new Renderer();
+    this.combokeys = new Combokeys(document.documentElement);
     this.state = {
       graph: new Graph(),
     };
@@ -63,8 +68,8 @@ export default class App extends Component<undefined, State> {
   }
 
   public componentWillMount() {
-    keyboardJs.bind('delete', this.onDelete);
-    keyboardJs.bind('backspace', this.onDelete);
+    this.combokeys.bind('delete', this.onDelete);
+    this.combokeys.bind('backspace', this.onDelete);
   }
 
   public render(props: any, { graph }: State): any {

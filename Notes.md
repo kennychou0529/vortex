@@ -1,19 +1,22 @@
 # TODO:
 
-* Render a filter
+* type conversions
+* Finish up blend filter
+  - more operators
+  - normalize
 * Editing existing connectors
 * Deleting connectors
-* Making connectors actually do stuff.
 * Finish compass rose
+* Markdown descriptions
 * Finish scroll limits
 * Edit color parameters
 * Edit color gradient parameters
 * Component palette
 * Component palette drag and drop
-* Delete components
 * Import / Export diagrams
 * Undo / Redo
 * Export image
+* Log scale controls
 
 * https://github.com/Jam3/glsl-fast-gaussian-blur
 * https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
@@ -43,5 +46,20 @@
     * Gradient
     * PerlinNoise
     * Tile
+
+    <feBlend>
+    <feColorMatrix>
+    <feComponentTransfer>
+    <feComposite>
+    <feConvolveMatrix>
+    <feDiffuseLighting>
+    <feDisplacementMap>
+    <feImage>
+    <feMerge>
+    <feMorphology>
+    <feOffset>
+    <feSpecularLighting>
+    <feTile>
+    <feTurbulence>
 
 <svg version="1.1" ></svg>

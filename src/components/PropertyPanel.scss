@@ -8,17 +8,53 @@
   background-color: $panelBg;
 
   > .property-editor {
+    > header {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 8px
+    }
+
     display: flex;
     flex-direction: column;
     align-items: stretch;
     flex: 1;
     padding: 8px;
     overflow-y: auto;
+    overflow-x: hidden;
 
     > .property-group {
       display: flex;
       flex-direction: column;
       margin-bottom: 4px;
+    }
+  }
+
+  > .buttons {
+    display: flex;
+    margin: 4px 4px 0 4px;
+
+    .button-group {
+      > button {
+        border: 1px solid black;
+        border-right: none;
+        &:first-child {
+          border-top-left-radius: 3px;
+          border-bottom-left-radius: 3px;
+        }
+        &:last-child {
+          border-top-right-radius: 3px;
+          border-bottom-right-radius: 3px;
+          border-right: 1px solid black;
+        }
+      }
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    button {
+      border-collapse: collapse;
     }
   }
 

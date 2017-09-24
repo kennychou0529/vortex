@@ -1,4 +1,3 @@
-// import { vec4 } from 'gl-matrix';
 import { DataType, Operator, Output, Parameter, ParameterType } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
