@@ -3,11 +3,11 @@ float blend_overlay(float a, float b) {
 }
 
 vec4 blend(
-  vec4 a,
-  vec4 b,
-  int op,
-  float strength,
-  int norm) {
+    vec4 a,
+    vec4 b,
+    int op,
+    float strength,
+    int norm) {
   vec3 value;
   vec3 ca = a.rgb;
   vec3 cb = b.rgb;

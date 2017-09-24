@@ -8,7 +8,7 @@ interface Resources {
   shader: ShaderResource;
 }
 
-class Blend extends Operator {
+class Mask extends Operator {
   public readonly inputs: Input[] = [
     {
       id: 'a',
@@ -20,6 +20,11 @@ class Blend extends Operator {
       name: 'B',
       type: DataType.RGBA,
     },
+    {
+      id: 'mask',
+      name: 'Mask',
+      type: DataType.RGBA,
+    },
   ];
   public readonly outputs: Output[] = [{
     id: 'out',
@@ -28,59 +33,29 @@ class Blend extends Operator {
   }];
   public readonly params: Parameter[] = [
     {
-      id: 'op',
-      name: 'Operator',
-      type: ParameterType.INTEGER,
-      enumVals: [
-        { name: 'Add', value: 1 },
-        { name: 'Subtract', value: 2 },
-        { name: 'Multiply', value: 3 },
-        { name: 'Difference', value: 4 },
-        { name: 'Lighten', value: 10 },
-        { name: 'Darken', value: 11 },
-        { name: 'Screen', value: 20 },
-        { name: 'Overlay', value: 21 },
-        { name: 'Color Dodge', value: 22 },
-        { name: 'Color Burn', value: 23 },
-      ],
-      default: 1,
-    },
-    {
-      id: 'strength',
-      name: 'Strength',
-      type: ParameterType.FLOAT,
-      min: 0,
-      max: 1,
-      default: 1,
-    },
-    {
-      id: 'norm',
-      name: 'Normalize',
+      id: 'invert',
+      name: 'Invert',
       type: ParameterType.INTEGER,
       enumVals: [
         { name: 'Off', value: 0 },
         { name: 'On', value: 1 },
       ],
-      default: 1,
+      default: 0,
     },
   ];
   public readonly description = `
-Blends two source images, similar to layer operations in GIMP or PhotoShop.
-* *strength* affects how much of the original image shows through.
-* *normalize* controls whether the result is clamped to a [0..1] range.
+Blends two source images based on a grayscale mask.
 `;
 
   constructor() {
-    super('filter', 'Blend', 'filter_blend');
+    super('filter', 'Mask', 'filter_mask');
   }
 
   // Render a node with the specified renderer.
   public render(renderer: Renderer, node: GraphNode, resources: Resources) {
     if (!resources.shader) {
       const fragmentSrc = this.build(node);
-      resources.shader = renderer.compileShaderProgram(
-        require('./shaders/Basic.vs'),
-        fragmentSrc);
+      resources.shader = renderer.compileShaderProgram(require('./shaders/Basic.vs'), fragmentSrc);
     }
 
     if (resources.shader) {
@@ -107,17 +82,16 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
     if (assembly.start(node.id)) {
       assembly.declareUniforms(this, node.id, this.params);
-      assembly.addCommon('blend.glsl', require('./shaders/blend.glsl'));
+      assembly.addCommon('mask.glsl', require('./shaders/mask.glsl'));
       assembly.finish(node.id);
     }
 
     // TODO: type conversion
     const inputA = assembly.readInputValue(node, 'a', DataType.RGBA);
     const inputB = assembly.readInputValue(node, 'b', DataType.RGBA);
-    const op = assembly.ident(this.uniformName(node.id, 'op'));
-    const strength = assembly.ident(this.uniformName(node.id, 'strength'));
-    const norm = assembly.ident(this.uniformName(node.id, 'norm'));
-    return assembly.call('blend', [inputA, inputB, op, strength, norm]);
+    const mask = assembly.readInputValue(node, 'mask', DataType.SCALAR);
+    const invert = assembly.ident(this.uniformName(node.id, 'invert'));
+    return assembly.call('mask', [inputA, inputB, mask, invert]);
   }
 
   // Release any GL resources we were holding on to.
@@ -129,4 +103,4 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
   }
 }
 
-export default new Blend();
+export default new Mask();

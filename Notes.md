@@ -1,18 +1,16 @@
 # TODO:
 
-* type conversions
+* Mask operator
+* Gradient: Delete color stops
 * Finish up blend filter
-  - more operators
   - normalize
+* type conversions
 * Editing existing connectors
 * Deleting connectors
 * Finish compass rose
 * Markdown descriptions
 * Finish scroll limits
 * Edit color parameters
-* Edit color gradient parameters
-* Component palette
-* Component palette drag and drop
 * Import / Export diagrams
 * Undo / Redo
 * Export image
@@ -24,7 +22,6 @@
 
 # Operators to do:
   * Filters:
-    * Blend
     * Blur
     * Color Correct
     * Colorize
@@ -47,6 +44,7 @@
     * PerlinNoise
     * Tile
 
+  * SVG filter types:
     <feBlend>
     <feColorMatrix>
     <feComponentTransfer>
@@ -61,5 +59,3 @@
     <feSpecularLighting>
     <feTile>
     <feTurbulence>
-
-<svg version="1.1" ></svg>

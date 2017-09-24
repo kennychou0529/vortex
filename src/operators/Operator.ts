@@ -69,6 +69,11 @@ export abstract class Operator {
     }
   }
 
+  public localPrefix(nodeId: number) {
+    const opName = this.id.slice(0, 1).toUpperCase() + this.id.slice(1);
+    return `t${opName}${nodeId}`;
+  }
+
   public uniformPrefix(nodeId: number) {
     const opName = this.id.slice(0, 1).toUpperCase() + this.id.slice(1);
     return `u${opName}${nodeId}`;

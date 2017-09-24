@@ -49,16 +49,22 @@ export class GraphNode {
   constructor(operator: Operator) {
     this.operator = operator;
     this.resources = {};
-    let y = 30;
-    (operator.inputs || []).forEach(input => {
-      this.inputs.push(new InputTerminal(this, input.name, input.id, -18, y));
-      y += 36;
-    });
-    y = 30;
-    (operator.outputs || []).forEach(output => {
-      this.outputs.push(new OutputTerminal(this, output.name, output.id, 92, y));
-      y += 36;
-    });
+    if (operator.inputs) {
+      const spacing = Math.min(36, 120 / operator.inputs.length);
+      let y = Math.floor((120 - operator.inputs.length * spacing) / 2);
+      operator.inputs.forEach(input => {
+        this.inputs.push(new InputTerminal(this, input.name, input.id, -18, y));
+        y += spacing;
+      });
+    }
+    if (operator.outputs) {
+      const spacing = Math.min(36, 120 / operator.outputs.length);
+      let y = Math.floor((120 - operator.outputs.length * spacing) / 2);
+      (operator.outputs || []).forEach(output => {
+        this.outputs.push(new OutputTerminal(this, output.name, output.id, 92, y));
+        y += spacing;
+      });
+    }
   }
 
   // The human-readable name of this node.

@@ -68,7 +68,7 @@ export default class App extends Component<undefined, State> {
   }
 
   public componentWillMount() {
-    this.combokeys.bind('delete', this.onDelete);
+    this.combokeys.bind('del', this.onDelete);
     this.combokeys.bind('backspace', this.onDelete);
   }
 

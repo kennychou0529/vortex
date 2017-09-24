@@ -11,7 +11,7 @@ export enum TraversalState {
 export default class ShaderAssembly {
   private traversalState = new Map<number, TraversalState>();
   private common = new Set<string>();
-  private expressionList: Assignment[] = [];
+  private assignmentList: Assignment[] = [];
   private cachedValues = new Set<string>();
   private out: string[] = ['precision mediump float;\n'];
   private indentLevel: number = 0;
@@ -80,7 +80,8 @@ export default class ShaderAssembly {
       value from the connected output terminal, unless the input is not connected in Which
       case the expression is zero. Also handles de-duping of expressions that are used in
       more than one place. */
-  public readInputValue(node: GraphNode, signalName: string): Expr {
+  // TODO: type conversion
+  public readInputValue(node: GraphNode, signalName: string, type?: DataType): Expr {
     const operator = node.operator;
     const input = operator.getInput(signalName);
     const inputTerminal = node.findInputTerminal(signalName);
@@ -96,10 +97,10 @@ export default class ShaderAssembly {
     const outputDefn = outputNode.operator.getOutput(outputTerminal.id);
     const outputType = this.outputDataType(outputDefn.type);
     if (outputTerminal.connections.length > 1) {
-      const cachedValueId = `o${outputNode.operator.id}${outputNode.id}_${outputTerminal.id}`;
+      const cachedValueId = `${outputNode.operator.localPrefix(node.id)}_${outputTerminal.id}`;
       if (!this.cachedValues.has(cachedValueId)) {
         this.cachedValues.add(cachedValueId);
-        this.expressionList.push({
+        this.assignmentList.push({
           name: cachedValueId,
           type: outputType,
           value: outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id),
@@ -136,7 +137,11 @@ export default class ShaderAssembly {
     this.out.push('varying highp vec2 vTextureCoord;');
     this.out.push('');
     this.out.push('void main() {');
-    this.indentLevel += 2;
+    this.indentLevel = 2;
+    this.assignmentList.forEach(assigment => {
+      this.out.push(`  vec4 ${assigment.name} = ${this.emitExpr(assigment.value)};`);
+      console.log(assigment);
+    });
     this.out.push(`  gl_FragColor = ${this.emitExpr(expr)};`);
     this.out.push('}');
   }

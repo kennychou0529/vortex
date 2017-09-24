@@ -73,8 +73,11 @@ export default class Renderer {
     gl.enableVertexAttribArray(vertexPosition);
 
     const textureCoords = gl.getAttribLocation(resource.program, 'aTextureCoords');
-    gl.vertexAttribPointer(textureCoords, 2, gl.FLOAT, false, 4 * 4, 2 * 4);
-    gl.enableVertexAttribArray(textureCoords);
+    if (textureCoords >= 0) {
+      // If there's no generators connected, then no texture coords.
+      gl.vertexAttribPointer(textureCoords, 2, gl.FLOAT, false, 4 * 4, 2 * 4);
+      gl.enableVertexAttribArray(textureCoords);
+    }
 
     if (setShaderVars) {
       setShaderVars(gl);
@@ -124,8 +127,6 @@ export default class Renderer {
             colors.push(lastColor);
             positions.push(1);
           }
-          console.log(positions);
-          console.log(colors);
           // Trick with concat() to flatten the color array.
           gl.uniform4fv(
               gl.getUniformLocation(program, `${uniformName}_colors`),
