@@ -35,7 +35,7 @@ export default class ConnectionRendition extends Component<Props, undefined> {
     ].join(' ');
     return (
       <g onMouseDown={this.onMouseDown} className={classNames({ pending })}>
-        <path className="connector-shadow" d={d} filter="url(#dropShadow)" />
+        <path className="connector-shadow" d={d} transform="translate(0, 3)" />
         <path className="connector-outline" d={d} />
         <path className="connector" d={d} />
       </g>

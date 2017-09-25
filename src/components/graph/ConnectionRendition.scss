@@ -18,7 +18,6 @@
 
 .connector-shadow {
   stroke-width: 9px;
-  stroke: $connectorShadowStroke;
+  stroke: transparentize($connectorShadowStroke, .8);
   fill: transparent;
-  opacity: 0.5;
 }

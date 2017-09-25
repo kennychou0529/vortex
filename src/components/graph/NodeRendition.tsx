@@ -9,6 +9,10 @@ import TerminalRendition from './TerminalRendition';
 
 import './NodeRendition.scss';
 
+function quantize(n: number): number {
+  return Math.floor(n / 16) * 16;
+}
+
 interface Props {
   node: GraphNode;
   graph: Graph;
@@ -96,12 +100,12 @@ export default class NodeRendition extends Component<Props, undefined> {
     const { node } = this.props;
     const scrollEl = this.base.parentNode as HTMLElement;
     const graphEl = scrollEl.parentNode as HTMLElement;
-    node.x = Math.min(
+    node.x = quantize(Math.min(
       graphEl.offsetLeft + graphEl.offsetWidth,
-      Math.max(graphEl.offsetLeft, e.clientX)) - this.dragXOffset - scrollEl.offsetLeft;
-    node.y = Math.min(
+      Math.max(graphEl.offsetLeft, e.clientX)) - this.dragXOffset - scrollEl.offsetLeft);
+    node.y = quantize(Math.min(
       graphEl.offsetTop + graphEl.offsetHeight,
-      Math.max(graphEl.offsetTop, e.clientY)) - this.dragYOffset - scrollEl.offsetTop;
+      Math.max(graphEl.offsetTop, e.clientY)) - this.dragYOffset - scrollEl.offsetTop);
 
     let hScroll = 0;
     if (e.clientX < graphEl.offsetLeft) {

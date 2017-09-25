@@ -1,5 +1,7 @@
 # TODO:
 
+* Need some sort of modal dialog class.
+* Filters are producing buggy outputs.
 * Quantize operator positions
 * Limit operator dragging to document size
 * Gradient: Delete color stops
@@ -10,12 +12,12 @@
 * Deleting connectors
 * Finish compass rose
 * Markdown descriptions
-* Finish scroll limits
 * Edit color parameters
 * Import / Export diagrams
 * Undo / Redo
 * Export image
 * Log scale controls
+* Output type conversion - currently assumes all outputs are vec4.
 
 * https://github.com/Jam3/glsl-fast-gaussian-blur
 * https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob

@@ -9,6 +9,10 @@ import NodeRendition from './NodeRendition';
 
 import './GraphView.scss';
 
+function quantize(n: number): number {
+  return Math.floor(n * 16) / 16;
+}
+
 interface Props {
   graph: Graph;
 }
@@ -76,12 +80,6 @@ export default class GraphView extends Component<Props, State> {
               height={bounds.height}
               onMouseDown={this.onConnectionMouseDown}
           >
-            <defs>
-              <filter id="dropShadow" height="200%">
-                <feGaussianBlur in="SourceAlpha" stdDeviation="2" />
-                <feOffset dx="0" dy="2" />
-              </filter>
-            </defs>
             {graph.nodes.map(node => this.renderNodeConnections(node))}
             {this.renderDragConnection()}
           </svg>
@@ -189,8 +187,8 @@ export default class GraphView extends Component<Props, State> {
     if (data) {
       const op = this.context.registry.get(data);
       const node = new GraphNode(op);
-      node.x = e.clientX - this.base.offsetLeft - this.state.xScroll - 45;
-      node.y = e.clientY - this.base.offsetTop - this.state.yScroll - 60;
+      node.x = quantize(e.clientX - this.base.offsetLeft - this.state.xScroll - 45);
+      node.y = quantize(e.clientY - this.base.offsetTop - this.state.yScroll - 60);
       this.props.graph.add(node);
     }
   }

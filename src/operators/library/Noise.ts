@@ -19,10 +19,6 @@ class Noise extends Operator {
     type: DataType.SCALAR,
   }];
 
-  // val peristence = new FloatProperty("Persistence", 0.5f, minVal = 0f)
-  // 	SpectralControlParam spectralControl = CreateLocalSpectralControlParam("Spectral Control");
-  // 	BoolParam periodic = CreateLocalBoolParam("Periodic", true);
-
   public readonly params: Parameter[] = [
     {
       id: 'scale_x',
