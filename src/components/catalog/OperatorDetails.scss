@@ -8,4 +8,8 @@
   overflow-y: auto;
   flex: 1;
   font-size: 14px;
+
+  > p:first-child {
+    margin-top: 0;
+  }
 }

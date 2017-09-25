@@ -1,5 +1,6 @@
 import { Component, h } from 'preact';
 import { Operator } from '../../operators';
+import Markdown from '../controls/Markdown';
 
 import './OperatorDetails.scss';
 
@@ -10,9 +11,7 @@ interface Props {
 export default class OperatorDetails extends Component<Props, undefined> {
   public render({ operator }: Props) {
     return (
-      <section className="operator-details">
-        {operator && operator.description}
-      </section>
+      <Markdown className="operator-details" markdown={operator && operator.description || ''} />
     );
   }
 }

@@ -66,8 +66,8 @@ class Blend extends Operator {
   ];
   public readonly description = `
 Blends two source images, similar to layer operations in GIMP or PhotoShop.
-* *strength* affects how much of the original image shows through.
-* *normalize* controls whether the result is clamped to a [0..1] range.
+* **strength** affects how much of the original image shows through.
+* **normalize** controls whether the result is clamped to a [0..1] range.
 `;
 
   constructor() {

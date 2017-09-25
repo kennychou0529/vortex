@@ -2,12 +2,11 @@
 
 * Need some sort of modal dialog class.
 * Filters are producing buggy outputs.
-* Quantize operator positions
 * Limit operator dragging to document size
 * Gradient: Delete color stops
 * Finish up blend filter
   - normalize
-* type conversions
+* Type conversions for node outputs
 * Editing existing connectors
 * Deleting connectors
 * Finish compass rose
