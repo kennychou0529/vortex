@@ -22,6 +22,7 @@
     "node-sass": "^4.5.3",
     "preact": "^8.2.5",
     "preact-mobx": "^0.1.4",
+    "preact-portal": "^1.1.2",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
     "ts-loader": "^2.3.7",
@@ -40,5 +41,19 @@
     "tslint": "^5.7.0",
     "tslint-config-airbnb": "^5.3.0",
     "tslint-react": "^3.2.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viridia/vortex.git"
+  },
+  "keywords": [
+    "webgl",
+    "texture",
+    "generator",
+    "typescript"
+  ],
+  "bugs": {
+    "url": "https://github.com/viridia/vortex/issues"
+  },
+  "homepage": "https://github.com/viridia/vortex#readme"
 }

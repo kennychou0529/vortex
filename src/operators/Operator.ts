@@ -63,8 +63,6 @@ export abstract class Operator {
     if (this.outputs.length > 0) {
       const assembly = new ShaderAssembly();
       assembly.main(this.readOutputValue(assembly, node, this.outputs[0].id));
-      // assembly.dump();
-      // console.log(assembly.toString());
       return assembly.toString();
     }
   }

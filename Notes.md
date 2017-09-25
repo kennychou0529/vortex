@@ -1,6 +1,6 @@
 # TODO:
 
-* Need some sort of modal dialog class.
+* Keyboard shortcuts for modals.
 * Filters are producing buggy outputs.
 * Limit operator dragging to document size
 * Gradient: Delete color stops
@@ -10,7 +10,6 @@
 * Editing existing connectors
 * Deleting connectors
 * Finish compass rose
-* Markdown descriptions
 * Edit color parameters
 * Import / Export diagrams
 * Undo / Redo
@@ -36,14 +35,13 @@
     * Warp
     * Bump Map
     * Lighting
+    * Repeat
   * Generators:
     * Bitmap
-    * Brick
     * Cellular
     * Checker
     * Constant Color
     * Function
-    * Tile
 
   * SVG filter types:
     <feColorMatrix>

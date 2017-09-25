@@ -64,6 +64,7 @@ export default class App extends Component<undefined, State> {
     return {
       renderer: this.renderer,
       registry: this.registry,
+      combokeys: this.combokeys,
     };
   }
 

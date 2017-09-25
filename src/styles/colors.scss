@@ -13,3 +13,10 @@ $terminalCaption: #eee;
 $connectorStroke: #4c4;
 $connectorOutlineStroke: #000;
 $connectorShadowStroke: #000;
+
+$modalBg: transparentize(#335, .7);
+$modalDialogBg: $panelBg;
+$modalBorder: #000;
+$modalShadow: transparentize(#000, .3);
+$modalSepLight: lighten($modalDialogBg, 10%);
+$modalSepDark: darken($modalDialogBg, 10%);

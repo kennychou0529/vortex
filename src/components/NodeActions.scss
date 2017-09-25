@@ -1,0 +1,30 @@
+@import '../styles/colors';
+
+.shader-source {
+  max-width: 95%;
+  height: 95%;
+
+  .source-scroll {
+    flex-shrink: 1;
+    font-family: monospace;
+    overflow-y: auto;
+    background-color: #dec;
+    border: 1px inset $panelBg;
+    margin: 0;
+    padding: 4px;
+
+    .source {
+      font-size: 12px;
+      td.index {
+        color: #9a9;
+        user-select: none;
+        text-align: right;
+        padding-right: 8px;
+      }
+
+      td.text {
+        white-space: pre;
+      }
+    }
+  }
+}
