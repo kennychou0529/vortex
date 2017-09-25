@@ -81,11 +81,11 @@ Generates a simple gradient.
   }
 
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
-    if (assembly.start(node.id)) {
+    if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
       assembly.addCommon('gradient-color.glsl', require('./shaders/gradient-color.glsl'));
       assembly.addCommon('gradient.glsl', require('./shaders/gradient.glsl'));
-      assembly.finish(node.id);
+      assembly.finish(node);
     }
 
     // TODO: type conversion

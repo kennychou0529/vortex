@@ -1,6 +1,6 @@
 enum DragType {
-  INPUT = 'application/x-scintil-input',
-  OUTPUT = 'application/x-scintil-output',
+  INPUT = 'application/x-vortex-input',
+  OUTPUT = 'application/x-vortex-output',
 }
 
 export default DragType;

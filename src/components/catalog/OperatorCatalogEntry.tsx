@@ -41,6 +41,6 @@ export default class OperatorCatalogEntry extends Component<Props, undefined> {
     const { id } = this.props.operator;
     e.dataTransfer.dropEffect = 'copy';
     e.dataTransfer.setDragImage(this.props.img, 45, 60);
-    e.dataTransfer.setData('application/x-scintil-operator', `${id}`);
+    e.dataTransfer.setData('application/x-vortex-operator', `${id}`);
   }
 }

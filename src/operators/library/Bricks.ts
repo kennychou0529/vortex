@@ -126,10 +126,10 @@ Generates a pattern consisting of alternating rows of bricks.
   }
 
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
-    if (assembly.start(node.id)) {
+    if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
       assembly.addCommon(this.id, this.commonSrc);
-      assembly.finish(node.id);
+      assembly.finish(node);
     }
 
     // TODO: type conversion

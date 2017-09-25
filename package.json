@@ -1,5 +1,5 @@
 {
-  "name": "scintil",
+  "name": "vortex",
   "version": "0.0.1",
   "description": "A procedural texture generator.",
   "main": "src/index.ts",
@@ -16,6 +16,7 @@
     "file-loader": "^0.11.2",
     "float-hsl2rgb": "^1.0.2",
     "float-rgb2hsl": "^1.0.1",
+    "glsl-noise": "0.0.0",
     "mobx": "^3.2.2",
     "node-sass": "^4.5.3",
     "preact": "^8.2.5",

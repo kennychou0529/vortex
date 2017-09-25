@@ -1,6 +1,7 @@
 # TODO:
 
-* Mask operator
+* Quantize operator positions
+* Limit operator dragging to document size
 * Gradient: Delete color stops
 * Finish up blend filter
   - normalize
@@ -27,12 +28,13 @@
     * Colorize
     * Combine
     * Emboss
-    * Mask
     * Math
     * Modulus
     * NormalMap
     * Transform
     * Warp
+    * Bump Map
+    * Lighting
   * Generators:
     * Bitmap
     * Brick
@@ -40,12 +42,9 @@
     * Checker
     * Constant Color
     * Function
-    * Gradient
-    * PerlinNoise
     * Tile
 
   * SVG filter types:
-    <feBlend>
     <feColorMatrix>
     <feComponentTransfer>
     <feComposite>

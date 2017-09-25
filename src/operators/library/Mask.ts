@@ -80,10 +80,10 @@ Blends two source images based on a grayscale mask.
   }
 
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
-    if (assembly.start(node.id)) {
+    if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
       assembly.addCommon('mask.glsl', require('./shaders/mask.glsl'));
-      assembly.finish(node.id);
+      assembly.finish(node);
     }
 
     // TODO: type conversion

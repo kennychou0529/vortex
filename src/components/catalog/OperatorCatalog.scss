@@ -25,10 +25,13 @@
 
     > .group {
       width: 30%;
+      padding-right: 8px;
+      text-align: right;
     }
 
     > .name {
       width: 70%;
+      font-weight: bold;
     }
   }
 }

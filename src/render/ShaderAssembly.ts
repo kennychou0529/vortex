@@ -30,20 +30,20 @@ export default class ShaderAssembly {
 
   /** Indicate that we are beginning the compilation for a node. Use for de-duping and loop
       detection. */
-  public start(nodeId: number): boolean {
-    const state = this.traversalState.get(nodeId);
+  public start(node: GraphNode): boolean {
+    const state = this.traversalState.get(node.id);
     if (state === undefined) {
-      this.traversalState.set(nodeId, TraversalState.IN_PROCESS);
+      this.traversalState.set(node.id, TraversalState.IN_PROCESS);
       return true;
     }
     return false;
   }
 
   /** Indicate that we have finished compilation for a node. */
-  public finish(nodeId: number) {
-    const state = this.traversalState.get(nodeId);
+  public finish(node: GraphNode) {
+    const state = this.traversalState.get(node.id);
     if (state === undefined) {
-      this.traversalState.set(nodeId, TraversalState.FINISHED);
+      this.traversalState.set(node.id, TraversalState.FINISHED);
     }
   }
 
@@ -140,7 +140,6 @@ export default class ShaderAssembly {
     this.indentLevel = 2;
     this.assignmentList.forEach(assigment => {
       this.out.push(`  vec4 ${assigment.name} = ${this.emitExpr(assigment.value)};`);
-      console.log(assigment);
     });
     this.out.push(`  gl_FragColor = ${this.emitExpr(expr)};`);
     this.out.push('}');

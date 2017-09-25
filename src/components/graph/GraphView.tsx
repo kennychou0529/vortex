@@ -156,7 +156,7 @@ export default class GraphView extends Component<Props, State> {
 
   @bind
   private onDragEnter(e: DragEvent) {
-    if (e.dataTransfer.types.indexOf('application/x-scintil-operator') >= 0) {
+    if (e.dataTransfer.types.indexOf('application/x-vortex-operator') >= 0) {
       e.preventDefault();
     }
     this.setState({
@@ -168,7 +168,7 @@ export default class GraphView extends Component<Props, State> {
 
   @bind
   private onDragOver(e: DragEvent) {
-    if (e.dataTransfer.types.indexOf('application/x-scintil-operator') >= 0) {
+    if (e.dataTransfer.types.indexOf('application/x-vortex-operator') >= 0) {
       e.preventDefault();
     }
     this.setState({
@@ -185,7 +185,7 @@ export default class GraphView extends Component<Props, State> {
 
   @action.bound
   private onDrop(e: DragEvent) {
-    const data = e.dataTransfer.getData('application/x-scintil-operator');
+    const data = e.dataTransfer.getData('application/x-vortex-operator');
     if (data) {
       const op = this.context.registry.get(data);
       const node = new GraphNode(op);

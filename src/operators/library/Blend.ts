@@ -105,10 +105,10 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
   }
 
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
-    if (assembly.start(node.id)) {
+    if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
       assembly.addCommon('blend.glsl', require('./shaders/blend.glsl'));
-      assembly.finish(node.id);
+      assembly.finish(node);
     }
 
     // TODO: type conversion

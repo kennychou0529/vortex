@@ -5,7 +5,7 @@ vec4 gradientColor(
     float inputValue,
     vec4 stopColors[32],
     float stopPositions[32]) {
-  inputValue = max(0.0, min(1.0, inputValue));
+  inputValue = max(0.0, min(0.99999, inputValue));
   vec4 result = vec4(0.0, 0.0, 0.0, 1.0);
   for (int nextStop = 1; nextStop < 32; nextStop++) {
     float t0 = stopPositions[nextStop - 1];
