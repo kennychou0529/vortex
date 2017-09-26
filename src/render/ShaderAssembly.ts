@@ -11,9 +11,13 @@ export enum TraversalState {
 export default class ShaderAssembly {
   private traversalState = new Map<number, TraversalState>();
   private common = new Set<string>();
+  private extensions = new Set<string>();
   private assignmentList: Assignment[] = [];
   private cachedValues = new Set<string>();
-  private out: string[] = ['precision mediump float;\n'];
+  private out: string[] = [
+    '#version 300 es',
+    'precision mediump float;\n',
+  ];
   private indentLevel: number = 0;
 
   public toString() {
@@ -47,6 +51,14 @@ export default class ShaderAssembly {
     }
   }
 
+  /** Add an extension directive. */
+  public addExtension(src: string) {
+    if (!this.extensions.has(src)) {
+      this.extensions.add(src);
+      this.out.splice(0, 0, `#extension ${src} : enable`);
+    }
+  }
+
   /** Add a common function to the shader source. */
   public addCommon(opId: string, src: string) {
     if (!this.common.has(opId)) {
@@ -76,6 +88,11 @@ export default class ShaderAssembly {
     return { kind: ExprKind.IDENT, name: op.uniformName(nodeId, param) };
   }
 
+  /** Add an assignment to the list of statements to execute before the final return statement. */
+  public assign(name: string, type: string, value: Expr) {
+    this.assignmentList.push({ name, type, value });
+  }
+
   /** Return an expression representing the input to a terminal. This is the same as the
       value from the connected output terminal, unless the input is not connected in Which
       case the expression is zero. Also handles de-duping of expressions that are used in
@@ -88,8 +105,8 @@ export default class ShaderAssembly {
     if (inputTerminal.connection === null) {
       switch (input.type) {
         case DataType.SCALAR: return this.literal('0.0');
-        case DataType.RGBA: return this.literal('vec4(0., 0, 0., 0.)');
-        case DataType.XYZW: return this.literal('vec4(0., 0, 0., 0.)');
+        case DataType.RGBA: return this.literal('vec4(0.0, 0.0, 0.0, 0.0)');
+        case DataType.XYZW: return this.literal('vec4(0.0, 0.0, 0.0, 0.0)');
       }
     }
     const outputTerminal = inputTerminal.connection.source;
@@ -100,11 +117,10 @@ export default class ShaderAssembly {
       const cachedValueId = `${outputNode.operator.localPrefix(node.id)}_${outputTerminal.id}`;
       if (!this.cachedValues.has(cachedValueId)) {
         this.cachedValues.add(cachedValueId);
-        this.assignmentList.push({
-          name: cachedValueId,
-          type: outputType,
-          value: outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id),
-        });
+        this.assign(
+          cachedValueId,
+          outputType,
+          outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id));
         return this.ident(cachedValueId);
       }
       return this.ident(cachedValueId);
@@ -134,14 +150,15 @@ export default class ShaderAssembly {
 
   /** Generate code for the shader's main function */
   public main(expr: Expr) {
-    this.out.push('varying highp vec2 vTextureCoord;');
+    this.out.push('in highp vec2 vTextureCoord;');
+    this.out.push('out vec4 outputColor;');
     this.out.push('');
     this.out.push('void main() {');
     this.indentLevel = 2;
     this.assignmentList.forEach(assigment => {
-      this.out.push(`  vec4 ${assigment.name} = ${this.emitExpr(assigment.value)};`);
+      this.out.push(`  ${assigment.type} ${assigment.name} = ${this.emitExpr(assigment.value)};`);
     });
-    this.out.push(`  gl_FragColor = ${this.emitExpr(expr)};`);
+    this.out.push(`  outputColor = ${this.emitExpr(expr)};`);
     this.out.push('}');
   }
 

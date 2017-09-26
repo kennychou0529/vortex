@@ -8,16 +8,11 @@ interface Resources {
   shader: ShaderResource;
 }
 
-class Blend extends Operator {
+class NormalMap extends Operator {
   public readonly inputs: Input[] = [
     {
-      id: 'a',
-      name: 'A',
-      type: DataType.RGBA,
-    },
-    {
-      id: 'b',
-      name: 'B',
+      id: 'in',
+      name: 'In',
       type: DataType.RGBA,
     },
   ];
@@ -26,53 +21,26 @@ class Blend extends Operator {
     name: 'Out',
     type: DataType.RGBA,
   }];
+
   public readonly params: Parameter[] = [
     {
-      id: 'op',
-      name: 'Operator',
-      type: ParameterType.INTEGER,
-      enumVals: [
-        { name: 'Replace', value: 0 },
-        { name: 'Add', value: 1 },
-        { name: 'Subtract', value: 2 },
-        { name: 'Multiply', value: 3 },
-        { name: 'Difference', value: 4 },
-        { name: 'Lighten', value: 10 },
-        { name: 'Darken', value: 11 },
-        { name: 'Screen', value: 20 },
-        { name: 'Overlay', value: 21 },
-        { name: 'Color Dodge', value: 22 },
-        { name: 'Color Burn', value: 23 },
-      ],
-      default: 1,
-    },
-    {
-      id: 'strength',
-      name: 'Strength',
+      id: 'scale',
+      name: 'Height Scale',
       type: ParameterType.FLOAT,
-      min: 0,
-      max: 1,
-      default: 1,
-    },
-    {
-      id: 'norm',
-      name: 'Normalize',
-      type: ParameterType.INTEGER,
-      enumVals: [
-        { name: 'Off', value: 0 },
-        { name: 'On', value: 1 },
-      ],
-      default: 1,
+      min: 0.01,
+      max: 2,
+      precision: 2,
+      increment: 0.01,
+      default: 0.5,
     },
   ];
+
   public readonly description = `
-Blends two source images, similar to layer operations in GIMP or PhotoShop.
-* **strength** affects how much of the original image shows through.
-* **normalize** controls whether the result is clamped to a [0..1] range.
+Treating the grayscale input as a height map, computes normals.
 `;
 
   constructor() {
-    super('filter', 'Blend', 'filter_blend');
+    super('filter', 'Normal Map', 'filter_normal_map');
   }
 
   // Render a node with the specified renderer.
@@ -105,17 +73,23 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
-      assembly.addCommon('blend.glsl', require('./shaders/blend.glsl'));
       assembly.finish(node);
     }
 
     // TODO: type conversion
-    const inputA = assembly.readInputValue(node, 'a', DataType.RGBA);
-    const inputB = assembly.readInputValue(node, 'b', DataType.RGBA);
-    const op = assembly.ident(this.uniformName(node.id, 'op'));
-    const strength = assembly.ident(this.uniformName(node.id, 'strength'));
-    const norm = assembly.ident(this.uniformName(node.id, 'norm'));
-    return assembly.call('blend', [inputA, inputB, op, strength, norm]);
+    const inputA = assembly.readInputValue(node, 'in', DataType.RGBA);
+    const scale = this.uniformName(node.id, 'scale');
+    const t = `${this.localPrefix(node.id)}_t`;
+    const h = `${this.localPrefix(node.id)}_h`;
+    const dx = `${this.localPrefix(node.id)}_dx`;
+    const dy = `${this.localPrefix(node.id)}_dy`;
+    const normal = `${this.localPrefix(node.id)}_normal`;
+    assembly.assign(t, 'vec4', inputA);
+    assembly.assign(h, 'float', assembly.literal(`(${t}.x + ${t}.y + ${t}.z) * ${scale} / 3.0`));
+    assembly.assign(dx, 'vec3', assembly.literal(`dFdx(vec3(vTextureCoord, ${h}))`));
+    assembly.assign(dy, 'vec3', assembly.literal(`dFdy(vec3(vTextureCoord, ${h}))`));
+    assembly.assign(normal, 'vec3', assembly.literal(`normalize(cross(${dx}, ${dy}))`));
+    return assembly.literal(`vec4(${normal} * 0.5 + 0.5, 1.0)`);
   }
 
   // Release any GL resources we were holding on to.
@@ -127,4 +101,4 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
   }
 }
 
-export default new Blend();
+export default new NormalMap();

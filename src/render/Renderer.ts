@@ -16,7 +16,7 @@ export default class Renderer {
 
   constructor() {
     this.canvas = document.createElement('canvas');
-    this.gl = this.canvas.getContext('webgl');
+    this.gl = this.canvas.getContext('webgl2') as WebGLRenderingContext;
 
     // Allocate a buffer containing a unit square
     const gl = this.gl;
@@ -30,10 +30,10 @@ export default class Renderer {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.unitSquare);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-    this.vertexShader = this.compileShader(gl.VERTEX_SHADER, `
-attribute vec4 aVertexPosition;
-attribute vec4 aTextureCoords;
-varying highp vec2 vTextureCoord;
+    this.vertexShader = this.compileShader(gl.VERTEX_SHADER, `#version 300 es
+in vec4 aVertexPosition;
+in vec4 aTextureCoords;
+out highp vec2 vTextureCoord;
 
 void main() {
   vTextureCoord = aTextureCoords.xy;
@@ -105,7 +105,6 @@ void main() {
           ? paramValues.get(param.id)
           : param.default;
       const uniformName = `${paramPrefix}_${param.id}`;
-      console.log(`  ${uniformName}`);
       switch (param.type) {
         case ParameterType.INTEGER:
           gl.uniform1i(gl.getUniformLocation(program, uniformName),

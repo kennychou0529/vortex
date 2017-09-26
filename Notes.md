@@ -1,9 +1,10 @@
 # TODO:
 
 * Keyboard shortcuts for modals.
-* Filters are producing buggy outputs.
 * Limit operator dragging to document size
+* Quantize initial placement.
 * Gradient: Delete color stops
+* Normal map.
 * Finish up blend filter
   - normalize
 * Type conversions for node outputs
@@ -57,3 +58,8 @@
     <feSpecularLighting>
     <feTile>
     <feTurbulence>
+
+vec3 dx = dFdx(vec3(vTextureCoord.xy, h));
+vec3 dy = dFdy(vec3(vTextureCoord.xy, h));
+vec3 normal = normalize(cross(dx, dy));
+out = vec4(normal * 0.5 + 0.5, 1.0)
