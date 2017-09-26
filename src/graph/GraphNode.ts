@@ -101,7 +101,7 @@ export class GraphNode {
     const visit = (node: GraphNode): void => {
       if (!visited.has(node.id)) {
         visited.add(node.id);
-        for (const input of this.inputs) {
+        for (const input of node.inputs) {
           const connection = input.connection;
           if (connection && connection.source) {
             if (callback(connection.source.node, connection.source.id) !== false) {

@@ -4,7 +4,6 @@ import { Parameter, ParameterType } from '../operators';
 
 export interface ShaderResource {
   program: WebGLProgram;
-  vertex: WebGLShader;
   fragment: WebGLShader;
 }
 
@@ -13,6 +12,7 @@ export default class Renderer {
   private canvas: HTMLCanvasElement;
   private gl: WebGLRenderingContext;
   private unitSquare: WebGLBuffer;
+  private vertexShader: WebGLShader;
 
   constructor() {
     this.canvas = document.createElement('canvas');
@@ -30,7 +30,15 @@ export default class Renderer {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.unitSquare);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-    // TODO: Create vertex arrays for 2x2, 3x3 etc.
+    this.vertexShader = this.compileShader(gl.VERTEX_SHADER, `
+attribute vec4 aVertexPosition;
+attribute vec4 aTextureCoords;
+varying highp vec2 vTextureCoord;
+
+void main() {
+  vTextureCoord = aTextureCoords.xy;
+  gl_Position = aVertexPosition;
+}`);
   }
 
   public render(
@@ -95,19 +103,31 @@ export default class Renderer {
     for (const param of params) {
       const value = paramValues.has(param.id)
           ? paramValues.get(param.id)
-          : param.default !== undefined ? param.default : 0;
+          : param.default;
       const uniformName = `${paramPrefix}_${param.id}`;
+      console.log(`  ${uniformName}`);
       switch (param.type) {
         case ParameterType.INTEGER:
-          gl.uniform1i(gl.getUniformLocation(program, uniformName), value);
+          gl.uniform1i(gl.getUniformLocation(program, uniformName),
+              value !== undefined ? value : 0);
           break;
         case ParameterType.FLOAT:
-          gl.uniform1f(gl.getUniformLocation(program, uniformName), value);
+          gl.uniform1f(gl.getUniformLocation(program, uniformName),
+              value !== undefined ? value : 0);
+          break;
+        case ParameterType.COLOR:
+          if (value !== undefined) {
+            gl.uniform4f(
+                gl.getUniformLocation(program, uniformName),
+                value[0], value[1], value[2], value[3]);
+          } else {
+            gl.uniform4f(gl.getUniformLocation(program, uniformName), 0, 0, 0, 1);
+          }
           break;
         case ParameterType.COLOR_GRADIENT: {
           // Shader requires a fixed-length array of 32 entries. Copy the colors into the
           // array and then pad the rest of the array with the final color;
-          const gradient: ColorGradient = value;
+          const gradient: ColorGradient = value !== undefined ? value : [];
           const colors: RGBAColor[] = [];
           const positions: number[] = [];
           let lastColor: RGBAColor = [0, 0, 0, 1];
@@ -138,9 +158,8 @@ export default class Renderer {
     }
   }
 
-  public compileShaderProgram(vsSource: string, fsSource: string): ShaderResource {
+  public compileShaderProgram(fsSource: string): ShaderResource {
     const gl = this.gl;
-    const vertexShader = this.compileShader(gl.VERTEX_SHADER, vsSource);
     const fragmentShader = this.compileShader(gl.FRAGMENT_SHADER, fsSource);
     if (!fragmentShader) {
       console.error('Compilation failed');
@@ -157,7 +176,7 @@ export default class Renderer {
     // Create the shader program
     const shaderProgram = gl.createProgram();
     try {
-      gl.attachShader(shaderProgram, vertexShader);
+      gl.attachShader(shaderProgram, this.vertexShader);
       gl.attachShader(shaderProgram, fragmentShader);
       gl.linkProgram(shaderProgram);
     } catch (e) {
@@ -174,7 +193,6 @@ export default class Renderer {
 
     return {
       program: shaderProgram,
-      vertex: vertexShader,
       fragment: fragmentShader,
     };
   }
@@ -183,7 +201,6 @@ export default class Renderer {
     const gl = this.gl;
     gl.deleteProgram(resource.program);
     gl.deleteShader(resource.fragment);
-    gl.deleteShader(resource.vertex);
   }
 
   private compileShader(type: number, source: string): WebGLShader {

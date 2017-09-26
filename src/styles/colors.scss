@@ -1,5 +1,6 @@
 $panelBg: #ccd;
 $graphBg: #667;
+$selectedBg: #99e;
 
 $listBg: lighten($panelBg, 5%);
 $listBgHover: lighten($listBg, 5%);
@@ -20,3 +21,8 @@ $modalBorder: #000;
 $modalShadow: transparentize(#000, .3);
 $modalSepLight: lighten($modalDialogBg, 10%);
 $modalSepDark: darken($modalDialogBg, 10%);
+
+$buttonBg: linear-gradient(to bottom, lighten($panelBg, 1%), darken($panelBg, 9%));
+$buttonActiveBg: linear-gradient(to bottom, darken($panelBg, 15%), darken($panelBg, 5%));
+$buttonSelectedBg: linear-gradient(to bottom, darken($selectedBg, 10%), darken($selectedBg, 5%));
+$buttonBorderColor: darken($panelBg, 30%);

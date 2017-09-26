@@ -54,8 +54,7 @@ Blends two source images based on a grayscale mask.
   // Render a node with the specified renderer.
   public render(renderer: Renderer, node: GraphNode, resources: Resources) {
     if (!resources.shader) {
-      const fragmentSrc = this.build(node);
-      resources.shader = renderer.compileShaderProgram(require('./shaders/Basic.vs'), fragmentSrc);
+      resources.shader = renderer.compileShaderProgram(this.build(node));
     }
 
     if (resources.shader) {

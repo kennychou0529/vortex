@@ -32,6 +32,7 @@ class Blend extends Operator {
       name: 'Operator',
       type: ParameterType.INTEGER,
       enumVals: [
+        { name: 'Replace', value: 0 },
         { name: 'Add', value: 1 },
         { name: 'Subtract', value: 2 },
         { name: 'Multiply', value: 3 },
@@ -77,15 +78,13 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
   // Render a node with the specified renderer.
   public render(renderer: Renderer, node: GraphNode, resources: Resources) {
     if (!resources.shader) {
-      const fragmentSrc = this.build(node);
-      resources.shader = renderer.compileShaderProgram(
-        require('./shaders/Basic.vs'),
-        fragmentSrc);
+      resources.shader = renderer.compileShaderProgram(this.build(node));
     }
 
     if (resources.shader) {
       const program: WebGLProgram = resources.shader.program;
       renderer.executeShaderProgram(resources.shader, gl => {
+        console.log('setting shader uniforms for:', this.name, node.id);
         // Set the uniforms for this node and all upstream nodes.
         renderer.setShaderUniforms(
             this.params,
@@ -94,6 +93,7 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
             this.uniformPrefix(node.id));
         node.visitUpstreamNodes((upstream, termId) => {
           const upstreamOp = upstream.operator;
+          console.log('  setting upstream uniforms for:', upstreamOp.name, upstream.id);
           renderer.setShaderUniforms(
               upstreamOp.params,
               program,

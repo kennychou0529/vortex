@@ -4,6 +4,7 @@ const config = require('./webpack.config.js');
 
 const PORT = 9001;
 
+config.entry.main.splice(0, 0, 'webpack/hot/dev-server');
 config.plugins.push(new webpack.HotModuleReplacementPlugin());
 config.plugins.push(new webpack.NamedModulesPlugin());
 

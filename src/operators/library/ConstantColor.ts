@@ -8,7 +8,7 @@ interface Resources {
   shader: ShaderResource;
 }
 
-class Gradient extends Operator {
+class ConstantColor extends Operator {
   public readonly outputs: Output[] = [{
     id: 'out',
     name: 'Out',
@@ -16,42 +16,18 @@ class Gradient extends Operator {
   }];
   public readonly params: Parameter[] = [
     {
-      id: 'type',
-      name: 'Gradient Type',
-      type: ParameterType.INTEGER,
-      enumVals: [
-        { name: 'Linear Horizontal', value: 0 },
-        { name: 'Linear Vertical', value: 1 },
-        { name: 'Symmetric Horizontal', value: 2 },
-        { name: 'Symmetric Vertical', value: 3 },
-        { name: 'Radial', value: 4 },
-        { name: 'Square', value: 5 },
-      ],
-      default: 0,
-    },
-    {
       id: 'color',
-      name: 'Gradient color',
-      type: ParameterType.COLOR_GRADIENT,
-      max: 32,
-      default: [
-        {
-          value: [0, 0, 0, 1],
-          position: 0,
-        },
-        {
-          value: [1, 1, 1, 1],
-          position: 1,
-        },
-      ],
+      name: 'Color',
+      type: ParameterType.COLOR,
+      default: [1.0, 1.0, 1.0, 1.0],
     },
   ];
   public readonly description = `
-Generates a simple gradient.
+A constant color.
 `;
 
   constructor() {
-    super('generator', 'Gradient', 'generator_gradient');
+    super('generator', 'Constant Color', 'generator_constant_color');
   }
 
   // Render a node with the specified renderer.
@@ -80,21 +56,12 @@ Generates a simple gradient.
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
-      assembly.addCommon('gradient-color.glsl', require('./shaders/gradient-color.glsl'));
-      assembly.addCommon('gradient.glsl', require('./shaders/gradient.glsl'));
       assembly.finish(node);
     }
 
     // TODO: type conversion
-    const colorName = this.uniformName(node.id, 'color');
-    const args = [
-      assembly.literal('vTextureCoord'),
-      assembly.ident(this.uniformName(node.id, 'type')),
-      assembly.ident(`${colorName}_colors`),
-      assembly.ident(`${colorName}_positions`),
-    ];
-    return assembly.call('gradient', args);
+    return assembly.literal(this.uniformName(node.id, 'color'));
   }
 }
 
-export default new Gradient();
+export default new ConstantColor();

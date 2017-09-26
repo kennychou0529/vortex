@@ -1,4 +1,5 @@
 import bind from 'bind-decorator';
+import * as classNames from 'classnames';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
 import { GraphNode } from '../graph';
@@ -12,24 +13,41 @@ interface Props {
 
 interface State {
   showSource: boolean;
+  repeat: number;
 }
 
 @observer
-export default class PropertyPanel extends Component<Props, State> {
+export default class NodeActions extends Component<Props, State> {
   constructor() {
     super();
     this.state = {
       showSource: false,
+      repeat: 1,
     };
   }
 
-  public render({ node }: Props, { showSource }: State) {
+  public render({ node }: Props, { showSource, repeat }: State) {
     return (
       <section className="node-actions">
         <section className="button-group">
-          <button>1x1</button>
-          <button>2x2</button>
-          <button>3x3</button>
+          <button
+              className={classNames({ selected: repeat === 1 })}
+              onClick={() => this.setRepeat(1)}
+          >
+            1x1
+          </button>
+          <button
+              className={classNames({ selected: repeat === 2 })}
+              onClick={() => this.setRepeat(2)}
+          >
+            2x2
+          </button>
+          <button
+              className={classNames({ selected: repeat === 3 })}
+              onClick={() => this.setRepeat(3)}
+          >
+              3x3
+          </button>
         </section>
         <div className="spacer" />
         <button onClick={this.onClickShowSource}>Shader source...</button>
@@ -72,5 +90,10 @@ export default class PropertyPanel extends Component<Props, State> {
   @bind
   private onHideSource() {
     this.setState({ showSource: false });
+  }
+
+  @bind
+  private setRepeat(repeat: number) {
+    this.setState({ repeat });
   }
 }

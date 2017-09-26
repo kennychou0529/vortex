@@ -110,10 +110,7 @@ Generates a periodic Perlin noise texture.
   // Render a node with the specified renderer.
   public render(renderer: Renderer, node: GraphNode, resources: Resources) {
     if (!resources.shader) {
-      const fragmentSrc = this.build(node);
-      resources.shader = renderer.compileShaderProgram(
-        require('./shaders/Basic.vs'),
-        fragmentSrc);
+      resources.shader = renderer.compileShaderProgram(this.build(node));
     }
 
     renderer.executeShaderProgram(resources.shader, gl => {

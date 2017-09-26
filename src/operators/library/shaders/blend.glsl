@@ -14,8 +14,8 @@ vec4 blend(
   const vec3 ONE = vec3(1.0, 1.0, 1.0);
   const vec3 ZERO = vec3(0.0, 0.0, 0.0);
   const vec3 SMALL = vec3(1.0/256.0, 1.0/256.0, 1.0/256.0);
-  if (op == 0) { // Identity
-    value = ca * 0.5;
+  if (op == 0) { // Replace
+    value = cb * 0.5;
   } else if (op == 1) { // Add
     value = ca + cb;
   } else if (op == 2) { // Subtract
