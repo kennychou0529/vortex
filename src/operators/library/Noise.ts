@@ -131,21 +131,20 @@ Generates a periodic Perlin noise texture.
       assembly.finish(node);
     }
 
-    // TODO: type conversion
     const colorName = this.uniformName(node.id, 'color');
     const args = [
-      assembly.literal('vTextureCoord'),
-      assembly.ident(this.uniformName(node.id, 'scale_x')),
-      assembly.ident(this.uniformName(node.id, 'scale_y')),
-      assembly.ident(this.uniformName(node.id, 'offset_z')),
-      assembly.ident(this.uniformName(node.id, 'scale_value')),
-      assembly.ident(this.uniformName(node.id, 'start_band')),
-      assembly.ident(this.uniformName(node.id, 'end_band')),
-      assembly.ident(this.uniformName(node.id, 'persistence')),
-      assembly.ident(`${colorName}_colors`),
-      assembly.ident(`${colorName}_positions`),
+      assembly.literal('vTextureCoord', DataType.UV),
+      assembly.ident(this.uniformName(node.id, 'scale_x'), DataType.SCALAR),
+      assembly.ident(this.uniformName(node.id, 'scale_y'), DataType.SCALAR),
+      assembly.ident(this.uniformName(node.id, 'offset_z'), DataType.SCALAR),
+      assembly.ident(this.uniformName(node.id, 'scale_value'), DataType.SCALAR),
+      assembly.ident(this.uniformName(node.id, 'start_band'), DataType.SCALAR),
+      assembly.ident(this.uniformName(node.id, 'end_band'), DataType.SCALAR),
+      assembly.ident(this.uniformName(node.id, 'persistence'), DataType.SCALAR),
+      assembly.ident(`${colorName}_colors`, DataType.OTHER),
+      assembly.ident(`${colorName}_positions`, DataType.OTHER),
     ];
-    return assembly.call('periodicNoise', args);
+    return assembly.call('periodicNoise', args, DataType.RGBA);
   }
 
   // Release any GL resources we were holding on to.

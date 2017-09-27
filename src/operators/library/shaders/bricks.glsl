@@ -1,4 +1,4 @@
-vec4 bricks(
+float bricks(
     vec2 uv,
     int xCount,
     int yCount,
@@ -25,5 +25,5 @@ vec4 bricks(
   } else { // Sqare
     value = min(xf, yf);
   }
-  return vec4(vec3(1.0, 1.0, 1.0) * value, 1);
+  return value;
 }

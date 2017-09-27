@@ -85,15 +85,14 @@ Generates a simple gradient.
       assembly.finish(node);
     }
 
-    // TODO: type conversion
     const colorName = this.uniformName(node.id, 'color');
     const args = [
-      assembly.literal('vTextureCoord'),
-      assembly.ident(this.uniformName(node.id, 'type')),
-      assembly.ident(`${colorName}_colors`),
-      assembly.ident(`${colorName}_positions`),
+      assembly.literal('vTextureCoord', DataType.UV),
+      assembly.ident(this.uniformName(node.id, 'type'), DataType.SCALAR),
+      assembly.ident(`${colorName}_colors`, DataType.OTHER),
+      assembly.ident(`${colorName}_positions`, DataType.OTHER),
     ];
-    return assembly.call('gradient', args);
+    return assembly.call('gradient', args, DataType.RGBA);
   }
 }
 

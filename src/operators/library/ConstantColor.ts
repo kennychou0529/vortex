@@ -59,8 +59,7 @@ A constant color.
       assembly.finish(node);
     }
 
-    // TODO: type conversion
-    return assembly.literal(this.uniformName(node.id, 'color'));
+    return assembly.literal(this.uniformName(node.id, 'color'), DataType.RGBA);
   }
 }
 

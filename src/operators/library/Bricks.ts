@@ -129,12 +129,12 @@ Generates a pattern consisting of alternating rows of bricks.
       assembly.finish(node);
     }
 
-    // TODO: type conversion
     const args = [
-      assembly.literal('vTextureCoord'),
-      ...this.params.map(param => assembly.ident(this.uniformName(node.id, param.id))),
+      assembly.literal('vTextureCoord', DataType.SCALAR),
+      ...this.params.map(param =>
+          assembly.ident(this.uniformName(node.id, param.id), DataType.OTHER)),
     ];
-    return assembly.call('bricks', args);
+    return assembly.call('bricks', args, DataType.SCALAR);
   }
 
   // Release any GL resources we were holding on to.

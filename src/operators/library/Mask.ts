@@ -85,12 +85,11 @@ Blends two source images based on a grayscale mask.
       assembly.finish(node);
     }
 
-    // TODO: type conversion
     const inputA = assembly.readInputValue(node, 'a', DataType.RGBA);
     const inputB = assembly.readInputValue(node, 'b', DataType.RGBA);
-    const mask = assembly.readInputValue(node, 'mask', DataType.SCALAR);
-    const invert = assembly.ident(this.uniformName(node.id, 'invert'));
-    return assembly.call('mask', [inputA, inputB, mask, invert]);
+    const mask = assembly.readInputValue(node, 'mask', DataType.RGBA);
+    const invert = assembly.ident(this.uniformName(node.id, 'invert'), DataType.OTHER);
+    return assembly.call('mask', [inputA, inputB, mask, invert], DataType.RGBA);
   }
 
   // Release any GL resources we were holding on to.

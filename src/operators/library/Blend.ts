@@ -109,13 +109,12 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
       assembly.finish(node);
     }
 
-    // TODO: type conversion
     const inputA = assembly.readInputValue(node, 'a', DataType.RGBA);
     const inputB = assembly.readInputValue(node, 'b', DataType.RGBA);
-    const op = assembly.ident(this.uniformName(node.id, 'op'));
-    const strength = assembly.ident(this.uniformName(node.id, 'strength'));
-    const norm = assembly.ident(this.uniformName(node.id, 'norm'));
-    return assembly.call('blend', [inputA, inputB, op, strength, norm]);
+    const op = assembly.ident(this.uniformName(node.id, 'op'), DataType.SCALAR);
+    const strength = assembly.ident(this.uniformName(node.id, 'strength'), DataType.SCALAR);
+    const norm = assembly.ident(this.uniformName(node.id, 'norm'), DataType.SCALAR);
+    return assembly.call('blend', [inputA, inputB, op, strength, norm], DataType.RGBA);
   }
 
   // Release any GL resources we were holding on to.

@@ -1,6 +1,6 @@
 import { GraphNode } from '../graph';
 import { DataType, Operator, Parameter, ParameterType } from '../operators';
-import { Assignment, CallExpr, Expr, ExprKind, IdentExpr, LiteralExpr } from './Expr';
+import { Assignment, CallExpr, Expr, ExprKind, IdentExpr, LiteralExpr, TypeCast } from './Expr';
 
 export enum TraversalState {
   IN_PROCESS,
@@ -69,23 +69,31 @@ export default class ShaderAssembly {
   }
 
   /** Construct a call expression. */
-  public call(funcName: string, args: Expr[]): CallExpr {
-    return { kind: ExprKind.CALL, funcName, args };
+  public call(funcName: string, args: Expr[], type: DataType): CallExpr {
+    return { kind: ExprKind.CALL, funcName, args, type };
   }
 
   /** Construct an identifier expression. */
-  public ident(name: string): IdentExpr {
-    return { kind: ExprKind.IDENT, name };
+  public ident(name: string, type: DataType): IdentExpr {
+    return { kind: ExprKind.IDENT, name, type };
   }
 
   /** Construct a literal expression. */
-  public literal(value: string): LiteralExpr {
-    return { kind: ExprKind.LITERAL, value };
+  public literal(value: string, type: DataType): LiteralExpr {
+    return { kind: ExprKind.LITERAL, value, type };
   }
 
   /** Construct a reference to a uniform. */
   public uniform(op: Operator, nodeId: number, param: Parameter): IdentExpr {
-    return { kind: ExprKind.IDENT, name: op.uniformName(nodeId, param) };
+    let type = DataType.SCALAR;
+    if (param.type === ParameterType.COLOR) {
+      type = DataType.RGBA;
+    }
+    return { kind: ExprKind.IDENT, name: op.uniformName(nodeId, param), type };
+  }
+
+  public typeCast(expr: Expr, type: DataType) {
+    return { kind: ExprKind.TYPE_CAST, expr, type };
   }
 
   /** Add an assignment to the list of statements to execute before the final return statement. */
@@ -97,22 +105,22 @@ export default class ShaderAssembly {
       value from the connected output terminal, unless the input is not connected in Which
       case the expression is zero. Also handles de-duping of expressions that are used in
       more than one place. */
-  // TODO: type conversion
-  public readInputValue(node: GraphNode, signalName: string, type?: DataType): Expr {
+  public readInputValue(node: GraphNode, signalName: string, type: DataType): Expr {
     const operator = node.operator;
     const input = operator.getInput(signalName);
     const inputTerminal = node.findInputTerminal(signalName);
     if (inputTerminal.connection === null) {
       switch (input.type) {
-        case DataType.SCALAR: return this.literal('0.0');
-        case DataType.RGBA: return this.literal('vec4(0.0, 0.0, 0.0, 0.0)');
-        case DataType.XYZW: return this.literal('vec4(0.0, 0.0, 0.0, 0.0)');
+        case DataType.SCALAR: return this.literal('0.0', DataType.SCALAR);
+        case DataType.RGBA: return this.literal('vec4(0.0, 0.0, 0.0, 0.0)', input.type);
+        case DataType.XYZW: return this.literal('vec4(0.0, 0.0, 0.0, 0.0)', input.type);
       }
     }
     const outputTerminal = inputTerminal.connection.source;
     const outputNode = outputTerminal.node;
     const outputDefn = outputNode.operator.getOutput(outputTerminal.id);
     const outputType = this.outputDataType(outputDefn.type);
+    let result: Expr;
     if (outputTerminal.connections.length > 1) {
       const cachedValueId = `${outputNode.operator.localPrefix(node.id)}_${outputTerminal.id}`;
       if (!this.cachedValues.has(cachedValueId)) {
@@ -121,11 +129,15 @@ export default class ShaderAssembly {
           cachedValueId,
           outputType,
           outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id));
-        return this.ident(cachedValueId);
       }
-      return this.ident(cachedValueId);
+      result = this.ident(cachedValueId, outputDefn.type);
+    } else {
+      result = outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id);
     }
-    return outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id);
+    if (type !== outputDefn.type) {
+      result = this.typeCast(result, type);
+    }
+    return result;
   }
 
   /** Assign shader uniform names for all of the parameters of the operator. */
@@ -158,7 +170,7 @@ export default class ShaderAssembly {
     this.assignmentList.forEach(assigment => {
       this.out.push(`  ${assigment.type} ${assigment.name} = ${this.emitExpr(assigment.value)};`);
     });
-    this.out.push(`  outputColor = ${this.emitExpr(expr)};`);
+    this.out.push(`  outputColor = ${this.emitExpr(this.typeCast(expr, DataType.RGBA))};`);
     this.out.push('}');
   }
 
@@ -186,6 +198,37 @@ export default class ShaderAssembly {
         this.indentLevel -= 2;
         result.push(')');
         return result.join('');
+      }
+      case ExprKind.TYPE_CAST: {
+        const typeCast = e as TypeCast;
+        if (typeCast.type === typeCast.expr.type) {
+          return this.emitExpr(typeCast.expr);
+        }
+        switch (typeCast.type) {
+          case DataType.SCALAR:
+            if (typeCast.expr.type === DataType.XYZW || typeCast.expr.type === DataType.RGBA) {
+              //
+            }
+            break;
+          case DataType.XYZW:
+          case DataType.RGBA:
+            if (typeCast.expr.type === DataType.SCALAR) {
+              return `vec4(vec3(1.0, 1.0, 1.0) * ` + this.emitExpr(typeCast.expr) + ', 1.0)';
+            }
+            if (typeCast.expr.type === DataType.XYZW || typeCast.expr.type === DataType.RGBA) {
+              return this.emitExpr(typeCast.expr);
+            }
+            break;
+          case DataType.XYZ:
+            if (typeCast.expr.type === DataType.SCALAR) {
+              return `vec3(1.0, 1.0, 1.0)` + this.emitExpr(typeCast.expr);
+            }
+            break;
+          default:
+            break;
+        }
+        throw Error('Type conversion not supported: ' +
+            `${DataType[typeCast.type]} ${DataType[typeCast.expr.type]}.`);
       }
     }
   }

@@ -76,7 +76,6 @@ Treating the grayscale input as a height map, computes normals.
       assembly.finish(node);
     }
 
-    // TODO: type conversion
     const inputA = assembly.readInputValue(node, 'in', DataType.RGBA);
     const scale = this.uniformName(node.id, 'scale');
     const t = `${this.localPrefix(node.id)}_t`;
@@ -85,11 +84,15 @@ Treating the grayscale input as a height map, computes normals.
     const dy = `${this.localPrefix(node.id)}_dy`;
     const normal = `${this.localPrefix(node.id)}_normal`;
     assembly.assign(t, 'vec4', inputA);
-    assembly.assign(h, 'float', assembly.literal(`(${t}.x + ${t}.y + ${t}.z) * ${scale} / 3.0`));
-    assembly.assign(dx, 'vec3', assembly.literal(`dFdx(vec3(vTextureCoord, ${h}))`));
-    assembly.assign(dy, 'vec3', assembly.literal(`dFdy(vec3(vTextureCoord, ${h}))`));
-    assembly.assign(normal, 'vec3', assembly.literal(`normalize(cross(${dx}, ${dy}))`));
-    return assembly.literal(`vec4(${normal} * 0.5 + 0.5, 1.0)`);
+    assembly.assign(h, 'float',
+        assembly.literal(`(${t}.x + ${t}.y + ${t}.z) * ${scale} / 3.0`, DataType.SCALAR));
+    assembly.assign(dx, 'vec3',
+        assembly.literal(`dFdx(vec3(vTextureCoord, ${h}))`, DataType.XYZ));
+    assembly.assign(dy, 'vec3',
+        assembly.literal(`dFdy(vec3(vTextureCoord, ${h}))`, DataType.XYZ));
+    assembly.assign(normal, 'vec3',
+        assembly.literal(`normalize(cross(${dx}, ${dy}))`, DataType.XYZ));
+    return assembly.literal(`vec4(${normal} * 0.5 + 0.5, 1.0)`, DataType.XYZW);
   }
 
   // Release any GL resources we were holding on to.
