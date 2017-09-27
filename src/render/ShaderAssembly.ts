@@ -207,7 +207,7 @@ export default class ShaderAssembly {
         switch (typeCast.type) {
           case DataType.SCALAR:
             if (typeCast.expr.type === DataType.XYZW || typeCast.expr.type === DataType.RGBA) {
-              //
+              return `dot(${this.emitExpr(typeCast.expr)}, vec4(0.3, 0.4, 0.3, 0.0))`;
             }
             break;
           case DataType.XYZW:
