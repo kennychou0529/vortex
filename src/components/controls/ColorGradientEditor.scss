@@ -3,6 +3,7 @@
 .color-gradient-editor {
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   align-items: stretch;
 
   > .color-stops {

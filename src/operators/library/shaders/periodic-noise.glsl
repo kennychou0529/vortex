@@ -16,11 +16,11 @@ vec4 periodicNoise(
   for (int i = 1; i <= 16; i += 1) {
     if (i >= start_band && i <= end_band) {
       accum += pnoise(vec3(uv.x * sx, uv.y * sy, offset_z), vec3(sx, sy, 1000)) * sv;
-      sx *= 2.0;
-      sy *= 2.0;
       offset_z += 1.0;
       sv *= persistence;
     }
+    sx *= 2.0;
+    sy *= 2.0;
   }
   return gradientColor(accum + 0.5, color_colors, color_positions);
 }

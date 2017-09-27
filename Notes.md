@@ -4,7 +4,6 @@
 * Limit operator dragging to document size
 * Quantize initial placement.
 * Gradient: Delete color stops
-* Normal map.
 * Finish up blend filter
   - normalize
 * Type conversions for node outputs
@@ -14,6 +13,8 @@
 * Edit color parameters
 * Import / Export diagrams
 * Undo / Redo
+* Save to cloud (url)
+* Generate unique url - server component
 * Export image
 * Log scale controls
 * Output type conversion - currently assumes all outputs are vec4.
@@ -31,7 +32,6 @@
     * Emboss
     * Math
     * Modulus
-    * NormalMap
     * Transform
     * Warp
     * Bump Map
@@ -43,6 +43,8 @@
     * Checker
     * Constant Color
     * Function
+    * Checkers
+    * Waves
 
   * SVG filter types:
     <feColorMatrix>
@@ -58,8 +60,3 @@
     <feSpecularLighting>
     <feTile>
     <feTurbulence>
-
-vec3 dx = dFdx(vec3(vTextureCoord.xy, h));
-vec3 dy = dFdy(vec3(vTextureCoord.xy, h));
-vec3 normal = normalize(cross(dx, dy));
-out = vec4(normal * 0.5 + 0.5, 1.0)

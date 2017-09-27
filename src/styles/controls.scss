@@ -11,6 +11,8 @@ button {
   border-radius: $buttonRadius;
   border: 1px solid $buttonBorderColor;
   background-image: $buttonBg;
+  outline: none;
+  user-select: none;
 
   &:active {
     background-image: $buttonActiveBg;

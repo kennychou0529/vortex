@@ -4,6 +4,7 @@ import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
 import { GraphNode } from '../graph';
 import Modal from './controls/Modal';
+import ExportImageModal from './export/ExportImageModal';
 
 import './NodeActions.scss';
 
@@ -13,6 +14,7 @@ interface Props {
 
 interface State {
   showSource: boolean;
+  showExport: boolean;
   repeat: number;
 }
 
@@ -22,11 +24,12 @@ export default class NodeActions extends Component<Props, State> {
     super();
     this.state = {
       showSource: false,
+      showExport: false,
       repeat: 1,
     };
   }
 
-  public render({ node }: Props, { showSource, repeat }: State) {
+  public render({ node }: Props, { showSource, showExport, repeat }: State) {
     return (
       <section className="node-actions">
         <section className="button-group">
@@ -50,7 +53,9 @@ export default class NodeActions extends Component<Props, State> {
           </button>
         </section>
         <div className="spacer" />
-        <button onClick={this.onClickShowSource}>Shader source...</button>
+        <button onClick={this.onClickShowSource}>Source...</button>
+        <div className="spacer" />
+        <button onClick={this.onClickShowExport}>Export...</button>
         <Modal className="shader-source" open={showSource} onHide={this.onHideSource} >
           <Modal.Header>Generated shader code for {node.operator.name}:{node.id}</Modal.Header>
           <Modal.Body>
@@ -71,6 +76,7 @@ export default class NodeActions extends Component<Props, State> {
             <button className="close" onClick={this.onClickCloseSource}>Close</button>
           </Modal.Footer>
         </Modal>
+        <ExportImageModal node={node} show={showExport} onHide={this.onHideExport} />
       </section>
     );
   }
@@ -90,6 +96,16 @@ export default class NodeActions extends Component<Props, State> {
   @bind
   private onHideSource() {
     this.setState({ showSource: false });
+  }
+
+  @bind
+  private onClickShowExport(e: MouseEvent) {
+    this.setState({ showExport: true });
+  }
+
+  @bind
+  private onHideExport() {
+    this.setState({ showExport: false });
   }
 
   @bind
