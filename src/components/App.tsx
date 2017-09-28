@@ -76,7 +76,7 @@ export default class App extends Component<undefined, State> {
   public render(props: any, { graph }: State): any {
     return (
       <section id="app">
-        <ToolPanel />
+        <ToolPanel graph={graph} />
         <GraphView graph={graph} />
         <PropertyPanel graph={graph} />
       </section>

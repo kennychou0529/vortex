@@ -18,12 +18,17 @@
 * Export image
 * Log scale controls
 * Output type conversion - currently assumes all outputs are vec4.
+* Save to server - generate unique url - need accounts?
 
 * https://github.com/Jam3/glsl-fast-gaussian-blur
 * https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
 * https://stackoverflow.com/questions/11112321/how-to-save-canvas-as-png-image
 
 # Operators to do:
+  * Transform
+    * Warp
+    * Repeat
+    * Rotate
   * Filters:
     * Blur
     * Color Correct
@@ -33,7 +38,6 @@
     * Math
     * Modulus
     * Transform
-    * Warp
     * Bump Map
     * Lighting
     * Repeat

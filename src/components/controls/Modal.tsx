@@ -33,7 +33,6 @@ interface State {
   closing: boolean;
 }
 
-// tslint:disable:function-name
 function Header({ children, className }: HeaderProps): JSX.Element {
   return (
     <header className={className}>

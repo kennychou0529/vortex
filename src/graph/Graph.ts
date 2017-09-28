@@ -117,6 +117,25 @@ export class Graph {
     this.nodes = this.nodes.filter(n => !n.selected);
   }
 
+  @action
+  public clear() {
+    this.nodes.forEach(node => {
+      node.outputs.forEach(output => {
+        output.connections.forEach(connection => {
+          output.disconnect(connection);
+        });
+      });
+      node.inputs.forEach(input => {
+        if (input.connection) {
+          input.connection.source.disconnect(input.connection);
+        }
+      });
+      // Release any rendering resources
+      node.setDeleted();
+    });
+    this.nodes = [];
+  }
+
   public toJs(): any {
     const connections: any[] = [];
     this.nodes.forEach(node => {
