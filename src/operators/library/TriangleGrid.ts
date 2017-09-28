@@ -8,7 +8,7 @@ interface Resources {
   shader: ShaderResource;
 }
 
-class Bricks extends Operator {
+class TriangleGrid extends Operator {
   public readonly outputs: Output[] = [{
     id: 'out',
     name: 'Out',
@@ -29,39 +29,32 @@ class Bricks extends Operator {
       type: ParameterType.INTEGER,
       min: 1,
       max: 16,
-      default: 4,
+      default: 2,
     },
     {
-      id: 'spacing_x',
-      name: 'Spacing X',
+      id: 'margin',
+      name: 'Spacing',
       type: ParameterType.FLOAT,
       min: 0,
       max: .5,
       default: .025,
     },
     {
-      id: 'spacing_y',
-      name: 'Spacing Y',
+      id: 'roundness',
+      name: 'Roundness',
       type: ParameterType.FLOAT,
-      min: 0,
-      max: .5,
-      default: .05,
+      min: 1,
+      max: 5,
+      precision: 1,
+      default: 1,
     },
     {
-      id: 'blur_x',
-      name: 'Blur X',
+      id: 'blur',
+      name: 'Blur',
       type: ParameterType.FLOAT,
       min: 0,
       max: .5,
       default: .1,
-    },
-    {
-      id: 'blur_y',
-      name: 'Blur Y',
-      type: ParameterType.FLOAT,
-      min: 0,
-      max: .5,
-      default: .2,
     },
     {
       id: 'offset_x',
@@ -78,43 +71,31 @@ class Bricks extends Operator {
       max: .5,
     },
     {
-      id: 'stagger',
-      name: 'Stagger',
-      type: ParameterType.FLOAT,
-      min: 0,
-      max: 1,
-      default: .5,
-    },
-    {
       id: 'corner',
       name: 'Corner Shape',
       type: ParameterType.INTEGER,
       enumVals: [
-        { name: 'Square', value: 0 },
+        { name: 'Sharp', value: 0 },
         { name: 'Mitered', value: 1 },
-        { name: 'Rounded', value: 2 },
+        { name: 'Smooth', value: 2 },
       ],
       default: 0,
     },
   ];
   public readonly description = `
-Generates a pattern consisting of alternating rows of bricks.
-* **Count X** is the number of bricks along the x-axis.
-* **Count Y** is the number of bricks along the y-axis.
-* **Spacing X** is the horizontal space between bricks.
-* **Spacing Y** is the vertical space between bricks.
-* **Blur X** controls the softness of the brick edges in the x direction.
-* **Blur Y** controls the softness of the brick edges in the y direction.
+Generates a triangular grid pattern.
+* **Count X** is the number of triangles along the x-axis.
+* **Count Y** is the number of triangles along the y-axis.
+* **Spacing** is the space between the triangles.
+* **Roundness** controls the roundness / sharpness of the tiangle corners.
+* **Blur** controls the softness of the triangle edges.
 * **Offset X** shifts the entire pattern along the X-axis.
 * **Offset Y** shifts the entire pattern along the y-axis.
-* **Stagger** controls how much the even rows of bricks should be offset relative to the odd rows.
-* **Corner** controls the style of the corners (square, round or mitered).
+* **Corner** controls the style of the corners (sharp, round or mitered).
 `;
 
-  private commonSrc: string = require('./shaders/bricks.glsl');
-
   constructor() {
-    super('pattern', 'Bricks', 'pattern_bricks');
+    super('pattern', 'Triangle Grid', 'pattern_trianglegrid');
   }
 
   // Render a node with the specified renderer.
@@ -135,7 +116,7 @@ Generates a pattern consisting of alternating rows of bricks.
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
-      assembly.addCommon(this.id, this.commonSrc);
+      assembly.addCommon(this.id, require('./shaders/triangles.glsl'));
       assembly.finish(node);
     }
 
@@ -144,7 +125,7 @@ Generates a pattern consisting of alternating rows of bricks.
       ...this.params.map(param =>
           assembly.ident(this.uniformName(node.id, param.id), DataType.OTHER)),
     ];
-    return assembly.call('bricks', args, DataType.SCALAR);
+    return assembly.call('triangles', args, DataType.SCALAR);
   }
 
   // Release any GL resources we were holding on to.
@@ -156,4 +137,4 @@ Generates a pattern consisting of alternating rows of bricks.
   }
 }
 
-export default new Bricks();
+export default new TriangleGrid();

@@ -45,9 +45,9 @@
     * Bitmap
     * Cellular
     * Checker
-    * Constant Color
     * Function
     * Checkers
+    * Tartan
     * Waves
 
   * SVG filter types:
