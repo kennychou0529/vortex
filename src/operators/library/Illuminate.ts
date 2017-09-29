@@ -8,12 +8,17 @@ interface Resources {
   shader: ShaderResource;
 }
 
-class NormalMap extends Operator {
+class Illuminate extends Operator {
   public readonly inputs: Input[] = [
     {
       id: 'in',
       name: 'In',
       type: DataType.RGBA,
+    },
+    {
+      id: 'normal',
+      name: 'Normal',
+      type: DataType.XYZW,
     },
   ];
   public readonly outputs: Output[] = [{
@@ -24,23 +29,61 @@ class NormalMap extends Operator {
 
   public readonly params: Parameter[] = [
     {
-      id: 'scale',
-      name: 'Height Scale',
+      id: 'azimuth',
+      name: 'Azimuth',
       type: ParameterType.FLOAT,
-      min: 0.001,
-      max: 2,
-      precision: 3,
-      increment: 0.01,
-      default: 0.5,
+      min: 0,
+      max: 360,
+      precision: 0,
+      increment: 1,
+      default: 45,
+    },
+    {
+      id: 'elevation',
+      name: 'Elevation',
+      type: ParameterType.FLOAT,
+      min: 0,
+      max: 90,
+      precision: 0,
+      increment: 1,
+      default: 45,
+    },
+    {
+      id: 'shininess',
+      name: 'Shininess',
+      type: ParameterType.FLOAT,
+      min: 0,
+      max: 100,
+      precision: 0,
+      increment: 1,
+      default: 0,
+    },
+    {
+      id: 'ambient',
+      name: 'Ambient Color',
+      type: ParameterType.COLOR,
+      default: [1.0, 1.0, 1.0, 1.0],
+    },
+    {
+      id: 'diffuse',
+      name: 'Diffuse Color',
+      type: ParameterType.COLOR,
+      default: [1.0, 1.0, 1.0, 1.0],
+    },
+    {
+      id: 'specular',
+      name: 'Specular Color',
+      type: ParameterType.COLOR,
+      default: [1.0, 1.0, 1.0, 1.0],
     },
   ];
 
   public readonly description = `
-Treating the grayscale input as a height map, computes normals.
+Illuminate the input texture.
 `;
 
   constructor() {
-    super('filter', 'Normal Map', 'filter_normal_map');
+    super('filter', 'Illuminate', 'filter_illuminate');
   }
 
   // Render a node with the specified renderer.
@@ -73,26 +116,21 @@ Treating the grayscale input as a height map, computes normals.
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
+      assembly.addCommon('illuminate.glsl', require('./shaders/illuminate.glsl'));
       assembly.finish(node);
     }
 
-    const inputA = assembly.readInputValue(node, 'in', DataType.RGBA, uv);
-    const scale = this.uniformName(node.id, 'scale');
-    const t = `${this.localPrefix(node.id)}_t`;
-    const h = `${this.localPrefix(node.id)}_h`;
-    const dx = `${this.localPrefix(node.id)}_dx`;
-    const dy = `${this.localPrefix(node.id)}_dy`;
-    const normal = `${this.localPrefix(node.id)}_normal`;
-    assembly.assign(t, 'vec4', inputA);
-    assembly.assign(h, 'float',
-        assembly.literal(`(${t}.x + ${t}.y + ${t}.z) * ${scale} / 3.0`, DataType.SCALAR));
-    assembly.assign(dx, 'vec3',
-        assembly.literal(`dFdx(vec3(vTextureCoord, ${h}))`, DataType.XYZ));
-    assembly.assign(dy, 'vec3',
-        assembly.literal(`dFdy(vec3(vTextureCoord, ${h}))`, DataType.XYZ));
-    assembly.assign(normal, 'vec3',
-        assembly.literal(`normalize(cross(${dx}, ${dy}))`, DataType.XYZ));
-    return assembly.literal(`vec4(${normal} * vec3(-0.5, 0.5, 0.5) + 0.5, 1.0)`, DataType.XYZW);
+    const input = assembly.readInputValue(node, 'in', DataType.RGBA, uv);
+    const normal = assembly.readInputValue(node, 'normal', DataType.XYZW, uv);
+
+    const args = [
+      input,
+      normal,
+      ...this.params.map(param =>
+          assembly.ident(this.uniformName(node.id, param.id), DataType.OTHER)),
+    ];
+
+    return assembly.call('illuminate', args, DataType.RGBA);
   }
 
   // Release any GL resources we were holding on to.
@@ -104,4 +142,4 @@ Treating the grayscale input as a height map, computes normals.
   }
 }
 
-export default new NormalMap();
+export default new Illuminate();

@@ -28,11 +28,14 @@ export default class ColorProperty extends Component<Props, undefined> {
 
   public render({ parameter, node }: Props) {
     return (
-      <ColorPicker
-          ref={(el: ColorPicker) => { this.colorPicker = el; }}
-          onChange={this.onChange}
-          alpha={true}
-      />
+      <section className="color-property">
+        <header>{parameter.name}</header>
+        <ColorPicker
+            ref={(el: ColorPicker) => { this.colorPicker = el; }}
+            onChange={this.onChange}
+            alpha={true}
+        />
+      </section>
     );
   }
 

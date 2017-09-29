@@ -22,7 +22,7 @@ float bricks(
     value = max(0., (xf + yf) - 1.0);
   } else if (corner == 2) { // Rounded
     value = max(0., 1. - sqrt((1.-xf) * (1.-xf) + (1.-yf) * (1.-yf)));
-  } else { // Sqare
+  } else { // Square
     value = min(xf, yf);
   }
   return value;

@@ -17,6 +17,9 @@
 * Generate unique url - server component
 * Export image
 * Log scale controls
+* Unify DataType and ParameterType
+* Standardize 'Resources' across all operators
+* Move 'render' to Operator class
 * Output type conversion - currently assumes all outputs are vec4.
 * Save to server - generate unique url - need accounts?
 
@@ -25,10 +28,11 @@
 * https://stackoverflow.com/questions/11112321/how-to-save-canvas-as-png-image
 
 # Operators to do:
-  * Transform
+  * Transforms:
     * Warp
-    * Repeat
+    * Mirror
     * Rotate
+    * Stitch
   * Filters:
     * Blur
     * Color Correct
@@ -37,16 +41,13 @@
     * Emboss
     * Math
     * Modulus
-    * Transform
     * Bump Map
     * Lighting
-    * Repeat
   * Generators:
     * Bitmap
     * Cellular
     * Checker
     * Function
-    * Checkers
     * Tartan
     * Waves
 

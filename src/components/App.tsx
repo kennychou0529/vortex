@@ -34,7 +34,7 @@ export default class App extends Component<undefined, State> {
     const savedGraph = localStorage.getItem('workingGraph');
     if (savedGraph) {
       try {
-        // this.state.graph.fromJs(JSON.parse(savedGraph), this.registry);
+        this.state.graph.fromJs(JSON.parse(savedGraph), this.registry);
       } catch (e) {
         console.error('node deserialization failed:', e);
       }
@@ -45,13 +45,6 @@ export default class App extends Component<undefined, State> {
       node.x = 20;
       node.y = 20;
       this.state.graph.add(node);
-
-      const node2 = new GraphNode(this.registry.get('filter_blend'));
-      node2.x = 250;
-      node2.y = 120;
-      this.state.graph.add(node2);
-
-      this.state.graph.connect(node, 'out', node2, 'a');
     }
 
     // Save the graph we are working on in local storage.
