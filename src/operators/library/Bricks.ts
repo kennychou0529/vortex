@@ -132,7 +132,11 @@ Generates a pattern consisting of alternating rows of bricks.
     });
   }
 
-  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
+  public readOutputValue(
+      assembly: ShaderAssembly,
+      node: GraphNode,
+      output: string,
+      uv: Expr): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
       assembly.addCommon(this.id, this.commonSrc);
@@ -140,7 +144,7 @@ Generates a pattern consisting of alternating rows of bricks.
     }
 
     const args = [
-      assembly.literal('vTextureCoord', DataType.SCALAR),
+      uv,
       ...this.params.map(param =>
           assembly.ident(this.uniformName(node.id, param.id), DataType.OTHER)),
     ];

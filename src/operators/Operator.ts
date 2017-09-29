@@ -2,6 +2,7 @@ import { GraphNode } from '../graph';
 import { Expr } from '../render/Expr';
 import Renderer, { ShaderResource } from '../render/Renderer';
 import ShaderAssembly from '../render/ShaderAssembly';
+import { DataType } from './DataType';
 import { Input } from './Input';
 import { Output } from './Output';
 import { Parameter } from './Parameter';
@@ -53,7 +54,8 @@ export abstract class Operator {
   }
 
   /** Returns an expression object representing the output of this node. */
-  public abstract readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr;
+  public abstract readOutputValue(
+      assembly: ShaderAssembly, node: GraphNode, output: string, uv: Expr): Expr;
 
   /** Build the shader for this operator and its current input connections.
       The shader will include the source for this operator and any operators it depends on.
@@ -62,7 +64,8 @@ export abstract class Operator {
   public build(node: GraphNode): string {
     if (this.outputs.length > 0) {
       const assembly = new ShaderAssembly();
-      assembly.main(this.readOutputValue(assembly, node, this.outputs[0].id));
+      const uv = assembly.literal('vTextureCoord', DataType.UV);
+      assembly.main(this.readOutputValue(assembly, node, this.outputs[0].id, uv));
       return assembly.toString();
     }
   }

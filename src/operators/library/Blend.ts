@@ -67,6 +67,7 @@ class Blend extends Operator {
   ];
   public readonly description = `
 Blends two source images, similar to layer operations in GIMP or PhotoShop.
+* **operator** determines the formula used to blend the two images.
 * **strength** affects how much of the original image shows through.
 * **normalize** controls whether the result is clamped to a [0..1] range.
 `;
@@ -102,15 +103,15 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
     }
   }
 
-  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
+  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
       assembly.addCommon('blend.glsl', require('./shaders/blend.glsl'));
       assembly.finish(node);
     }
 
-    const inputA = assembly.readInputValue(node, 'a', DataType.RGBA);
-    const inputB = assembly.readInputValue(node, 'b', DataType.RGBA);
+    const inputA = assembly.readInputValue(node, 'a', DataType.RGBA, uv);
+    const inputB = assembly.readInputValue(node, 'b', DataType.RGBA, uv);
     const op = assembly.ident(this.uniformName(node.id, 'op'), DataType.SCALAR);
     const strength = assembly.ident(this.uniformName(node.id, 'strength'), DataType.SCALAR);
     const norm = assembly.ident(this.uniformName(node.id, 'norm'), DataType.SCALAR);

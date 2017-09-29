@@ -105,15 +105,15 @@ Generates a tiled pattern of hexagons.
     });
   }
 
-  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
+  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
       assembly.addCommon(this.id, require('./shaders/hexgrid.glsl'));
       assembly.finish(node);
     }
 
-    const args = [
-      assembly.literal('vTextureCoord', DataType.SCALAR),
+    const args: Expr[] = [
+      uv,
       ...this.params.map(param =>
           assembly.ident(this.uniformName(node.id, param.id), DataType.OTHER)),
     ];

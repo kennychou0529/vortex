@@ -70,13 +70,13 @@ Treating the grayscale input as a height map, computes normals.
     }
   }
 
-  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
+  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
       assembly.finish(node);
     }
 
-    const inputA = assembly.readInputValue(node, 'in', DataType.RGBA);
+    const inputA = assembly.readInputValue(node, 'in', DataType.RGBA, uv);
     const scale = this.uniformName(node.id, 'scale');
     const t = `${this.localPrefix(node.id)}_t`;
     const h = `${this.localPrefix(node.id)}_h`;

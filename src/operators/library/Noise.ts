@@ -122,7 +122,7 @@ Generates a periodic Perlin noise texture.
     });
   }
 
-  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
+  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
       assembly.addCommon('glsl-noise/periodic/3d.glsl', this.noise);
@@ -133,7 +133,7 @@ Generates a periodic Perlin noise texture.
 
     const colorName = this.uniformName(node.id, 'color');
     const args = [
-      assembly.literal('vTextureCoord', DataType.UV),
+      uv,
       assembly.ident(this.uniformName(node.id, 'scale_x'), DataType.SCALAR),
       assembly.ident(this.uniformName(node.id, 'scale_y'), DataType.SCALAR),
       assembly.ident(this.uniformName(node.id, 'offset_z'), DataType.SCALAR),

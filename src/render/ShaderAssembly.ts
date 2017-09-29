@@ -105,7 +105,11 @@ export default class ShaderAssembly {
       value from the connected output terminal, unless the input is not connected in Which
       case the expression is zero. Also handles de-duping of expressions that are used in
       more than one place. */
-  public readInputValue(node: GraphNode, signalName: string, type: DataType): Expr {
+  public readInputValue(
+      node: GraphNode,
+      signalName: string,
+      type: DataType,
+      uv: Expr): Expr {
     const operator = node.operator;
     const input = operator.getInput(signalName);
     const inputTerminal = node.findInputTerminal(signalName);
@@ -121,6 +125,9 @@ export default class ShaderAssembly {
     const outputDefn = outputNode.operator.getOutput(outputTerminal.id);
     const outputType = this.outputDataType(outputDefn.type);
     let result: Expr;
+    // TODO: This logic is wrong in two ways.
+    // need to take into account uv.
+    // number of output connecions is not relevant.
     if (outputTerminal.connections.length > 1) {
       const cachedValueId = `${outputNode.operator.localPrefix(node.id)}_${outputTerminal.id}`;
       if (!this.cachedValues.has(cachedValueId)) {
@@ -128,11 +135,11 @@ export default class ShaderAssembly {
         this.assign(
           cachedValueId,
           outputType,
-          outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id));
+          outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id, uv));
       }
       result = this.ident(cachedValueId, outputDefn.type);
     } else {
-      result = outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id);
+      result = outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id, uv);
     }
     if (type !== outputDefn.type) {
       result = this.typeCast(result, type);

@@ -8,24 +8,12 @@ interface Resources {
   shader: ShaderResource;
 }
 
-class Mask extends Operator {
-  public readonly inputs: Input[] = [
-    {
-      id: 'a',
-      name: 'A',
-      type: DataType.RGBA,
-    },
-    {
-      id: 'b',
-      name: 'B',
-      type: DataType.RGBA,
-    },
-    {
-      id: 'mask',
-      name: 'Mask',
-      type: DataType.RGBA,
-    },
-  ];
+class Repeat extends Operator {
+  public readonly inputs: Input[] = [{
+    id: 'in',
+    name: 'In',
+    type: DataType.SCALAR,
+  }];
   public readonly outputs: Output[] = [{
     id: 'out',
     name: 'Out',
@@ -33,22 +21,27 @@ class Mask extends Operator {
   }];
   public readonly params: Parameter[] = [
     {
-      id: 'invert',
-      name: 'Invert',
+      id: 'count_x',
+      name: 'Count X',
       type: ParameterType.INTEGER,
-      enumVals: [
-        { name: 'Off', value: 0 },
-        { name: 'On', value: 1 },
-      ],
-      default: 0,
+      min: 1,
+      max: 16,
+      default: 2,
+    },
+    {
+      id: 'count_y',
+      name: 'Count Y',
+      type: ParameterType.INTEGER,
+      min: 1,
+      max: 16,
+      default: 2,
     },
   ];
-  public readonly description = `
-Blends two source images based on a grayscale mask.
-`;
+
+  public readonly description = `Produces a tiled copy of the input.`;
 
   constructor() {
-    super('filter', 'Mask', 'filter_mask');
+    super('transform', 'Repeat', 'transform_repeat');
   }
 
   // Render a node with the specified renderer.
@@ -60,10 +53,9 @@ Blends two source images based on a grayscale mask.
     if (resources.shader) {
       const program: WebGLProgram = resources.shader.program;
       renderer.executeShaderProgram(resources.shader, gl => {
-        // Set the uniforms for this node and all upstream nodes.
         renderer.setShaderUniforms(
             this.params,
-            program,
+            resources.shader.program,
             node.paramValues,
             this.uniformPrefix(node.id));
         node.visitUpstreamNodes((upstream, termId) => {
@@ -78,20 +70,6 @@ Blends two source images based on a grayscale mask.
     }
   }
 
-  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {
-    if (assembly.start(node)) {
-      assembly.declareUniforms(this, node.id, this.params);
-      assembly.addCommon('mask.glsl', require('./shaders/mask.glsl'));
-      assembly.finish(node);
-    }
-
-    const inputA = assembly.readInputValue(node, 'a', DataType.RGBA, uv);
-    const inputB = assembly.readInputValue(node, 'b', DataType.RGBA, uv);
-    const mask = assembly.readInputValue(node, 'mask', DataType.RGBA, uv);
-    const invert = assembly.ident(this.uniformName(node.id, 'invert'), DataType.OTHER);
-    return assembly.call('mask', [inputA, inputB, mask, invert], DataType.RGBA);
-  }
-
   // Release any GL resources we were holding on to.
   public cleanup(renderer: Renderer, node: GraphNode, resources: Resources) {
     if (resources.shader) {
@@ -99,6 +77,23 @@ Blends two source images based on a grayscale mask.
       delete resources.shader;
     }
   }
+
+  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {
+    if (assembly.start(node)) {
+      assembly.declareUniforms(this, node.id, this.params);
+      assembly.finish(node);
+    }
+
+    const countX = this.uniformName(node.id, 'count_x');
+    const countY = this.uniformName(node.id, 'count_y');
+    const tuv = `${this.localPrefix(node.id)}_uv`;
+    assembly.assign(tuv, 'vec2', uv);
+    return assembly.readInputValue(
+        node, 'in', DataType.SCALAR,
+        assembly.literal(
+            `vec2(fract(${tuv}.x * float(${countX})), fract(${tuv}.y * float(${countY})))`,
+            DataType.UV));
+  }
 }
 
-export default new Mask();
+export default new Repeat();

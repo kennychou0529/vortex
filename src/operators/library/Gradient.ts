@@ -77,7 +77,7 @@ Generates a simple gradient.
     }
   }
 
-  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
+  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
       assembly.addCommon('gradient-color.glsl', require('./shaders/gradient-color.glsl'));
@@ -86,8 +86,8 @@ Generates a simple gradient.
     }
 
     const colorName = this.uniformName(node.id, 'color');
-    const args = [
-      assembly.literal('vTextureCoord', DataType.UV),
+    const args: Expr[] = [
+      uv,
       assembly.ident(this.uniformName(node.id, 'type'), DataType.SCALAR),
       assembly.ident(`${colorName}_colors`, DataType.OTHER),
       assembly.ident(`${colorName}_positions`, DataType.OTHER),

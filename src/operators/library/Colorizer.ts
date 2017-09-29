@@ -78,14 +78,14 @@ class Colorizer extends Operator {
     }
   }
 
-  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, output: string): Expr {
+  public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
       assembly.addCommon('gradient-color.glsl', require('./shaders/gradient-color.glsl'));
       assembly.finish(node);
     }
 
-    const inputA = assembly.readInputValue(node, 'in', DataType.SCALAR);
+    const inputA = assembly.readInputValue(node, 'in', DataType.SCALAR, uv);
     const colorName = this.uniformName(node.id, 'color');
     const args = [
       inputA,
