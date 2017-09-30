@@ -27,11 +27,11 @@ class NormalMap extends Operator {
       id: 'scale',
       name: 'Height Scale',
       type: ParameterType.FLOAT,
-      min: 0.001,
-      max: 2,
+      min: -0.5,
+      max: 0.5,
       precision: 3,
       increment: 0.01,
-      default: 0.5,
+      default: 0.2,
     },
   ];
 
