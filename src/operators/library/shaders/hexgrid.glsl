@@ -1,9 +1,3 @@
-float hx_linearstep(float low, float high, float t) {
-  if (t <= low) { return 0.0; }
-  if (t >= high) { return 1.0; }
-  return (t - low) / (high - low);
-}
-
 float hexgrid(
     vec2 uv,
     int xCount,
@@ -59,9 +53,9 @@ float hexgrid(
     }
   }
 
-  dx = hx_linearstep(spacing, spacing + blur * roundness, dx);
-  ds = hx_linearstep(spacing, spacing + blur * roundness, ds);
-  dt = hx_linearstep(spacing, spacing + blur * roundness, dt);
+  dx = linearstep(spacing, spacing + blur * roundness, dx);
+  ds = linearstep(spacing, spacing + blur * roundness, ds);
+  dt = linearstep(spacing, spacing + blur * roundness, dt);
 
   float value;
   if (corner == 1) { // Mitered

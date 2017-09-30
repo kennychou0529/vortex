@@ -116,7 +116,8 @@ Generates a triangular grid pattern.
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
-      assembly.addCommon(this.id, require('./shaders/triangles.glsl'));
+      assembly.addCommon('steppers.glsl', require('./shaders/steppers.glsl'));
+      assembly.addCommon('triangles.glsl', require('./shaders/triangles.glsl'));
       assembly.finish(node);
     }
 

@@ -1,9 +1,3 @@
-float tr_linearstep(float low, float high, float t) {
-  if (t <= low) { return 0.0; }
-  if (t >= high) { return 1.0; }
-  return (t - low) / (high - low);
-}
-
 float triangles(
     vec2 uv,
     int xCount,
@@ -23,9 +17,9 @@ float triangles(
   float si = floor(s + 0.5);
   float ti = floor(t + 0.5);
 
-  float dx = tr_linearstep(spacing, spacing + blur * roundness, abs(x - xi));
-  float ds = tr_linearstep(spacing, spacing + blur * roundness, abs(s - si));
-  float dt = tr_linearstep(spacing, spacing + blur * roundness, abs(t - ti));
+  float dx = linearstep(spacing, spacing + blur * roundness, abs(x - xi));
+  float ds = linearstep(spacing, spacing + blur * roundness, abs(s - si));
+  float dt = linearstep(spacing, spacing + blur * roundness, abs(t - ti));
 
   float value;
   if (corner == 1) { // Mitered

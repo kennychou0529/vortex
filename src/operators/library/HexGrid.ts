@@ -108,7 +108,8 @@ Generates a tiled pattern of hexagons.
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
-      assembly.addCommon(this.id, require('./shaders/hexgrid.glsl'));
+      assembly.addCommon('steppers.glsl', require('./shaders/steppers.glsl'));
+      assembly.addCommon('hexgrid.glsl', require('./shaders/hexgrid.glsl'));
       assembly.finish(node);
     }
 

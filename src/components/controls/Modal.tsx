@@ -5,6 +5,7 @@ import { Component, h } from 'preact';
 import './Modal.scss';
 
 const Portal: any = require('preact-portal');
+const Combokeys: any = require('combokeys');
 
 interface Props {
   children?: any;
@@ -58,22 +59,38 @@ export default class Modal extends Component<Props, State> {
   public static Header = Header;
   public static Body = Body;
   public static Footer = Footer;
+  private combokeys: any;
 
   constructor() {
     super();
+    this.combokeys = new Combokeys(document.documentElement);
     this.state = {
       closing: false,
     };
   }
 
+  public getChildContext() {
+    return {
+      combokeys: this.combokeys,
+    };
+  }
+
   public componentWillReceiveProps(nextProps: Props) {
-    if (this.props.open && !nextProps.open) {
-      this.setState({ closing: true });
-      window.setTimeout(() => {
-        if (!this.props.open) {
-          this.setState({ closing: false });
-        }
-      }, 500);
+    const openChanged = this.props.open !== nextProps.open;
+    if (openChanged) {
+      if (!nextProps.open) {
+        this.combokeys.reset();
+        this.context.combokeys.unpause();
+        this.setState({ closing: true });
+        window.setTimeout(() => {
+          if (!this.props.open) {
+            this.setState({ closing: false });
+          }
+        }, 500);
+      } else {
+        this.context.combokeys.pause();
+        this.combokeys.bind('esc', this.props.onHide);
+      }
     }
   }
 

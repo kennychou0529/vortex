@@ -1,20 +1,21 @@
 # TODO:
 
 * Keyboard shortcuts for modals.
+* Type conversions for node outputs
+  * UV not fully supported
+  * See if we can remove some of the params
 * Limit operator dragging to document size
 * Quantize initial placement.
 * Gradient: Delete color stops
 * Finish up blend filter
-  - normalize
-* Type conversions for node outputs
+  - normalize output
 * Editing existing connectors
 * Deleting connectors
-* Finish compass rose
-* Edit color parameters
-* Import / Export diagrams
+* Finish compass rose - center button should center the diagram
+* Upload diagrams
 * Undo / Redo
 * Save to cloud (url)
-* Generate unique url - server component
+  * Generate unique url - server component
 * Export image
 * Log scale controls
 * Unify DataType and ParameterType

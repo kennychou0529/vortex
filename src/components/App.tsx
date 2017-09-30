@@ -12,6 +12,7 @@ import ToolPanel from './ToolPanel';
 import './App.scss';
 
 const Combokeys: any = require('combokeys');
+const pause: any = require('combokeys/plugins/pause');
 
 interface State {
   graph: Graph;
@@ -27,6 +28,7 @@ export default class App extends Component<undefined, State> {
     this.registry = new Registry();
     this.renderer = new Renderer();
     this.combokeys = new Combokeys(document.documentElement);
+    pause(this.combokeys);
     this.state = {
       graph: new Graph(),
     };
