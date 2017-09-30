@@ -13,10 +13,10 @@ float bricks(
   float y = (uv.y + yOffset) * float(yCount);
   float yr = floor(y);
   float yi = floor(y + 0.5);
-  float yf = smoothstep(ySpacing, ySpacing + yBlur, abs(y - yi));
+  float yf = smootherstep(ySpacing, ySpacing + yBlur, abs(y - yi));
   float x = (uv.x + xOffset) * float(xCount) + (floor(yr * 0.5) * 2.0 == yr ? stagger : 0.0);
   float xi = floor(x + 0.5);
-  float xf = smoothstep(xSpacing, xSpacing + xBlur, abs(x - xi));
+  float xf = smootherstep(xSpacing, xSpacing + xBlur, abs(x - xi));
   float value;
   if (corner == 1) { // Mitered
     value = max(0., (xf + yf) - 1.0);

@@ -16,7 +16,7 @@ class Noise extends Operator {
   public readonly outputs: Output[] = [{
     id: 'out',
     name: 'Out',
-    type: DataType.SCALAR,
+    type: DataType.RGBA,
   }];
 
   public readonly params: Parameter[] = [

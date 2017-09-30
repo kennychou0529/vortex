@@ -114,10 +114,15 @@ export default class ShaderAssembly {
     const input = operator.getInput(signalName);
     const inputTerminal = node.findInputTerminal(signalName);
     if (inputTerminal.connection === null) {
+      console.log('default:', signalName, DataType[input.type]);
       switch (input.type) {
-        case DataType.SCALAR: return this.literal('0.0', DataType.SCALAR);
-        case DataType.RGBA: return this.literal('vec4(0.0, 0.0, 0.0, 0.0)', input.type);
-        case DataType.XYZW: return this.literal('vec4(0.0, 0.0, 0.0, 0.0)', input.type);
+        case DataType.SCALAR:
+          return this.literal('0.0', input.type);
+        case DataType.RGBA:
+        case DataType.XYZW:
+          return this.literal('vec4(0.0, 0.0, 0.0, 0.0)', input.type);
+        case DataType.UV:
+          return this.literal('vec2(0.0, 0.0)', input.type);
       }
     }
     const outputTerminal = inputTerminal.connection.source;

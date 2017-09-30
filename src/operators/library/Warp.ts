@@ -8,12 +8,18 @@ interface Resources {
   shader: ShaderResource;
 }
 
-class Repeat extends Operator {
-  public readonly inputs: Input[] = [{
-    id: 'in',
-    name: 'In',
-    type: DataType.RGBA,
-  }];
+class Warp extends Operator {
+  public readonly inputs: Input[] = [
+    {
+      id: 'in',
+      name: 'In',
+      type: DataType.RGBA,
+    },
+    {
+      id: 'duv',
+      name: 'dUV',
+      type: DataType.XYZW,
+    }];
   public readonly outputs: Output[] = [{
     id: 'out',
     name: 'Out',
@@ -21,27 +27,22 @@ class Repeat extends Operator {
   }];
   public readonly params: Parameter[] = [
     {
-      id: 'count_x',
-      name: 'Count X',
-      type: ParameterType.INTEGER,
-      min: 1,
-      max: 16,
-      default: 2,
-    },
-    {
-      id: 'count_y',
-      name: 'Count Y',
-      type: ParameterType.INTEGER,
-      min: 1,
-      max: 16,
-      default: 2,
+      id: 'intensity',
+      name: 'Intensity',
+      type: ParameterType.FLOAT,
+      min: 0,
+      max: 1,
+      precision: 2,
+      increment: 0.01,
+      default: 0.05,
     },
   ];
 
-  public readonly description = `Produces a tiled copy of the input.`;
+  public readonly description =
+    `Dispaces the input pixels based on the normal vector of the displacement input.`;
 
   constructor() {
-    super('transform', 'Repeat', 'transform_repeat');
+    super('transform', 'Warp', 'transform_warp');
   }
 
   // Render a node with the specified renderer.
@@ -84,16 +85,18 @@ class Repeat extends Operator {
       assembly.finish(node);
     }
 
-    const countX = this.uniformName(node.id, 'count_x');
-    const countY = this.uniformName(node.id, 'count_y');
-    const tuv = `${this.localPrefix(node.id)}_uv`;
-    assembly.assign(tuv, 'vec2', uv);
+    const intensity = this.uniformName(node.id, 'intensity');
+    const iuv = `${this.localPrefix(node.id)}_uv`;
+    assembly.assign(iuv, 'vec2', uv);
+    const duv = `${this.localPrefix(node.id)}_duv`;
+    assembly.assign(duv, 'vec4', assembly.readInputValue(node, 'duv', DataType.XYZW, uv));
+
     return assembly.readInputValue(
         node, 'in', DataType.RGBA,
         assembly.literal(
-            `vec2(fract(${tuv}.x * float(${countX})), fract(${tuv}.y * float(${countY})))`,
+            `${iuv} + (${duv}.xy - 0.5) * vec2(1.0, -1.0) * ${intensity}`,
             DataType.UV));
   }
 }
 
-export default new Repeat();
+export default new Warp();

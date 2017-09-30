@@ -53,6 +53,7 @@ Treating the grayscale input as a height map, computes normals.
       const program: WebGLProgram = resources.shader.program;
       renderer.executeShaderProgram(resources.shader, gl => {
         // Set the uniforms for this node and all upstream nodes.
+        // gl.hint(ext.FRAGMENT_SHADER_DERIVATIVE_HINT_OES, gl.NICEST);
         renderer.setShaderUniforms(
             this.params,
             program,

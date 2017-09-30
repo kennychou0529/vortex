@@ -93,9 +93,10 @@ export default class GraphView extends Component<Props, State> {
     const result: JSX.Element[] = [];
     for (const output of node.outputs) {
       for (const connection of output.connections) {
+        const input = connection.dest;
         result.push(
           <ConnectionRendition
-              key={`${node.id}_${output.id}`}
+              key={`${node.id}_${output.id}_${input.node.id}_${input.id}`}
               ts={connection.source}
               te={connection.dest}
           />);

@@ -21,6 +21,7 @@
 * Standardize 'Resources' across all operators
 * Move 'render' to Operator class
 * Output type conversion - currently assumes all outputs are vec4.
+* Make brick edges smoother - possibly implement our own smootherstep? ('steps' library);
 * Save to server - generate unique url - need accounts?
 
 * https://github.com/Jam3/glsl-fast-gaussian-blur
@@ -29,20 +30,18 @@
 
 # Operators to do:
   * Transforms:
-    * Warp
     * Mirror
     * Rotate
-    * Stitch
+    * Stitch (used to blend images that aren't repeating)
   * Filters:
     * Blur
     * Color Correct
-    * Colorize
+    * Color Adjust
     * Combine
     * Emboss
     * Math
     * Modulus
     * Bump Map
-    * Lighting
   * Generators:
     * Bitmap
     * Cellular

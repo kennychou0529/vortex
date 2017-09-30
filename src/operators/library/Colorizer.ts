@@ -41,7 +41,7 @@ class Colorizer extends Operator {
   public readonly description = `Transforms input value through a color gradient.`;
 
   constructor() {
-    super('filter', 'Colorizer', 'filter_colorizer');
+    super('filter', 'Colorize', 'filter_colorize');
   }
 
   // Render a node with the specified renderer.

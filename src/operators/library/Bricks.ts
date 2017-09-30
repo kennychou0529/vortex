@@ -111,8 +111,6 @@ Generates a pattern consisting of alternating rows of bricks.
 * **Corner** controls the style of the corners (square, round or mitered).
 `;
 
-  private commonSrc: string = require('./shaders/bricks.glsl');
-
   constructor() {
     super('pattern', 'Bricks', 'pattern_bricks');
   }
@@ -139,7 +137,8 @@ Generates a pattern consisting of alternating rows of bricks.
       uv: Expr): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
-      assembly.addCommon(this.id, this.commonSrc);
+      assembly.addCommon('steppers.glsl', require('./shaders/steppers.glsl'));
+      assembly.addCommon('bricks.glsl', require('./shaders/bricks.glsl'));
       assembly.finish(node);
     }
 
