@@ -21,6 +21,12 @@ button {
   &.selected {
     background-image: $buttonSelectedBg;
   }
+  height: 32px;
+  padding: 0 12px;
+  border-radius: $buttonRadius;
+  border: 1px solid $buttonBorderColor;
+  background-image: $buttonBg;
+  outline: none;
 
   &[disabled] {
     opacity: .5;
@@ -43,4 +49,13 @@ button {
       border-right: 1px solid $buttonBorderColor;
     }
   }
+}
+
+select {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: $buttonRadius;
+  border: 1px solid $buttonBorderColor;
+  background-image: $buttonBg;
+  outline: none;
 }

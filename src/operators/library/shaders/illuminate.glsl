@@ -7,8 +7,8 @@ vec4 illuminate(
     vec4 ambient,
     vec4 diffuse,
     vec4 specular) {
-  float a = azimuth * 3.1415926 / 180.0;
-  float e = elevation * 3.1415926 / 180.0;
+  float a = radians(azimuth);
+  float e = radians(elevation);
   vec3 n = normal.xyz * 2.0 - 1.0;
   vec3 color = (src * ambient).xyz;
   vec3 lightDir = vec3(sin(a) * cos(e), cos(a) * cos(e), sin(e));

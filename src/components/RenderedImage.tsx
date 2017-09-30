@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default class RenderedImage extends Component<Props, undefined> {
-  private canvas: HTMLCanvasElement;
+  public canvas: HTMLCanvasElement;
 
   public componentDidMount() {
     this.updateCanvas(ChangeType.CONNECTION_CHANGED);
@@ -19,7 +19,10 @@ export default class RenderedImage extends Component<Props, undefined> {
   }
 
   public componentDidUpdate(prevProps: Props) {
-    if (prevProps.node !== this.props.node || prevProps.tiling !== this.props.tiling) {
+    if (prevProps.node !== this.props.node ||
+          prevProps.width !== this.props.width ||
+          prevProps.height !== this.props.height ||
+          prevProps.tiling !== this.props.tiling) {
       prevProps.node.unwatch(this.updateCanvas);
       this.updateCanvas(ChangeType.CONNECTION_CHANGED);
       this.props.node.watch(this.updateCanvas);
@@ -34,6 +37,7 @@ export default class RenderedImage extends Component<Props, undefined> {
     return (
       <canvas
           className="rendered-image"
+          style={{ width: `${width}px`, height: `${height}px` }}
           width={width}
           height={height}
           ref={el => this.canvas = el as HTMLCanvasElement}
