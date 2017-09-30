@@ -11,25 +11,21 @@ export interface ShaderResource {
 export default class Renderer {
   private canvas: HTMLCanvasElement;
   private gl: WebGLRenderingContext;
-  private unitSquare: WebGLBuffer;
   private vertexShader: WebGLShader;
+  private tiling: number;
+  private vertexBuffers: WebGLBuffer[];
 
   constructor() {
     this.canvas = document.createElement('canvas');
     this.gl = this.canvas.getContext('webgl2') as WebGLRenderingContext;
-
-    // Allocate a buffer containing a unit square
+    this.tiling = 1;
     const gl = this.gl;
-    const positions = [
-      -1, -1, 0, 0,
-      -1, 1, 0, 1,
-      1, -1, 1, 0,
-      1, 1, 1, 1,
+    this.vertexBuffers = [
+      null,
+      this.createBuffer(1),
+      this.createBuffer(2),
+      this.createBuffer(3),
     ];
-    this.unitSquare = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.unitSquare);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-
     this.vertexShader = this.compileShader(gl.VERTEX_SHADER, `#version 300 es
 in vec4 aVertexPosition;
 in vec4 aTextureCoords;
@@ -39,6 +35,10 @@ void main() {
   vTextureCoord = aTextureCoords.xy;
   gl_Position = aVertexPosition;
 }`);
+  }
+
+  public setTiling(tiling: number) {
+    this.tiling = tiling;
   }
 
   public render(
@@ -73,7 +73,7 @@ void main() {
     const gl = this.gl;
 
     gl.useProgram(resource.program);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.unitSquare);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffers[this.tiling]);
 
     // Set up the vertex buffer
     const vertexPosition = gl.getAttribLocation(resource.program, 'aVertexPosition');
@@ -91,7 +91,7 @@ void main() {
       setShaderVars(gl);
     }
 
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    gl.drawArrays(gl.TRIANGLES, 0, this.tiling ** 2 * 6);
   }
 
   public setShaderUniforms(
@@ -214,5 +214,37 @@ void main() {
       return null;
     }
     return shader;
+  }
+
+  private createBuffer(tiling: number): WebGLBuffer {
+    const gl = this.gl;
+    const positions: number[] = [];
+    for (let y = 0; y < tiling; y += 1) {
+      const y0 = y * 2 / tiling - 1;
+      const y1 = (y + 1) * 2 / tiling - 1;
+      for (let x = 0; x < tiling; x += 1) {
+        const x0 = x * 2 / tiling - 1;
+        const x1 = (x + 1) * 2 / tiling - 1;
+        positions.splice(positions.length, 0,
+          x0, y0, 0, 0,
+          x0, y1, 0, 1,
+          x1, y0, 1, 0,
+
+          x0, y1, 0, 1,
+          x1, y0, 1, 0,
+          x1, y1, 1, 1,
+        );
+      }
+    }
+    // const positions = [
+    //   -1, -1, 0, 0,
+    //   -1, 1, 0, 1,
+    //   1, -1, 1, 0,
+    //   1, 1, 1, 1,
+    // ];
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+    return buffer;
   }
 }

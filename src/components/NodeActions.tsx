@@ -10,6 +10,7 @@ import './NodeActions.scss';
 
 interface Props {
   node: GraphNode;
+  onSetTiling: (tiling: number) => void;
 }
 
 interface State {
@@ -111,5 +112,6 @@ export default class NodeActions extends Component<Props, State> {
   @bind
   private setRepeat(repeat: number) {
     this.setState({ repeat });
+    this.props.onSetTiling(repeat);
   }
 }

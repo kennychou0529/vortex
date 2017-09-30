@@ -1,6 +1,5 @@
 # TODO:
 
-* Keyboard shortcuts for modals.
 * Type conversions for node outputs
   * UV not fully supported
   * See if we can remove some of the params
@@ -24,6 +23,7 @@
 * Output type conversion - currently assumes all outputs are vec4.
 * Make brick edges smoother - possibly implement our own smootherstep? ('steps' library);
 * Save to server - generate unique url - need accounts?
+* Enter key to close dialogs.
 
 * https://github.com/Jam3/glsl-fast-gaussian-blur
 * https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
