@@ -85,7 +85,7 @@ class Colorizer extends Operator {
       assembly.finish(node);
     }
 
-    const inputA = assembly.readInputValue(node, 'in', DataType.FLOAT, uv);
+    const inputA = assembly.readInputValue(node, 'in', uv);
     const colorName = this.uniformName(node.id, 'color');
     const args = [
       inputA,

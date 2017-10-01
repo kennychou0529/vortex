@@ -115,8 +115,7 @@ Generates a tiled pattern of hexagons.
 
     const args: Expr[] = [
       uv,
-      ...this.params.map(param =>
-          assembly.ident(this.uniformName(node.id, param.id), DataType.OTHER)),
+      ...this.params.map(param => assembly.uniform(node, param.id)),
     ];
     return assembly.call('hexgrid', args, DataType.FLOAT);
   }

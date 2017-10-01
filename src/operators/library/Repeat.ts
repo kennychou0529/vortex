@@ -89,7 +89,7 @@ class Repeat extends Operator {
     const tuv = `${this.localPrefix(node.id)}_uv`;
     assembly.assign(tuv, 'vec2', uv);
     return assembly.readInputValue(
-        node, 'in', DataType.RGBA,
+        node, 'in',
         assembly.literal(
             `vec2(fract(${tuv}.x * float(${countX})), fract(${tuv}.y * float(${countY})))`,
             DataType.UV));

@@ -118,10 +118,10 @@ converted into a sequence of sawtooth waves.
 
     const colorName = this.uniformName(node.id, 'color');
     return assembly.call('modulus', [
-      assembly.readInputValue(node, 'input', DataType.FLOAT, uv),
-      assembly.ident(this.uniformName(node.id, 'frequency'), DataType.FLOAT),
-      assembly.ident(this.uniformName(node.id, 'offset'), DataType.FLOAT),
-      assembly.ident(this.uniformName(node.id, 'phase'), DataType.FLOAT),
+      assembly.readInputValue(node, 'input', uv),
+      assembly.uniform(node, 'frequency'),
+      assembly.uniform(node, 'offset'),
+      assembly.uniform(node, 'phase'),
       assembly.ident(`${colorName}_colors`, DataType.OTHER),
       assembly.ident(`${colorName}_positions`, DataType.OTHER),
     ], DataType.RGBA);

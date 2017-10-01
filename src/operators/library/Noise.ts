@@ -134,13 +134,13 @@ Generates a periodic Perlin noise texture.
     const colorName = this.uniformName(node.id, 'color');
     const args = [
       uv,
-      assembly.ident(this.uniformName(node.id, 'scale_x'), DataType.FLOAT),
-      assembly.ident(this.uniformName(node.id, 'scale_y'), DataType.FLOAT),
-      assembly.ident(this.uniformName(node.id, 'offset_z'), DataType.FLOAT),
-      assembly.ident(this.uniformName(node.id, 'scale_value'), DataType.FLOAT),
-      assembly.ident(this.uniformName(node.id, 'start_band'), DataType.FLOAT),
-      assembly.ident(this.uniformName(node.id, 'end_band'), DataType.FLOAT),
-      assembly.ident(this.uniformName(node.id, 'persistence'), DataType.FLOAT),
+      assembly.uniform(node, 'scale_x'),
+      assembly.uniform(node, 'scale_y'),
+      assembly.uniform(node, 'offset_z'),
+      assembly.uniform(node, 'scale_value'),
+      assembly.uniform(node, 'start_band'),
+      assembly.uniform(node, 'end_band'),
+      assembly.uniform(node, 'persistence'),
       assembly.ident(`${colorName}_colors`, DataType.OTHER),
       assembly.ident(`${colorName}_positions`, DataType.OTHER),
     ];

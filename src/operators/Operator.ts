@@ -53,6 +53,22 @@ export abstract class Operator {
     return result;
   }
 
+  /** Locate an operator output by id. */
+  public getParam(id: string): Parameter {
+    for (const p of this.params) {
+      if (p.id === id) {
+        return p;
+      } else if (p.children) {
+        for (const c of p.children) {
+          if (c.id === id) {
+            return c;
+          }
+        }
+      }
+    }
+    throw Error(`Parameter not found: ${this.id}.${id}`);
+  }
+
   /** Returns an expression object representing the output of this node. */
   public abstract readOutputValue(
       assembly: ShaderAssembly, node: GraphNode, output: string, uv: Expr): Expr;

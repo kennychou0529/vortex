@@ -89,10 +89,10 @@ class Warp extends Operator {
     const iuv = `${this.localPrefix(node.id)}_uv`;
     assembly.assign(iuv, 'vec2', uv);
     const duv = `${this.localPrefix(node.id)}_duv`;
-    assembly.assign(duv, 'vec4', assembly.readInputValue(node, 'duv', DataType.XYZW, uv));
+    assembly.assign(duv, 'vec4', assembly.readInputValue(node, 'duv', uv));
 
     return assembly.readInputValue(
-        node, 'in', DataType.RGBA,
+        node, 'in',
         assembly.literal(
             `${iuv} + (${duv}.xy - 0.5) * vec2(1.0, -1.0) * ${intensity}`,
             DataType.UV));

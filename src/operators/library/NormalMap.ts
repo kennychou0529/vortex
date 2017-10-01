@@ -77,7 +77,7 @@ Treating the grayscale input as a height map, computes normals.
       assembly.finish(node);
     }
 
-    const inputA = assembly.readInputValue(node, 'in', DataType.RGBA, uv);
+    const inputA = assembly.readInputValue(node, 'in', uv);
     const scale = this.uniformName(node.id, 'scale');
     const t = `${this.localPrefix(node.id)}_t`;
     const h = `${this.localPrefix(node.id)}_h`;

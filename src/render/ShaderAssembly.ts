@@ -51,7 +51,7 @@ export default class ShaderAssembly {
     }
   }
 
-  /** Add an extension directive. */
+  /** Add a GL extension directive. */
   public addExtension(src: string) {
     if (!this.extensions.has(src)) {
       this.extensions.add(src);
@@ -84,12 +84,10 @@ export default class ShaderAssembly {
   }
 
   /** Construct a reference to a uniform. */
-  public uniform(op: Operator, nodeId: number, param: Parameter): IdentExpr {
-    let type = DataType.FLOAT;
-    if (param.type === DataType.RGBA) {
-      type = DataType.RGBA;
-    }
-    return { kind: ExprKind.IDENT, name: op.uniformName(nodeId, param), type };
+  public uniform(node: GraphNode, paramName: string): IdentExpr {
+    const op = node.operator;
+    const param: Parameter = op.getParam(paramName);
+    return { kind: ExprKind.IDENT, name: op.uniformName(node.id, param), type: param.type };
   }
 
   public typeCast(expr: Expr, type: DataType) {
@@ -98,6 +96,10 @@ export default class ShaderAssembly {
 
   /** Add an assignment to the list of statements to execute before the final return statement. */
   public assign(name: string, type: string, value: Expr) {
+    if (type !== this.glType(value.type)) {
+      // Eventually we will get rid of the type parameter.
+      throw Error('assignment type mismatch');
+    }
     this.assignmentList.push({ name, type, value });
   }
 
@@ -105,26 +107,14 @@ export default class ShaderAssembly {
       value from the connected output terminal, unless the input is not connected in Which
       case the expression is zero. Also handles de-duping of expressions that are used in
       more than one place. */
-  public readInputValue(
-      node: GraphNode,
-      signalName: string,
-      type: DataType,
-      uv: Expr): Expr {
+  public readInputValue(node: GraphNode, signalName: string, uv: Expr): Expr {
     const operator = node.operator;
     const input = operator.getInput(signalName);
     const inputTerminal = node.findInputTerminal(signalName);
     if (inputTerminal.connection === null) {
-      console.log('default:', signalName, DataType[input.type]);
-      switch (input.type) {
-        case DataType.FLOAT:
-          return this.literal('0.0', input.type);
-        case DataType.RGBA:
-        case DataType.XYZW:
-          return this.literal('vec4(0.0, 0.0, 0.0, 0.0)', input.type);
-        case DataType.UV:
-          return this.literal('vec2(0.0, 0.0)', input.type);
-      }
+      return this.defaultValue(input.type);
     }
+
     const outputTerminal = inputTerminal.connection.source;
     const outputNode = outputTerminal.node;
     const outputDefn = outputNode.operator.getOutput(outputTerminal.id);
@@ -146,8 +136,8 @@ export default class ShaderAssembly {
     } else {
       result = outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id, uv);
     }
-    if (type !== outputDefn.type) {
-      result = this.typeCast(result, type);
+    if (input.type !== outputDefn.type) {
+      result = this.typeCast(result, input.type);
     }
     return result;
   }
@@ -247,6 +237,23 @@ export default class ShaderAssembly {
         throw Error('Type conversion not supported: ' +
             `${DataType[typeCast.type]} ${DataType[typeCast.expr.type]}.`);
       }
+    }
+  }
+
+  private defaultValue(type: DataType) {
+    switch (type) {
+      case DataType.INTEGER:
+        return this.literal('0', type);
+      case DataType.FLOAT:
+        return this.literal('0.0', type);
+      case DataType.UV:
+        return this.literal('vec2(0.0, 0.0)', type);
+      case DataType.RGB:
+      case DataType.XYZ:
+        return this.literal('vec3(0.0, 0.0, 0.0)', type);
+      case DataType.RGBA:
+      case DataType.XYZW:
+        return this.literal('vec4(0.0, 0.0, 0.0, 0.0)', type);
     }
   }
 

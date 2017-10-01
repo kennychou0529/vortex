@@ -144,8 +144,7 @@ Generates a pattern consisting of alternating rows of bricks.
 
     const args = [
       uv,
-      ...this.params.map(param =>
-          assembly.ident(this.uniformName(node.id, param.id), DataType.OTHER)),
+      ...this.params.map(param => assembly.uniform(node, param.id)),
     ];
     return assembly.call('bricks', args, DataType.FLOAT);
   }

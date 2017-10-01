@@ -120,14 +120,13 @@ Illuminate the input texture.
       assembly.finish(node);
     }
 
-    const input = assembly.readInputValue(node, 'in', DataType.RGBA, uv);
-    const normal = assembly.readInputValue(node, 'normal', DataType.XYZW, uv);
+    const input = assembly.readInputValue(node, 'in', uv);
+    const normal = assembly.readInputValue(node, 'normal', uv);
 
     const args = [
       input,
       normal,
-      ...this.params.map(param =>
-          assembly.ident(this.uniformName(node.id, param.id), DataType.OTHER)),
+      ...this.params.map(param => assembly.uniform(node, param.id)),
     ];
 
     return assembly.call('illuminate', args, DataType.RGBA);

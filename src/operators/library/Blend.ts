@@ -110,11 +110,11 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
       assembly.finish(node);
     }
 
-    const inputA = assembly.readInputValue(node, 'a', DataType.RGBA, uv);
-    const inputB = assembly.readInputValue(node, 'b', DataType.RGBA, uv);
-    const op = assembly.ident(this.uniformName(node.id, 'op'), DataType.FLOAT);
-    const strength = assembly.ident(this.uniformName(node.id, 'strength'), DataType.FLOAT);
-    const norm = assembly.ident(this.uniformName(node.id, 'norm'), DataType.FLOAT);
+    const inputA = assembly.readInputValue(node, 'a', uv);
+    const inputB = assembly.readInputValue(node, 'b', uv);
+    const op = assembly.uniform(node, 'op');
+    const strength = assembly.uniform(node, 'strength');
+    const norm = assembly.uniform(node, 'norm');
     return assembly.call('blend', [inputA, inputB, op, strength, norm], DataType.RGBA);
   }
 

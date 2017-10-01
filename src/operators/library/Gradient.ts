@@ -88,7 +88,7 @@ Generates a simple gradient.
     const colorName = this.uniformName(node.id, 'color');
     const args: Expr[] = [
       uv,
-      assembly.ident(this.uniformName(node.id, 'type'), DataType.FLOAT),
+      assembly.uniform(node, 'type'),
       assembly.ident(`${colorName}_colors`, DataType.OTHER),
       assembly.ident(`${colorName}_positions`, DataType.OTHER),
     ];
