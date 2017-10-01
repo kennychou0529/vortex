@@ -8,3 +8,9 @@ significant differences between the two programs, the biggest of which is the fa
 been entirely rewritten in JavaScript and runs entirely in the browser.
 
 The actual computation of the images is performed via WebGL.
+
+## Running
+
+npm install
+npm start
+Go to http://localhost:9001

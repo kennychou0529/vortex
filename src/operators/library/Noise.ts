@@ -1,4 +1,4 @@
-import { DataType, Operator, Output, Parameter, ParameterType } from '..';
+import { DataType, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
 import Renderer, { ShaderResource } from '../../render/Renderer';
@@ -23,7 +23,7 @@ class Noise extends Operator {
     {
       id: 'scale_x',
       name: 'Scale X',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       min: 1,
       max: 100,
       default: 1,
@@ -31,7 +31,7 @@ class Noise extends Operator {
     {
       id: 'scale_y',
       name: 'Scale Y',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       min: 1,
       max: 100,
       default: 1,
@@ -39,7 +39,7 @@ class Noise extends Operator {
     {
       id: 'offset_z',
       name: 'Z Offset',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: 200,
       precision: 1,
@@ -49,7 +49,7 @@ class Noise extends Operator {
     {
       id: 'scale_value',
       name: 'Value Scale',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: .01,
       max: 2,
       default: 0.7,
@@ -58,7 +58,7 @@ class Noise extends Operator {
     {
       id: 'start_band',
       name: 'Start Band',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       min: 1,
       max: 16,
       default: 1,
@@ -66,7 +66,7 @@ class Noise extends Operator {
     {
       id: 'end_band',
       name: 'End Band',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       min: 1,
       max: 16,
       default: 8,
@@ -74,7 +74,7 @@ class Noise extends Operator {
     {
       id: 'persistence',
       name: 'Persistence',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: 1,
       default: 0.5,
@@ -83,7 +83,7 @@ class Noise extends Operator {
     {
       id: 'color',
       name: 'Color',
-      type: ParameterType.COLOR_GRADIENT,
+      type: DataType.RGBA_GRADIENT,
       max: 32,
       default: [
         {
@@ -134,13 +134,13 @@ Generates a periodic Perlin noise texture.
     const colorName = this.uniformName(node.id, 'color');
     const args = [
       uv,
-      assembly.ident(this.uniformName(node.id, 'scale_x'), DataType.SCALAR),
-      assembly.ident(this.uniformName(node.id, 'scale_y'), DataType.SCALAR),
-      assembly.ident(this.uniformName(node.id, 'offset_z'), DataType.SCALAR),
-      assembly.ident(this.uniformName(node.id, 'scale_value'), DataType.SCALAR),
-      assembly.ident(this.uniformName(node.id, 'start_band'), DataType.SCALAR),
-      assembly.ident(this.uniformName(node.id, 'end_band'), DataType.SCALAR),
-      assembly.ident(this.uniformName(node.id, 'persistence'), DataType.SCALAR),
+      assembly.ident(this.uniformName(node.id, 'scale_x'), DataType.FLOAT),
+      assembly.ident(this.uniformName(node.id, 'scale_y'), DataType.FLOAT),
+      assembly.ident(this.uniformName(node.id, 'offset_z'), DataType.FLOAT),
+      assembly.ident(this.uniformName(node.id, 'scale_value'), DataType.FLOAT),
+      assembly.ident(this.uniformName(node.id, 'start_band'), DataType.FLOAT),
+      assembly.ident(this.uniformName(node.id, 'end_band'), DataType.FLOAT),
+      assembly.ident(this.uniformName(node.id, 'persistence'), DataType.FLOAT),
       assembly.ident(`${colorName}_colors`, DataType.OTHER),
       assembly.ident(`${colorName}_positions`, DataType.OTHER),
     ];

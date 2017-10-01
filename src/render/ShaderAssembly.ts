@@ -1,5 +1,5 @@
 import { GraphNode } from '../graph';
-import { DataType, Operator, Parameter, ParameterType } from '../operators';
+import { DataType, Operator, Parameter } from '../operators';
 import { Assignment, CallExpr, Expr, ExprKind, IdentExpr, LiteralExpr, TypeCast } from './Expr';
 
 export enum TraversalState {
@@ -85,8 +85,8 @@ export default class ShaderAssembly {
 
   /** Construct a reference to a uniform. */
   public uniform(op: Operator, nodeId: number, param: Parameter): IdentExpr {
-    let type = DataType.SCALAR;
-    if (param.type === ParameterType.COLOR) {
+    let type = DataType.FLOAT;
+    if (param.type === DataType.RGBA) {
       type = DataType.RGBA;
     }
     return { kind: ExprKind.IDENT, name: op.uniformName(nodeId, param), type };
@@ -116,7 +116,7 @@ export default class ShaderAssembly {
     if (inputTerminal.connection === null) {
       console.log('default:', signalName, DataType[input.type]);
       switch (input.type) {
-        case DataType.SCALAR:
+        case DataType.FLOAT:
           return this.literal('0.0', input.type);
         case DataType.RGBA:
         case DataType.XYZW:
@@ -128,7 +128,7 @@ export default class ShaderAssembly {
     const outputTerminal = inputTerminal.connection.source;
     const outputNode = outputTerminal.node;
     const outputDefn = outputNode.operator.getOutput(outputTerminal.id);
-    const outputType = this.outputDataType(outputDefn.type);
+    const outputType = this.glType(outputDefn.type);
     let result: Expr;
     // TODO: This logic is wrong in two ways.
     // need to take into account uv.
@@ -156,7 +156,11 @@ export default class ShaderAssembly {
   public declareUniforms(op: Operator, nodeId: number, params: Parameter[]) {
     this.out.push(`// Uniforms for ${op.id}${nodeId}`);
     for (const param of params) {
-      this.addUniform(op, nodeId, param);
+      if (param.type === DataType.GROUP) {
+        this.declareUniforms(op, nodeId, param.children);
+      } else {
+        this.addUniform(op, nodeId, param);
+      }
     }
     this.out.push('');
   }
@@ -164,11 +168,11 @@ export default class ShaderAssembly {
   /** Assign a shader uniform names for an operator parameter. */
   public addUniform(op: Operator, nodeId: number, param: Parameter) {
     const uniformName = op.uniformName(nodeId, param);
-    if (param.type === ParameterType.COLOR_GRADIENT) {
+    if (param.type === DataType.RGBA_GRADIENT) {
       this.out.push(`uniform vec4 ${uniformName}_colors[32];`);
       this.out.push(`uniform float ${uniformName}_positions[32];`);
     } else {
-      this.out.push(`uniform ${this.paramDataType(param.type)} ${uniformName};`);
+      this.out.push(`uniform ${this.glType(param.type)} ${uniformName};`);
     }
   }
 
@@ -217,22 +221,23 @@ export default class ShaderAssembly {
           return this.emitExpr(typeCast.expr);
         }
         switch (typeCast.type) {
-          case DataType.SCALAR:
+          case DataType.FLOAT:
             if (typeCast.expr.type === DataType.XYZW || typeCast.expr.type === DataType.RGBA) {
               return `dot(${this.emitExpr(typeCast.expr)}, vec4(0.3, 0.4, 0.3, 0.0))`;
             }
             break;
           case DataType.XYZW:
           case DataType.RGBA:
-            if (typeCast.expr.type === DataType.SCALAR) {
+            if (typeCast.expr.type === DataType.FLOAT) {
               return `vec4(vec3(1.0, 1.0, 1.0) * ` + this.emitExpr(typeCast.expr) + ', 1.0)';
             }
             if (typeCast.expr.type === DataType.XYZW || typeCast.expr.type === DataType.RGBA) {
               return this.emitExpr(typeCast.expr);
             }
             break;
+          case DataType.RGB:
           case DataType.XYZ:
-            if (typeCast.expr.type === DataType.SCALAR) {
+            if (typeCast.expr.type === DataType.FLOAT) {
               return `vec3(1.0, 1.0, 1.0)` + this.emitExpr(typeCast.expr);
             }
             break;
@@ -245,19 +250,20 @@ export default class ShaderAssembly {
     }
   }
 
-  private paramDataType(type: ParameterType) {
+  private glType(type: DataType) {
     switch (type) {
-      case ParameterType.FLOAT: return 'float';
-      case ParameterType.COLOR: return 'vec4';
-      case ParameterType.INTEGER: return 'int';
-    }
-  }
-
-  private outputDataType(type: DataType) {
-    switch (type) {
-      case DataType.SCALAR: return 'float';
-      case DataType.RGBA: return 'vec4';
-      case DataType.XYZW: return 'vec4';
+      case DataType.INTEGER:
+        return 'int';
+      case DataType.FLOAT:
+        return 'float';
+      case DataType.UV:
+        return 'vec2';
+      case DataType.RGB:
+      case DataType.XYZ:
+        return 'vec3';
+      case DataType.RGBA:
+      case DataType.XYZW:
+        return 'vec4';
     }
   }
 }

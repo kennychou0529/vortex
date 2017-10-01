@@ -1,4 +1,4 @@
-import { DataType, Operator, Output, Parameter, ParameterType } from '..';
+import { DataType, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
 import Renderer, { ShaderResource } from '../../render/Renderer';
@@ -12,13 +12,13 @@ class HexGrid extends Operator {
   public readonly outputs: Output[] = [{
     id: 'out',
     name: 'Out',
-    type: DataType.SCALAR,
+    type: DataType.FLOAT,
   }];
   public readonly params: Parameter[] = [
     {
       id: 'count_x',
       name: 'Count X',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       min: 1,
       max: 16,
       default: 2,
@@ -26,7 +26,7 @@ class HexGrid extends Operator {
     {
       id: 'count_y',
       name: 'Count Y',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       min: 1,
       max: 16,
       default: 2,
@@ -34,7 +34,7 @@ class HexGrid extends Operator {
     {
       id: 'margin',
       name: 'Margin',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: .5,
       default: .025,
@@ -42,7 +42,7 @@ class HexGrid extends Operator {
     {
       id: 'roundness',
       name: 'Roundness',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 1,
       max: 5,
       precision: 1,
@@ -51,7 +51,7 @@ class HexGrid extends Operator {
     {
       id: 'blur',
       name: 'Blur',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: .5,
       default: .1,
@@ -59,21 +59,21 @@ class HexGrid extends Operator {
     {
       id: 'offset_x',
       name: 'Offset X',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: .5,
     },
     {
       id: 'offset_y',
       name: 'Offset Y',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: .5,
     },
     {
       id: 'corner',
       name: 'Corner Shape',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       enumVals: [
         { name: 'Sharp', value: 0 },
         { name: 'Mitered', value: 1 },
@@ -118,7 +118,7 @@ Generates a tiled pattern of hexagons.
       ...this.params.map(param =>
           assembly.ident(this.uniformName(node.id, param.id), DataType.OTHER)),
     ];
-    return assembly.call('hexgrid', args, DataType.SCALAR);
+    return assembly.call('hexgrid', args, DataType.FLOAT);
   }
 
   // Release any GL resources we were holding on to.

@@ -1,6 +1,6 @@
 /** Data types for expressions. */
 export enum DataType {
-  SCALAR, // Scalar per pixel
+  FLOAT,  // float
   UV,     // vec2
   XYZ,    // vec3
   XYZW,   // For normal and displacement maps
@@ -11,4 +11,5 @@ export enum DataType {
   INTEGER,// Integer
   RGB,    // vec3 rgb
   RGBA_GRADIENT,  // Gradient array
+  GROUP,  // Sentinel value that indicates a parameter group
 }

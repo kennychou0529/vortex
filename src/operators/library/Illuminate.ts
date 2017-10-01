@@ -1,4 +1,4 @@
-import { DataType, Input, Operator, Output, Parameter, ParameterType } from '..';
+import { DataType, Input, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
 import Renderer, { ShaderResource } from '../../render/Renderer';
@@ -31,7 +31,7 @@ class Illuminate extends Operator {
     {
       id: 'azimuth',
       name: 'Azimuth',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: 360,
       precision: 0,
@@ -41,7 +41,7 @@ class Illuminate extends Operator {
     {
       id: 'elevation',
       name: 'Elevation',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: 90,
       precision: 0,
@@ -51,7 +51,7 @@ class Illuminate extends Operator {
     {
       id: 'shininess',
       name: 'Shininess',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: 100,
       precision: 0,
@@ -61,19 +61,19 @@ class Illuminate extends Operator {
     {
       id: 'ambient',
       name: 'Ambient Color',
-      type: ParameterType.COLOR,
+      type: DataType.RGBA,
       default: [1.0, 1.0, 1.0, 1.0],
     },
     {
       id: 'diffuse',
       name: 'Diffuse Color',
-      type: ParameterType.COLOR,
+      type: DataType.RGBA,
       default: [1.0, 1.0, 1.0, 1.0],
     },
     {
       id: 'specular',
       name: 'Specular Color',
-      type: ParameterType.COLOR,
+      type: DataType.RGBA,
       default: [1.0, 1.0, 1.0, 1.0],
     },
   ];

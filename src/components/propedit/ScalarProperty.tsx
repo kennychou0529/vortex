@@ -2,7 +2,7 @@ import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
 import { ChangeType, GraphNode } from '../../graph';
-import { Parameter, ParameterType } from '../../operators';
+import { DataType, Parameter } from '../../operators';
 import ComboSlider from '../controls/ComboSlider';
 
 interface Props {
@@ -24,12 +24,12 @@ export default class ScalarProperty extends Component<Props, undefined> {
       max = parameter.enumVals.length - 1;
       actual = parameter.enumVals.findIndex(e => e.value === value);
     }
-    const precision = parameter.type === ParameterType.INTEGER
+    const precision = parameter.type === DataType.INTEGER
         ? 0
         : (parameter.precision !== undefined ? parameter.precision : 2);
     const increment = parameter.increment !== undefined
         ? parameter.increment
-        : parameter.type === ParameterType.INTEGER ? 1 : 10 ** -precision;
+        : parameter.type === DataType.INTEGER ? 1 : 10 ** -precision;
     return (
       <ComboSlider
           name={parameter.name}

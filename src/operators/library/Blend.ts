@@ -1,4 +1,4 @@
-import { DataType, Input, Operator, Output, Parameter, ParameterType } from '..';
+import { DataType, Input, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
 import Renderer, { ShaderResource } from '../../render/Renderer';
@@ -30,7 +30,7 @@ class Blend extends Operator {
     {
       id: 'op',
       name: 'Operator',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       enumVals: [
         { name: 'Replace', value: 0 },
         { name: 'Add', value: 1 },
@@ -49,7 +49,7 @@ class Blend extends Operator {
     {
       id: 'strength',
       name: 'Strength',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: 1,
       default: 1,
@@ -57,7 +57,7 @@ class Blend extends Operator {
     {
       id: 'norm',
       name: 'Normalize',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       enumVals: [
         { name: 'Off', value: 0 },
         { name: 'On', value: 1 },
@@ -112,9 +112,9 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
 
     const inputA = assembly.readInputValue(node, 'a', DataType.RGBA, uv);
     const inputB = assembly.readInputValue(node, 'b', DataType.RGBA, uv);
-    const op = assembly.ident(this.uniformName(node.id, 'op'), DataType.SCALAR);
-    const strength = assembly.ident(this.uniformName(node.id, 'strength'), DataType.SCALAR);
-    const norm = assembly.ident(this.uniformName(node.id, 'norm'), DataType.SCALAR);
+    const op = assembly.ident(this.uniformName(node.id, 'op'), DataType.FLOAT);
+    const strength = assembly.ident(this.uniformName(node.id, 'strength'), DataType.FLOAT);
+    const norm = assembly.ident(this.uniformName(node.id, 'norm'), DataType.FLOAT);
     return assembly.call('blend', [inputA, inputB, op, strength, norm], DataType.RGBA);
   }
 

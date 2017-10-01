@@ -1,6 +1,6 @@
 import { ColorGradient, RGBAColor } from '../components/controls/colors';
 import { GraphNode } from '../graph';
-import { Parameter, ParameterType } from '../operators';
+import { DataType, Parameter } from '../operators';
 
 export interface ShaderResource {
   program: WebGLProgram;
@@ -106,15 +106,18 @@ void main() {
           : param.default;
       const uniformName = `${paramPrefix}_${param.id}`;
       switch (param.type) {
-        case ParameterType.INTEGER:
+        case DataType.GROUP:
+          this.setShaderUniforms(param.children, program, paramValues, paramPrefix);
+          break;
+        case DataType.INTEGER:
           gl.uniform1i(gl.getUniformLocation(program, uniformName),
               value !== undefined ? value : 0);
           break;
-        case ParameterType.FLOAT:
+        case DataType.FLOAT:
           gl.uniform1f(gl.getUniformLocation(program, uniformName),
               value !== undefined ? value : 0);
           break;
-        case ParameterType.COLOR:
+        case DataType.RGBA:
           if (value !== undefined) {
             gl.uniform4f(
                 gl.getUniformLocation(program, uniformName),
@@ -123,7 +126,7 @@ void main() {
             gl.uniform4f(gl.getUniformLocation(program, uniformName), 0, 0, 0, 1);
           }
           break;
-        case ParameterType.COLOR_GRADIENT: {
+        case DataType.RGBA_GRADIENT: {
           // Shader requires a fixed-length array of 32 entries. Copy the colors into the
           // array and then pad the rest of the array with the final color;
           const gradient: ColorGradient = value !== undefined ? value : [];

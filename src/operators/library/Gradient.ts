@@ -1,4 +1,4 @@
-import { DataType, Operator, Output, Parameter, ParameterType } from '..';
+import { DataType, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
 import Renderer, { ShaderResource } from '../../render/Renderer';
@@ -18,7 +18,7 @@ class Gradient extends Operator {
     {
       id: 'type',
       name: 'Gradient Type',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       enumVals: [
         { name: 'Linear Horizontal', value: 0 },
         { name: 'Linear Vertical', value: 1 },
@@ -32,7 +32,7 @@ class Gradient extends Operator {
     {
       id: 'color',
       name: 'Gradient color',
-      type: ParameterType.COLOR_GRADIENT,
+      type: DataType.RGBA_GRADIENT,
       max: 32,
       default: [
         {
@@ -88,7 +88,7 @@ Generates a simple gradient.
     const colorName = this.uniformName(node.id, 'color');
     const args: Expr[] = [
       uv,
-      assembly.ident(this.uniformName(node.id, 'type'), DataType.SCALAR),
+      assembly.ident(this.uniformName(node.id, 'type'), DataType.FLOAT),
       assembly.ident(`${colorName}_colors`, DataType.OTHER),
       assembly.ident(`${colorName}_positions`, DataType.OTHER),
     ];

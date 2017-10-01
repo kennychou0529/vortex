@@ -1,4 +1,4 @@
-import { DataType, Input, Operator, Output, Parameter, ParameterType } from '..';
+import { DataType, Input, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
 import Renderer, { ShaderResource } from '../../render/Renderer';
@@ -12,7 +12,7 @@ class Colorizer extends Operator {
   public readonly inputs: Input[] = [{
     id: 'in',
     name: 'In',
-    type: DataType.SCALAR,
+    type: DataType.FLOAT,
   }];
   public readonly outputs: Output[] = [{
     id: 'out',
@@ -23,7 +23,7 @@ class Colorizer extends Operator {
     {
       id: 'color',
       name: 'Gradient color',
-      type: ParameterType.COLOR_GRADIENT,
+      type: DataType.RGBA_GRADIENT,
       max: 32,
       default: [
         {
@@ -85,7 +85,7 @@ class Colorizer extends Operator {
       assembly.finish(node);
     }
 
-    const inputA = assembly.readInputValue(node, 'in', DataType.SCALAR, uv);
+    const inputA = assembly.readInputValue(node, 'in', DataType.FLOAT, uv);
     const colorName = this.uniformName(node.id, 'color');
     const args = [
       inputA,

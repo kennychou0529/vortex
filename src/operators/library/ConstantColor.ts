@@ -1,4 +1,4 @@
-import { DataType, Operator, Output, Parameter, ParameterType } from '..';
+import { DataType, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
 import Renderer, { ShaderResource } from '../../render/Renderer';
@@ -18,7 +18,7 @@ class ConstantColor extends Operator {
     {
       id: 'color',
       name: 'Color',
-      type: ParameterType.COLOR,
+      type: DataType.RGBA,
       default: [1.0, 1.0, 1.0, 1.0],
     },
   ];

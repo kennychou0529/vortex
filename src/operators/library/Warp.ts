@@ -1,4 +1,4 @@
-import { DataType, Input, Operator, Output, Parameter, ParameterType } from '..';
+import { DataType, Input, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
 import Renderer, { ShaderResource } from '../../render/Renderer';
@@ -29,7 +29,7 @@ class Warp extends Operator {
     {
       id: 'intensity',
       name: 'Intensity',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: 1,
       precision: 2,

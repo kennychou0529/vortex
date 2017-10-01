@@ -1,10 +1,4 @@
-export enum ParameterType {
-  INTEGER,  // Integer or enumeration
-  FLOAT,    // Floating-point
-  COLOR,    // Color
-  COLOR_GRADIENT,  // Color gradient
-  GROUP,    // Named group of params
-}
+import { DataType } from './DataType';
 
 export interface EnumValue {
   name: string;
@@ -20,7 +14,7 @@ export interface Parameter {
   name: string;
 
   // Parameter type
-  type: ParameterType;
+  type: DataType;
 
   // Type-specific constraints
   default?: any;

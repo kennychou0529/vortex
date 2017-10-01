@@ -1,4 +1,4 @@
-import { DataType, Input, Operator, Output, Parameter, ParameterType } from '..';
+import { DataType, Input, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
 import Renderer, { ShaderResource } from '../../render/Renderer';
@@ -23,7 +23,7 @@ class Repeat extends Operator {
     {
       id: 'count_x',
       name: 'Count X',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       min: 1,
       max: 16,
       default: 2,
@@ -31,7 +31,7 @@ class Repeat extends Operator {
     {
       id: 'count_y',
       name: 'Count Y',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       min: 1,
       max: 16,
       default: 2,

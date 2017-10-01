@@ -1,27 +1,25 @@
 # TODO:
 
+* How to serialize images with the document?
+  * Easier if we have an online database
+* Upload diagrams
 * Type conversions for node outputs
   * UV not fully supported
-  * See if we can remove some of the params
+  * See if we can remove some of the type params that are passed in
 * Limit operator dragging to document size
 * Quantize initial placement.
-* Gradient: Delete color stops
-* Finish up blend filter
-  - normalize output
 * Editing existing connectors
 * Deleting connectors
 * Finish compass rose - center button should center the diagram
-* Upload diagrams
 * Undo / Redo
 * Save to cloud (url)
   * Generate unique url - server component
 * Export image
 * Log scale controls
-* Unify DataType and ParameterType
 * Standardize 'Resources' across all operators
 * Move 'render' to Operator class
 * Output type conversion - currently assumes all outputs are vec4.
-* Make brick edges smoother - possibly implement our own smootherstep? ('steps' library);
+* Make brick edges smoother
 * Save to server - generate unique url - need accounts?
 * Enter key to close dialogs.
 
@@ -41,11 +39,10 @@
     * Combine
     * Emboss
     * Math
-    * Modulus
     * Bump Map
   * Generators:
     * Bitmap
-    * Cellular
+    * Cellular / Worley
     * Checker
     * Function
     * Tartan

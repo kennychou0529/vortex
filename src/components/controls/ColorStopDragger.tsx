@@ -12,6 +12,7 @@ interface Props {
   index: number;
   onChange: (value: number) => void;
   onSelect: (index: number, event: PointerEvent) => void;
+  onDelete: (index: number) => void;
 }
 
 export default class ColorStopDragger extends Component<Props, undefined> {
@@ -61,6 +62,7 @@ export default class ColorStopDragger extends Component<Props, undefined> {
   private onDoubleClick(e: MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
+    this.props.onDelete(this.props.index);
   }
 
   @bind

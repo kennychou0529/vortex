@@ -1,4 +1,4 @@
-import { DataType, Input, Operator, Output, Parameter, ParameterType } from '..';
+import { DataType, Input, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
 import Renderer, { ShaderResource } from '../../render/Renderer';
@@ -35,7 +35,7 @@ class Mask extends Operator {
     {
       id: 'invert',
       name: 'Invert',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       enumVals: [
         { name: 'Off', value: 0 },
         { name: 'On', value: 1 },

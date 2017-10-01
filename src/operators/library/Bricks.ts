@@ -1,4 +1,4 @@
-import { DataType, Operator, Output, Parameter, ParameterType } from '..';
+import { DataType, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
 import Renderer, { ShaderResource } from '../../render/Renderer';
@@ -12,13 +12,13 @@ class Bricks extends Operator {
   public readonly outputs: Output[] = [{
     id: 'out',
     name: 'Out',
-    type: DataType.SCALAR,
+    type: DataType.FLOAT,
   }];
   public readonly params: Parameter[] = [
     {
       id: 'count_x',
       name: 'Count X',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       min: 1,
       max: 16,
       default: 2,
@@ -26,7 +26,7 @@ class Bricks extends Operator {
     {
       id: 'count_y',
       name: 'Count Y',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       min: 1,
       max: 16,
       default: 4,
@@ -34,7 +34,7 @@ class Bricks extends Operator {
     {
       id: 'spacing_x',
       name: 'Spacing X',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: .5,
       default: .025,
@@ -42,7 +42,7 @@ class Bricks extends Operator {
     {
       id: 'spacing_y',
       name: 'Spacing Y',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: .5,
       default: .05,
@@ -50,7 +50,7 @@ class Bricks extends Operator {
     {
       id: 'blur_x',
       name: 'Blur X',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: .5,
       default: .1,
@@ -58,7 +58,7 @@ class Bricks extends Operator {
     {
       id: 'blur_y',
       name: 'Blur Y',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: .5,
       default: .2,
@@ -66,21 +66,21 @@ class Bricks extends Operator {
     {
       id: 'offset_x',
       name: 'Offset X',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: .5,
     },
     {
       id: 'offset_y',
       name: 'Offset Y',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: .5,
     },
     {
       id: 'stagger',
       name: 'Stagger',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: 1,
       default: .5,
@@ -88,7 +88,7 @@ class Bricks extends Operator {
     {
       id: 'corner',
       name: 'Corner Shape',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       enumVals: [
         { name: 'Square', value: 0 },
         { name: 'Mitered', value: 1 },
@@ -147,7 +147,7 @@ Generates a pattern consisting of alternating rows of bricks.
       ...this.params.map(param =>
           assembly.ident(this.uniformName(node.id, param.id), DataType.OTHER)),
     ];
-    return assembly.call('bricks', args, DataType.SCALAR);
+    return assembly.call('bricks', args, DataType.FLOAT);
   }
 
   // Release any GL resources we were holding on to.

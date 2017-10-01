@@ -1,5 +1,5 @@
 import { observable } from 'mobx';
-import { Operator } from '../operators';
+import { DataType, Operator, Parameter } from '../operators';
 import Renderer from '../render/Renderer';
 import { InputTerminal } from './InputTerminal';
 import { OutputTerminal } from './OutputTerminal';
@@ -171,13 +171,16 @@ export class GraphNode {
 
   public toJs(): any {
     const params: any = {};
-    this.operator.params.forEach(param => {
-      if (this.paramValues.has(param.id)) {
+    const paramToJs = (param: Parameter) => {
+      if (param.type === DataType.GROUP) {
+        param.children.forEach(paramToJs);
+      } else if (this.paramValues.has(param.id)) {
         params[param.id] = this.paramValues.get(param.id);
       } else if (param.default !== undefined) {
         params[param.id] = param.default;
       }
-    });
+    };
+    this.operator.params.forEach(paramToJs);
     return {
       id: this.id,
       x: this.x,

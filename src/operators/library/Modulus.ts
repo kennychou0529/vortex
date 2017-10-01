@@ -1,4 +1,4 @@
-import { DataType, Input, Operator, Output, Parameter, ParameterType } from '..';
+import { DataType, Input, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
 import Renderer, { ShaderResource } from '../../render/Renderer';
@@ -13,7 +13,7 @@ class Modulus extends Operator {
     {
       id: 'input',
       name: 'In',
-      type: DataType.SCALAR,
+      type: DataType.FLOAT,
     },
   ];
   public readonly outputs: Output[] = [{
@@ -25,7 +25,7 @@ class Modulus extends Operator {
     {
       id: 'frequency',
       name: 'Frequency',
-      type: ParameterType.INTEGER,
+      type: DataType.INTEGER,
       min: 1,
       max: 100,
       default: 2,
@@ -33,7 +33,7 @@ class Modulus extends Operator {
     {
       id: 'offset',
       name: 'Offset',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: 1,
       precision: 2,
@@ -43,7 +43,7 @@ class Modulus extends Operator {
     {
       id: 'phase',
       name: 'Phase',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: 0,
       max: 1,
       precision: 2,
@@ -53,7 +53,7 @@ class Modulus extends Operator {
     {
       id: 'color',
       name: 'Color',
-      type: ParameterType.COLOR_GRADIENT,
+      type: DataType.RGBA_GRADIENT,
       max: 32,
       default: [
         {
@@ -118,10 +118,10 @@ converted into a sequence of sawtooth waves.
 
     const colorName = this.uniformName(node.id, 'color');
     return assembly.call('modulus', [
-      assembly.readInputValue(node, 'input', DataType.SCALAR, uv),
-      assembly.ident(this.uniformName(node.id, 'frequency'), DataType.SCALAR),
-      assembly.ident(this.uniformName(node.id, 'offset'), DataType.SCALAR),
-      assembly.ident(this.uniformName(node.id, 'phase'), DataType.SCALAR),
+      assembly.readInputValue(node, 'input', DataType.FLOAT, uv),
+      assembly.ident(this.uniformName(node.id, 'frequency'), DataType.FLOAT),
+      assembly.ident(this.uniformName(node.id, 'offset'), DataType.FLOAT),
+      assembly.ident(this.uniformName(node.id, 'phase'), DataType.FLOAT),
       assembly.ident(`${colorName}_colors`, DataType.OTHER),
       assembly.ident(`${colorName}_positions`, DataType.OTHER),
     ], DataType.RGBA);

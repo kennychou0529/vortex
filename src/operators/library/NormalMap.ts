@@ -1,4 +1,4 @@
-import { DataType, Input, Operator, Output, Parameter, ParameterType } from '..';
+import { DataType, Input, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
 import Renderer, { ShaderResource } from '../../render/Renderer';
@@ -26,7 +26,7 @@ class NormalMap extends Operator {
     {
       id: 'scale',
       name: 'Height Scale',
-      type: ParameterType.FLOAT,
+      type: DataType.FLOAT,
       min: -0.5,
       max: 0.5,
       precision: 3,
@@ -86,7 +86,7 @@ Treating the grayscale input as a height map, computes normals.
     const normal = `${this.localPrefix(node.id)}_normal`;
     assembly.assign(t, 'vec4', inputA);
     assembly.assign(h, 'float',
-        assembly.literal(`(${t}.x + ${t}.y + ${t}.z) * ${scale} / 3.0`, DataType.SCALAR));
+        assembly.literal(`(${t}.x + ${t}.y + ${t}.z) * ${scale} / 3.0`, DataType.FLOAT));
     assembly.assign(dx, 'vec3',
         assembly.literal(`dFdx(vec3(vTextureCoord, ${h}))`, DataType.XYZ));
     assembly.assign(dy, 'vec3',

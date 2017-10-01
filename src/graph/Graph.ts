@@ -1,5 +1,5 @@
 import { action, computed, observable } from 'mobx';
-import { Registry } from '../operators';
+import { DataType, Registry } from '../operators';
 import { Bounds } from './Bounds';
 import { Connection } from './Connection';
 import { ChangeType, GraphNode } from './GraphNode';
@@ -172,7 +172,13 @@ export class Graph {
       n.x = node.x;
       n.y = node.y;
       n.operator.params.forEach(param => {
-        if (param.id in node.params) {
+        if (param.type === DataType.GROUP) {
+          param.children.forEach(childParam => {
+            if (childParam.id in node.params) {
+              n.paramValues.set(childParam.id, node.params[childParam.id]);
+            }
+          });
+        } else if (param.id in node.params) {
           n.paramValues.set(param.id, node.params[param.id]);
         }
       });

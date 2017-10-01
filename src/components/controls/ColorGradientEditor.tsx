@@ -60,6 +60,7 @@ export default class ColorGradientEditor extends Component<Props, State> {
                   selected={i === selected}
                   onChange={null}
                   onSelect={this.onSelectStop}
+                  onDelete={this.onDeleteStop}
               />))}
           </div>
           <ComboSlider
@@ -121,6 +122,13 @@ export default class ColorGradientEditor extends Component<Props, State> {
     this.colorPicker.setRGBA(color, true);
     if (selected > 0 && selected < this.props.value.length - 1) {
       this.beginDragging(e.pointerId);
+    }
+  }
+
+  @bind
+  private onDeleteStop(index: number) {
+    if (index > 0 && index < this.props.value.length - 1) {
+      this.props.value.splice(index, 1);
     }
   }
 
