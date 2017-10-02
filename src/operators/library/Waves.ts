@@ -91,8 +91,8 @@ class Waves extends Operator {
           id: 'fx2',
           name: 'X Frequency',
           type: DataType.INTEGER,
-          min: 0,
-          max: 10,
+          min: -20,
+          max: 20,
           default: 1,
         },
         {
@@ -107,8 +107,8 @@ class Waves extends Operator {
           id: 'phase2',
           name: 'Phase',
           type: DataType.FLOAT,
-          min: -20,
-          max: 20,
+          min: 0,
+          max: 1,
           precision: 2,
           increment: 0.01,
           default: 0,
@@ -156,11 +156,7 @@ Sums together up to three wave generators.
     }
 
     renderer.executeShaderProgram(resources.shader, gl => {
-      renderer.setShaderUniforms(
-          this.params,
-          resources.shader.program,
-          node.paramValues,
-          this.uniformPrefix(node.id));
+      renderer.setShaderUniforms(node, resources.shader.program);
     });
   }
 

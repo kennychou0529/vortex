@@ -54,18 +54,9 @@ class Warp extends Operator {
     if (resources.shader) {
       const program: WebGLProgram = resources.shader.program;
       renderer.executeShaderProgram(resources.shader, gl => {
-        renderer.setShaderUniforms(
-            this.params,
-            resources.shader.program,
-            node.paramValues,
-            this.uniformPrefix(node.id));
+        renderer.setShaderUniforms(node, resources.shader.program);
         node.visitUpstreamNodes((upstream, termId) => {
-          const upstreamOp = upstream.operator;
-          renderer.setShaderUniforms(
-              upstreamOp.params,
-              program,
-              upstream.paramValues,
-              upstreamOp.uniformPrefix(upstream.id));
+          renderer.setShaderUniforms(upstream, program);
         });
       });
     }

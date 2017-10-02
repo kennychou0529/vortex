@@ -8,7 +8,7 @@ interface Resources {
   shader: ShaderResource;
 }
 
-class ConstantColor extends Operator {
+class Image extends Operator {
   public readonly outputs: Output[] = [{
     id: 'out',
     name: 'Out',
@@ -16,18 +16,15 @@ class ConstantColor extends Operator {
   }];
   public readonly params: Parameter[] = [
     {
-      id: 'color',
-      name: 'Color',
-      type: DataType.RGBA,
-      default: [1.0, 1.0, 1.0, 1.0],
+      id: 'image',
+      name: 'Image',
+      type: DataType.IMAGE,
     },
   ];
-  public readonly description = `
-A constant color.
-`;
+  public readonly description = `A bitmapped image.`;
 
   constructor() {
-    super('generator', 'Constant Color', 'generator_constant_color');
+    super('pattern', 'Image', 'pattern_image');
   }
 
   // Render a node with the specified renderer.
@@ -55,8 +52,12 @@ A constant color.
       assembly.finish(node);
     }
 
-    return assembly.uniform(node, 'color');
+    return assembly.call(
+      'texture', [
+        assembly.uniform(node, 'image'),
+        uv,
+      ], DataType.RGBA);
   }
 }
 
-export default new ConstantColor();
+export default new Image();

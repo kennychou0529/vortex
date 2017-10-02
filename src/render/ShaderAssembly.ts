@@ -271,6 +271,8 @@ export default class ShaderAssembly {
       case DataType.RGBA:
       case DataType.XYZW:
         return 'vec4';
+      case DataType.IMAGE:
+        return 'sampler2D';
     }
   }
 }

@@ -105,11 +105,7 @@ Generates a triangular grid pattern.
     }
 
     renderer.executeShaderProgram(resources.shader, gl => {
-      renderer.setShaderUniforms(
-          this.params,
-          resources.shader.program,
-          node.paramValues,
-          this.uniformPrefix(node.id));
+      renderer.setShaderUniforms(node, resources.shader.program);
     });
   }
 

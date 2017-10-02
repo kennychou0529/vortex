@@ -1,6 +1,6 @@
 import { GraphNode } from '../graph';
 import { Expr } from '../render/Expr';
-import Renderer, { ShaderResource } from '../render/Renderer';
+import Renderer from '../render/Renderer';
 import ShaderAssembly from '../render/ShaderAssembly';
 import { DataType } from './DataType';
 import { Input } from './Input';
@@ -25,12 +25,6 @@ export abstract class Operator {
 
   // Render a node with the specified renderer.
   public abstract render(renderer: Renderer, node: GraphNode, resources: any): void;
-
-  // Set the shader uniform values in preparation for rendering.
-  public setUniformValues(renderer: Renderer, node: GraphNode, shader: ShaderResource) {
-    renderer.setShaderUniforms(
-        this.params, shader.program, node.paramValues, this.uniformPrefix(node.id));
-  }
 
   // Release any GL resources we were holding on to.
   public abstract cleanup(renderer: Renderer, node: GraphNode, resources: any): void;
@@ -67,6 +61,19 @@ export abstract class Operator {
       }
     }
     throw Error(`Parameter not found: ${this.id}.${id}`);
+  }
+
+  /** Return parameters as a flat list. */
+  public get paramList(): Parameter[] {
+    const result: Parameter[] = [];
+    for (const param of this.params) {
+      if (param.children) {
+        result.splice(result.length, 0, ...param.children);
+      } else {
+        result.push(param);
+      }
+    }
+    return result;
   }
 
   /** Returns an expression object representing the output of this node. */

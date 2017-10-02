@@ -61,18 +61,9 @@ Blends two source images based on a grayscale mask.
       const program: WebGLProgram = resources.shader.program;
       renderer.executeShaderProgram(resources.shader, gl => {
         // Set the uniforms for this node and all upstream nodes.
-        renderer.setShaderUniforms(
-            this.params,
-            program,
-            node.paramValues,
-            this.uniformPrefix(node.id));
+        renderer.setShaderUniforms(node, program);
         node.visitUpstreamNodes((upstream, termId) => {
-          const upstreamOp = upstream.operator;
-          renderer.setShaderUniforms(
-              upstreamOp.params,
-              program,
-              upstream.paramValues,
-              upstreamOp.uniformPrefix(upstream.id));
+          renderer.setShaderUniforms(upstream, program);
         });
       });
     }

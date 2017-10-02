@@ -1,5 +1,7 @@
 import { observable } from 'mobx';
-import { DataType, Operator, Parameter } from '../operators';
+import { DataType, Operator } from '../operators';
+import GLResources from '../render/GLResources';
+import ImageStore from '../render/ImageStore';
 import Renderer from '../render/Renderer';
 import { InputTerminal } from './InputTerminal';
 import { OutputTerminal } from './OutputTerminal';
@@ -40,6 +42,7 @@ export class GraphNode {
   public readonly operator: Operator;
 
   // GL resources allocated by the operator for this node.
+  public glResources: GLResources;
   private resources: any;
 
   // List of entities that need to be notified when any of the node properties change.
@@ -171,16 +174,13 @@ export class GraphNode {
 
   public toJs(): any {
     const params: any = {};
-    const paramToJs = (param: Parameter) => {
-      if (param.type === DataType.GROUP) {
-        param.children.forEach(paramToJs);
-      } else if (this.paramValues.has(param.id)) {
+    for (const param of this.operator.paramList) {
+      if (this.paramValues.has(param.id)) {
         params[param.id] = this.paramValues.get(param.id);
       } else if (param.default !== undefined) {
         params[param.id] = param.default;
       }
-    };
-    this.operator.params.forEach(paramToJs);
+    }
     return {
       id: this.id,
       x: this.x,
@@ -188,5 +188,23 @@ export class GraphNode {
       operator: this.operator.id,
       params,
     };
+  }
+
+  public loadTextures(renderer: Renderer, imageStore: ImageStore) {
+    for (const param of this.operator.paramList) {
+      if (param.type === DataType.IMAGE && this.paramValues.has(param.id)) {
+        imageStore.get(this.paramValues.get(param.id), (err, file) => {
+          if (err) {
+            console.error(err);
+            alert(err);
+          } else {
+            renderer.loadTexture(file, texture => {
+              this.glResources.textures.set(param.id, texture);
+              this.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
+            });
+          }
+        });
+      }
+    }
   }
 }

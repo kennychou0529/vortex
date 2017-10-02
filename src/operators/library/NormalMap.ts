@@ -54,18 +54,9 @@ Treating the grayscale input as a height map, computes normals.
       renderer.executeShaderProgram(resources.shader, gl => {
         // Set the uniforms for this node and all upstream nodes.
         // gl.hint(ext.FRAGMENT_SHADER_DERIVATIVE_HINT_OES, gl.NICEST);
-        renderer.setShaderUniforms(
-            this.params,
-            program,
-            node.paramValues,
-            this.uniformPrefix(node.id));
+        renderer.setShaderUniforms(node, program);
         node.visitUpstreamNodes((upstream, termId) => {
-          const upstreamOp = upstream.operator;
-          renderer.setShaderUniforms(
-              upstreamOp.params,
-              program,
-              upstream.paramValues,
-              upstreamOp.uniformPrefix(upstream.id));
+          renderer.setShaderUniforms(upstream, program);
         });
       });
     }
@@ -93,7 +84,7 @@ Treating the grayscale input as a height map, computes normals.
         assembly.literal(`dFdy(vec3(vTextureCoord, ${h}))`, DataType.XYZ));
     assembly.assign(normal, 'vec3',
         assembly.literal(`normalize(cross(${dx}, ${dy}))`, DataType.XYZ));
-    return assembly.literal(`vec4(${normal} * vec3(-0.5, 0.5, 0.5) + 0.5, 1.0)`, DataType.XYZW);
+    return assembly.literal(`vec4(${normal} * vec3(0.5, 0.5, -0.5) + 0.5, 1.0)`, DataType.XYZW);
   }
 
   // Release any GL resources we were holding on to.

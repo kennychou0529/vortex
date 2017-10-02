@@ -3,6 +3,7 @@ import { GraphNode } from '../../graph';
 import { DataType, Parameter } from '../../operators';
 import ColorGradientProperty from './ColorGradientProperty';
 import ColorProperty from './ColorProperty';
+import ImageProperty from './ImageProperty';
 import ScalarProperty from './ScalarProperty';
 
 interface Props {
@@ -22,6 +23,12 @@ export default function PropertyEditor({ node }: Props) {
           children.push(<section className="property-group">{group}</section>);
         }
         children.push(<ColorProperty key={param.id} node={node} parameter={param} />);
+        group = [];
+      } else if (param.type === DataType.IMAGE) {
+        if (group.length > 0) {
+          children.push(<section className="property-group">{group}</section>);
+        }
+        children.push(<ImageProperty key={param.id} node={node} parameter={param} />);
         group = [];
       } else if (param.type === DataType.RGBA_GRADIENT) {
         if (group.length > 0) {

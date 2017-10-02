@@ -23,7 +23,7 @@
     overflow-y: auto;
     overflow-x: hidden;
 
-    > .property-group {
+    > .property-group, > .image-property {
       display: flex;
       flex-direction: column;
       margin-bottom: 4px;
@@ -45,6 +45,10 @@
         overflow: hidden;
         user-select: none;
       }
+    }
+
+    > .image-property > button {
+      justify-content: flex-start;
     }
 
     > .color-property > header {

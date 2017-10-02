@@ -1,6 +1,7 @@
 import { ColorGradient, RGBAColor } from '../components/controls/colors';
 import { GraphNode } from '../graph';
-import { DataType, Parameter } from '../operators';
+import { DataType } from '../operators';
+import GLResources from './GLResources';
 
 export interface ShaderResource {
   program: WebGLProgram;
@@ -54,6 +55,10 @@ void main() {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
     gl.clear(gl.COLOR_BUFFER_BIT);
 
+    if (!node.glResources) {
+      node.glResources = new GLResources();
+    }
+
     if (rebuildShader) {
       node.destroy(this);
     }
@@ -94,21 +99,16 @@ void main() {
     gl.drawArrays(gl.TRIANGLES, 0, this.tiling ** 2 * 6);
   }
 
-  public setShaderUniforms(
-    params: Parameter[],
-    program: WebGLProgram,
-    paramValues: Map<string, any> = new Map(),
-    paramPrefix: string) {
+  public setShaderUniforms(node: GraphNode, program: WebGLProgram) {
+    const params = node.operator.paramList;
+    const paramValues = node.paramValues;
     const gl = this.gl;
     for (const param of params) {
       const value = paramValues.has(param.id)
           ? paramValues.get(param.id)
           : param.default;
-      const uniformName = `${paramPrefix}_${param.id}`;
+      const uniformName = node.operator.uniformName(node.id, param.id);
       switch (param.type) {
-        case DataType.GROUP:
-          this.setShaderUniforms(param.children, program, paramValues, paramPrefix);
-          break;
         case DataType.INTEGER:
           gl.uniform1i(gl.getUniformLocation(program, uniformName),
               value !== undefined ? value : 0);
@@ -156,6 +156,16 @@ void main() {
           gl.uniform1fv(gl.getUniformLocation(program, `${uniformName}_positions`), positions);
           break;
         }
+        case DataType.IMAGE: {
+          if (value) {
+            const texture: WebGLTexture = node.glResources.textures.get(param.id);
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.uniform1i(gl.getUniformLocation(program, uniformName), 0);
+            // console.log('texture', texture);
+          }
+          break;
+        }
       }
     }
   }
@@ -199,10 +209,68 @@ void main() {
     };
   }
 
+  public deleteResources(resources: GLResources) {
+    this.deleteShaderResources(resources);
+    this.deleteTextureResources(resources);
+  }
+
   public deleteShaderProgram(resource: ShaderResource) {
     const gl = this.gl;
     gl.deleteProgram(resource.program);
     gl.deleteShader(resource.fragment);
+  }
+
+  public deleteShaderResources(resources: ShaderResource) {
+    const gl = this.gl;
+    if (resources) {
+      if (resources.program) {
+        gl.deleteProgram(resources.program);
+        resources.program = null;
+      }
+      if (resources.fragment) {
+        gl.deleteProgram(resources.fragment);
+        resources.fragment = null;
+      }
+    }
+  }
+
+  public deleteTextureResources(resources: GLResources) {
+    const gl = this.gl;
+    if (resources) {
+      resources.textures.forEach(texture => gl.deleteTexture(texture));
+      resources.textures.clear();
+    }
+  }
+
+  public loadTexture(file: File, callback: (texture: WebGLTexture) => void) {
+    const gl = this.gl;
+
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    const pixel = new Uint8Array([0, 100, 0, 255]);  // opaque blue
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+
+    const image = new Image();
+    image.onload = function() {
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+      if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+        gl.generateMipmap(gl.TEXTURE_2D);
+      } else {
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      }
+      callback(texture);
+    };
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      image.src = (event.target as any).result;
+    };
+    reader.readAsDataURL(file);
   }
 
   private compileShader(type: number, source: string): WebGLShader {
@@ -229,25 +297,23 @@ void main() {
         const x0 = x * 2 / tiling - 1;
         const x1 = (x + 1) * 2 / tiling - 1;
         positions.splice(positions.length, 0,
-          x0, y0, 0, 0,
-          x0, y1, 0, 1,
-          x1, y0, 1, 0,
+          x0, y0, 0, 1,
+          x0, y1, 0, 0,
+          x1, y0, 1, 1,
 
-          x0, y1, 0, 1,
-          x1, y0, 1, 0,
-          x1, y1, 1, 1,
+          x0, y1, 0, 0,
+          x1, y0, 1, 1,
+          x1, y1, 1, 0,
         );
       }
     }
-    // const positions = [
-    //   -1, -1, 0, 0,
-    //   -1, 1, 0, 1,
-    //   1, -1, 1, 0,
-    //   1, 1, 1, 1,
-    // ];
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
     return buffer;
   }
+}
+
+function isPowerOf2(value: number) {
+  return (value & (value - 1)) === 0;
 }
