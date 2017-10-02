@@ -28,7 +28,9 @@ Then navigate to http://localhost:9001
   * Output nodes can have any number of connections.
   * Input nodes can only have one connection. Attempting to add another connection will replace the previous connection.
 * When a node is selected, the node's property list will appear on the right panel.
-* Node properties are shown as 'combo sliders' which are a combination of slider and text input, very similar to the controls in Blender. You can click the arrows, drag left and right, or double-click to type in a numeric value directly.
+* Node properties are shown as 'combo sliders' which are a combination of slider and text input, very
+  similar to the controls in Blender. You can click the arrows, drag left and right, or double-click to type in a numeric value directly.
+* Editing gradients: Double-click to add or remove a color stop.
 * Select the 'Shader' button on the left panel to view the text of the generated OpenGL shader.
 * Select the 'Export' button to see a high-res version of the generated image for the current selected node.
 
