@@ -11,7 +11,7 @@ The actual computation of the images is performed via WebGL.
 
 ## Screenshot
 
-![screenshot](./images/screenshot.png)
+![screenshot](./images/screenshot.png "Vortex UI")
 
 ## Running
 
