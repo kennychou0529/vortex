@@ -1,8 +1,8 @@
 # TODO:
 
-* How to serialize images with the document?
-  * Easier if we have an online database
-* Upload diagrams
+* Garbage collection for image references.
+* Make brick edges smoother - gamma correction?
+* Upload graphs
 * Type conversions for node outputs
   * UV not fully supported
   * See if we can remove some of the type params that are passed in
@@ -19,7 +19,6 @@
 * Standardize 'Resources' across all operators
 * Move 'render' to Operator class
 * Output type conversion - currently assumes all outputs are vec4.
-* Make brick edges smoother
 * Save to server - generate unique url - need accounts?
 * Enter key to close dialogs.
 
@@ -41,7 +40,6 @@
     * Math
     * Bump Map
   * Generators:
-    * Bitmap
     * Cellular / Worley
     * Checker
     * Function
