@@ -9,8 +9,13 @@ been entirely rewritten in JavaScript and runs entirely in the browser.
 
 The actual computation of the images is performed via WebGL.
 
+## Screenshot
+
+![screenshot](./images/screenshot.png "Vortex UI")
+
 ## Running
 
-npm install
-npm start
-Go to http://localhost:9001
+    npm install
+    npm start
+
+Then navigate to http://localhost:9001
