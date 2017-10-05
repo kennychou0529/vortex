@@ -157,13 +157,13 @@ void main() {
           break;
         }
         case DataType.IMAGE: {
+          gl.activeTexture(gl.TEXTURE0);
           if (value) {
-            const texture: WebGLTexture = node.glResources.textures.get(param.id);
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, texture);
-            gl.uniform1i(gl.getUniformLocation(program, uniformName), 0);
-            // console.log('texture', texture);
+            gl.bindTexture(gl.TEXTURE_2D, node.glResources.textures.get(param.id));
+          } else {
+            gl.bindTexture(gl.TEXTURE_2D, null);
           }
+          gl.uniform1i(gl.getUniformLocation(program, uniformName), 0);
           break;
         }
       }
@@ -242,7 +242,7 @@ void main() {
     }
   }
 
-  public loadTexture(file: File, callback: (texture: WebGLTexture) => void) {
+  public loadTexture(file: Blob, callback: (texture: WebGLTexture) => void) {
     const gl = this.gl;
 
     const texture = gl.createTexture();

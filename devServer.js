@@ -1,6 +1,9 @@
 const WebpackDevServer = require('webpack-dev-server');
 const webpack = require('webpack');
 const config = require('./webpack.config.js');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const PORT = 9001;
 
@@ -14,5 +17,11 @@ const server = new WebpackDevServer(compiler, {
   stats: 'minimal',
   hot: true,
   publicPath: '/dist/',
+  proxy: {
+    '/api': {
+      target: `http://localhost:${process.env.PORT}`,
+      secure: false
+    }
+  }
 });
 server.listen(PORT, 'localhost', () => {});

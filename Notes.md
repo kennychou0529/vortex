@@ -1,6 +1,7 @@
 # TODO:
 
 * Garbage collection for image references.
+* Finish 'resources' tracking.
 * Make brick edges smoother - gamma correction?
 * Upload graphs
 * Type conversions for node outputs
@@ -25,6 +26,21 @@
 * https://github.com/Jam3/glsl-fast-gaussian-blur
 * https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
 * https://stackoverflow.com/questions/11112321/how-to-save-canvas-as-png-image
+
+# Schemas
+  * graphs
+    * id
+    * creator
+    * createdAt
+    * updatedAt
+    * name
+    * data
+  * images
+    * id
+    * graph
+    * name
+    * mimeType
+    * data
 
 # Operators to do:
   * Transforms:
@@ -51,12 +67,9 @@
     <feComponentTransfer>
     <feComposite>
     <feConvolveMatrix>
-    <feDiffuseLighting>
     <feDisplacementMap>
     <feImage>
     <feMerge>
     <feMorphology>
     <feOffset>
-    <feSpecularLighting>
-    <feTile>
     <feTurbulence>

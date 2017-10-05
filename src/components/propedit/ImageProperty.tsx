@@ -1,9 +1,9 @@
+import Axios from 'axios';
 import bind from 'bind-decorator';
 import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { ChangeType, GraphNode } from '../../graph';
 import { Parameter } from '../../operators';
-import ImageStore from '../../render/ImageStore';
 import Renderer from '../../render/Renderer';
 
 interface Props {
@@ -29,11 +29,10 @@ export default class ImageProperty extends Component<Props, State> {
   public componentWillMount() {
     const { parameter, node } = this.props;
     const key = node.paramValues.get(parameter.id);
-    this.context.imageStore.get(key, (err: any, file: File) => {
-      if (err) {
-        console.error(err);
-      } else if (file) {
-        this.setState({ imageName: file.name });
+    Axios.get(`/api/images/${key}`).then(resp => {
+      const name = resp.headers['x-content-name'];
+      if (name) {
+        this.setState({ imageName: name });
       }
     });
   }
@@ -65,20 +64,16 @@ export default class ImageProperty extends Component<Props, State> {
   @action.bound
   private onFileChanged(e: any) {
     const { parameter, node } = this.props;
-    const imgStore: ImageStore = this.context.imageStore;
     const renderer: Renderer = this.context.renderer;
     if (this.fileEl.files.length > 0) {
       const file = this.fileEl.files[0];
-      const value = imgStore.put(file, (err, id) => {
-        if (err) {
-          console.error(err);
-          alert(err);
-        } else {
-          renderer.loadTexture(file, texture => {
-            node.glResources.textures.set(parameter.id, texture);
-            node.paramValues.set(parameter.id, value);
-          });
-        }
+      const formData = new FormData();
+      formData.append('attachment', file);
+      Axios.post('/api/images', formData).then(resp => {
+        renderer.loadTexture(file, texture => {
+          node.glResources.textures.set(parameter.id, texture);
+          node.paramValues.set(parameter.id, resp.data.id);
+        });
       });
     } else {
       node.paramValues.set(parameter.id, null);

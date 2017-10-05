@@ -1,25 +1,22 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
+    "outDir": "../dist/server/",
     "sourceMap": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "module": "commonjs",
-    "jsx": "react",
-    "jsxFactory": "h",
     "target": "es6",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "baseUrl": "..",
-    "paths": {
-      "shaders": ["client/src/shaders"]
-    },
     "types": [
-      "webpack-env"
+      "node"
+    ],
+    "typeRoots": [
+      "../node_modules/@types"
     ]
   },
   "include": [
-    "./src/**/*.ts",
-    "./src/**/*.tsx"
+    "./**/*.ts"
   ]
 }

@@ -1,10 +1,7 @@
-// import * as combokeys from 'combokeys';
-// import * as keyboardJs from 'keyboardjs';
 import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { Graph, GraphNode } from '../graph';
 import { Registry } from '../operators';
-import ImageStore from '../render/ImageStore';
 import Renderer from '../render/Renderer';
 import GraphView from './graph/GraphView';
 import PropertyPanel from './PropertyPanel';
@@ -22,14 +19,12 @@ interface State {
 export default class App extends Component<undefined, State> {
   private renderer: Renderer;
   private registry: Registry;
-  private imageStore: ImageStore;
   private combokeys: any;
 
   constructor() {
     super();
     this.registry = new Registry();
     this.renderer = new Renderer();
-    this.imageStore = new ImageStore();
     this.combokeys = new Combokeys(document.documentElement);
     pause(this.combokeys);
     this.state = {
@@ -41,7 +36,7 @@ export default class App extends Component<undefined, State> {
       try {
         this.state.graph.fromJs(JSON.parse(savedGraph), this.registry);
         for (const node of this.state.graph.nodes) {
-          node.loadTextures(this.renderer, this.imageStore);
+          node.loadTextures(this.renderer);
         }
       } catch (e) {
         console.error('node deserialization failed:', e);
@@ -66,7 +61,6 @@ export default class App extends Component<undefined, State> {
       renderer: this.renderer,
       registry: this.registry,
       combokeys: this.combokeys,
-      imageStore: this.imageStore,
     };
   }
 

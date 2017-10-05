@@ -33,6 +33,9 @@ export default class ToolPanel extends Component<Props, State> {
             onSelect={this.onSelectorOperator}
         />
         <OperatorDetails operator={operator} />
+        <section className="about">
+          <a href="https://github.com/viridia/vortex">Source Code</a>
+        </section>
       </aside>
     );
   }

@@ -11,6 +11,7 @@ const DOC_WIDTH = 4000;
 
 export class Graph {
   public name: string;
+  public id: string;
   @observable public nodes: GraphNode[];
   @observable public bounds: Bounds;
 

@@ -1,7 +1,7 @@
+import Axios from 'axios';
 import { observable } from 'mobx';
 import { DataType, Operator } from '../operators';
 import GLResources from '../render/GLResources';
-import ImageStore from '../render/ImageStore';
 import Renderer from '../render/Renderer';
 import { InputTerminal } from './InputTerminal';
 import { OutputTerminal } from './OutputTerminal';
@@ -190,20 +190,32 @@ export class GraphNode {
     };
   }
 
-  public loadTextures(renderer: Renderer, imageStore: ImageStore) {
+  public loadTextures(renderer: Renderer) {
     for (const param of this.operator.paramList) {
       if (param.type === DataType.IMAGE && this.paramValues.has(param.id)) {
-        imageStore.get(this.paramValues.get(param.id), (err, file) => {
-          if (err) {
-            console.error(err);
-            alert(err);
-          } else {
-            renderer.loadTexture(file, texture => {
+        const imageId = this.paramValues.get(param.id);
+        console.log('image id:', imageId);
+        if (imageId) {
+          Axios.get(`/api/images/${imageId}`, {
+            responseType: 'blob',
+          }).then(resp => {
+            renderer.loadTexture(resp.data, texture => {
               this.glResources.textures.set(param.id, texture);
               this.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
             });
-          }
-        });
+          });
+          // imageStore.get(this.paramValues.get(param.id), (err, file) => {
+          //   if (err) {
+          //     console.error(err);
+          //     alert(err);
+          //   } else {
+          //     renderer.loadTexture(file, texture => {
+          //       this.glResources.textures.set(param.id, texture);
+          //       this.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
+          //     });
+          //   }
+          // });
+        }
       }
     }
   }
