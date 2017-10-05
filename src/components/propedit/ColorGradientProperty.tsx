@@ -1,12 +1,13 @@
 import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
-import { ChangeType, GraphNode } from '../../graph';
+import { ChangeType, Graph, GraphNode } from '../../graph';
 import { Parameter } from '../../operators';
 import ColorGradientEditor from '../controls/ColorGradientEditor';
 
 interface Props {
   parameter: Parameter;
+  graph: Graph;
   node: GraphNode;
 }
 
@@ -40,7 +41,8 @@ export default class ColorGradientProperty extends Component<Props, undefined> {
 
   @action.bound
   private onChange() {
-    const { node } = this.props;
+    const { node, graph } = this.props;
     node.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
+    graph.modified = true;
   }
 }

@@ -2,13 +2,14 @@ import Axios from 'axios';
 import bind from 'bind-decorator';
 import { action } from 'mobx';
 import { Component, h } from 'preact';
-import { ChangeType, GraphNode } from '../../graph';
+import { ChangeType, Graph, GraphNode } from '../../graph';
 import { Parameter } from '../../operators';
 import Renderer from '../../render/Renderer';
 
 interface Props {
   parameter: Parameter;
   node: GraphNode;
+  graph: Graph;
 }
 
 interface State {
@@ -63,7 +64,7 @@ export default class ImageProperty extends Component<Props, State> {
 
   @action.bound
   private onFileChanged(e: any) {
-    const { parameter, node } = this.props;
+    const { parameter, node, graph } = this.props;
     const renderer: Renderer = this.context.renderer;
     if (this.fileEl.files.length > 0) {
       const file = this.fileEl.files[0];
@@ -73,10 +74,12 @@ export default class ImageProperty extends Component<Props, State> {
         renderer.loadTexture(file, texture => {
           node.glResources.textures.set(parameter.id, texture);
           node.paramValues.set(parameter.id, resp.data.id);
+          graph.modified = true;
         });
       });
     } else {
       node.paramValues.set(parameter.id, null);
+      graph.modified = true;
     }
     node.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
   }

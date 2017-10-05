@@ -97,7 +97,7 @@ export default class NodeRendition extends Component<Props, undefined> {
 
   @action.bound
   private onPointerMove(e: PointerEvent) {
-    const { node } = this.props;
+    const { node, graph } = this.props;
     const scrollEl = this.base.parentNode as HTMLElement;
     const graphEl = scrollEl.parentNode as HTMLElement;
     node.x = quantize(Math.min(
@@ -106,6 +106,7 @@ export default class NodeRendition extends Component<Props, undefined> {
     node.y = quantize(Math.min(
       graphEl.offsetTop + graphEl.offsetHeight,
       Math.max(graphEl.offsetTop, e.clientY)) - this.dragYOffset - scrollEl.offsetTop);
+    graph.modified = true;
 
     let hScroll = 0;
     if (e.clientX < graphEl.offsetLeft) {

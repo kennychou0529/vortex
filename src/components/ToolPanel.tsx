@@ -10,6 +10,7 @@ import './ToolPanel.scss';
 
 interface Props {
   graph: Graph;
+  onSave: () => void;
 }
 
 interface State {
@@ -24,10 +25,10 @@ export default class ToolPanel extends Component<Props, State> {
     };
   }
 
-  public render({ graph }: Props, { operator }: State) {
+  public render({ graph, onSave }: Props, { operator }: State) {
     return (
       <aside id="tool-panel">
-        <GraphActions graph={graph} />
+        <GraphActions graph={graph} onSave={onSave} />
         <OperatorCatalog
             selected={operator}
             onSelect={this.onSelectorOperator}

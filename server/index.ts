@@ -10,6 +10,8 @@ import { URL } from 'url';
 import { ensureDbsExist, ensureTablesExist } from './db/helpers';
 
 const ReGrid = require('rethinkdb-regrid');
+const fallback = require('express-history-api-fallback');
+const yeast = require('yeast');
 
 dotenv.config();
 
@@ -20,24 +22,53 @@ const app = express();
 app.use(bodyParser.json());
 app.use(compression());
 
-app.get('/api/docs', (req, res, next) => {
+app.get('/api/docs', async (req, res, next) => {
   res.json({ status: 'OK' });
 });
 
-app.post('/api/docs', (req, res, next) => {
-  res.json({ status: 'Yep.' });
+app.get('/api/docs/:id', async (req, res, next) => {
+  const doc = await r.table('docs').get(req.params.id).run(conn);
+  res.json(doc);
 });
 
-app.put('/api/docs', (req, res, next) => {
-  res.json({ status: 'Gotcha!' });
+app.post('/api/docs', async (req, res, next) => {
+  // TODO: validate with ajv
+  req.body.id = yeast.encode(await nextDocId());
+  const result = await r.table('docs')
+      .insert({
+        name: req.body.name,
+        data: req.body,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .run(conn);
+  if (result.inserted === 1) {
+    res.json({ id: req.body.id });
+  } else {
+    // Do something with the error
+  }
+});
+
+app.put('/api/docs/:id', async (req, res, next) => {
+  // TODO: validate with ajv
+  const result = await r.table('docs')
+      .replace({
+        id: req.params.id,
+        name: req.body.name,
+        data: req.body,
+        updatedAt: new Date(),
+      })
+      .run(conn);
+  if (result.replaced === 1) {
+    res.json({ id: req.params.id });
+  } else {
+    // Do something with the error
+  }
 });
 
 app.get('/api/images', async (req, res, next) => {
   const stream = bucket.listMetadata({});
   stream.toArray().then((result: any) => res.json(result));
-  // stream.on('data', (data: any) => {
-  //   console.log('data');
-  // });
 });
 
 app.get('/api/images/:id', async (req, res, next) => {
@@ -50,7 +81,6 @@ app.get('/api/images/:id', async (req, res, next) => {
 
 const upload = multer({ dest: 'uploads/' });
 app.post('/api/images', upload.single('attachment'), async (req, res) => {
-  console.info('Uploading:', req.file.originalname, req.file.mimetype, req.file);
   const id = await r.uuid().run(conn);
   const ws = bucket.createWriteStream({
     filename: id,
@@ -80,9 +110,6 @@ app.post('/api/images', upload.single('attachment'), async (req, res) => {
   });
 });
 
-// Serve static client assets
-app.use(express.static(path.resolve(__dirname, '../static')));
-
 // Webpack client proxy
 if (process.env.NODE_ENV !== 'production') {
   const webpack = require('webpack');
@@ -102,6 +129,27 @@ if (process.env.NODE_ENV !== 'production') {
   }));
 }
 
+// Serve static client assets
+const root = path.resolve(__dirname, '../static');
+app.use(express.static(root));
+app.use(fallback('index.html', { root }));
+
+async function nextDocId() {
+  // Increment the issue id counter.
+  const resp: any = await r.table('global').get('0').update({
+    nextDoc: r.row('nextDoc').add(1),
+  }, {
+    returnChanges: true,
+  }).run(conn);
+
+  if (resp.replaced !== 1) {
+    console.error(resp);
+    throw new Error('Error acquiring issue id.');
+  }
+
+  return resp.changes[0].new_val.nextDoc;
+}
+
 async function start() {
   const dbUrl = new URL(process.env.RETHINKDB_URL);
   // logger.info(`Connecting to RethinkDB at host: ${dbUrl.hostname}, port: ${dbUrl.port}`);
@@ -112,17 +160,15 @@ async function start() {
   await ensureDbsExist(conn, [process.env.DB_NAME]);
   await ensureTablesExist(conn, process.env.DB_NAME, [
     'docs',
-    'images',
+    'global',
   ]);
-  // await ensureIndicesExist(this.conn, process.env.DB_NAME, {
-  //   projects: ['name'],
-  //   memberships: ['project', 'user'],
-  // });
   conn.use(process.env.DB_NAME);
   bucket = ReGrid({ db: process.env.DB_NAME });
   await bucket.initBucket();
-  // this.middleware();
-  // await this.routes();
+
+  await r.table('global')
+      .insert({ id: '0', nextDoc: 10000 })
+      .run(conn);
 
   app.listen(process.env.PORT);
 }

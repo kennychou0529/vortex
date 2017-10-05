@@ -30,7 +30,7 @@ export default class PropertyPanel extends Component<Props, State> {
     const selectedNode = selection.length === 1 ? selection[0] : null;
     return (
       <aside id="property-panel">
-        {selectedNode && <PropertyEditor node={selectedNode} />}
+        {selectedNode && <PropertyEditor graph={graph} node={selectedNode} />}
         {selectedNode && <NodeActions node={selectedNode} onSetTiling={this.onSetTiling} />}
         {selectedNode &&
             <RenderedImage node={selectedNode} width={320} height={320} tiling={tiling} />}

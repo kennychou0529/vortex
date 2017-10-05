@@ -9,6 +9,7 @@ import './GraphActions.scss';
 
 interface Props {
   graph: Graph;
+  onSave: () => void;
 }
 
 interface State {
@@ -37,6 +38,7 @@ export default class GraphActions extends Component<Props, State> {
         <a ref={(el: HTMLAnchorElement) => { this.downloadEl = el; }} style={{ display: 'none' }} />
         <section className="button-group">
           <button onClick={this.onClickLoad}>Load...</button>
+          <button onClick={this.onClickSave} disabled={!graph.modified}>Save</button>
           <button onClick={this.onClickDownload}>Download...</button>
           <button onClick={this.onClickClear}>Clear</button>
         </section>
@@ -73,6 +75,13 @@ export default class GraphActions extends Component<Props, State> {
     e.preventDefault();
     e.stopPropagation();
     // this.setState({ showSource: true });
+  }
+
+  @bind
+  private onClickSave(e: MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.props.onSave();
   }
 
   @bind

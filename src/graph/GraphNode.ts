@@ -194,7 +194,6 @@ export class GraphNode {
     for (const param of this.operator.paramList) {
       if (param.type === DataType.IMAGE && this.paramValues.has(param.id)) {
         const imageId = this.paramValues.get(param.id);
-        console.log('image id:', imageId);
         if (imageId) {
           Axios.get(`/api/images/${imageId}`, {
             responseType: 'blob',
@@ -204,17 +203,6 @@ export class GraphNode {
               this.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
             });
           });
-          // imageStore.get(this.paramValues.get(param.id), (err, file) => {
-          //   if (err) {
-          //     console.error(err);
-          //     alert(err);
-          //   } else {
-          //     renderer.loadTexture(file, texture => {
-          //       this.glResources.textures.set(param.id, texture);
-          //       this.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
-          //     });
-          //   }
-          // });
         }
       }
     }

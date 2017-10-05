@@ -14,6 +14,7 @@ export class Graph {
   public id: string;
   @observable public nodes: GraphNode[];
   @observable public bounds: Bounds;
+  @observable public modified: boolean;
 
   private nodeCount = 0;
 
@@ -32,6 +33,7 @@ export class Graph {
       this.nodeCount = Math.max(this.nodeCount, node.id + 1);
     }
     this.nodes.push(node);
+    this.modified = true;
   }
 
   /** Locate a node by id. */
@@ -85,6 +87,7 @@ export class Graph {
     dst.connection = conn;
     src.node.notifyChange(ChangeType.CONNECTION_CHANGED);
     dst.node.notifyChange(ChangeType.CONNECTION_CHANGED);
+    this.modified = true;
   }
 
   /** Return a list of all selected nodes. */
@@ -116,6 +119,7 @@ export class Graph {
     });
     // Delete all selected nodes
     this.nodes = this.nodes.filter(n => !n.selected);
+    this.modified = true;
   }
 
   @action
@@ -135,6 +139,7 @@ export class Graph {
       node.setDeleted();
     });
     this.nodes = [];
+    this.modified = true;
   }
 
   public toJs(): any {
@@ -190,5 +195,6 @@ export class Graph {
         connection.source.node, connection.source.terminal,
         connection.destination.node, connection.destination.terminal);
     });
+    this.modified = false;
   }
 }

@@ -1,13 +1,14 @@
 import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
-import { ChangeType, GraphNode } from '../../graph';
+import { ChangeType, Graph, GraphNode } from '../../graph';
 import { DataType, Parameter } from '../../operators';
 import ComboSlider from '../controls/ComboSlider';
 
 interface Props {
   parameter: Parameter;
   node: GraphNode;
+  graph: Graph;
 }
 
 @observer
@@ -47,12 +48,13 @@ export default class ScalarProperty extends Component<Props, undefined> {
 
   @action.bound
   private onChange(value: number) {
-    const { parameter, node } = this.props;
+    const { parameter, node, graph } = this.props;
     if (parameter.enumVals) {
       node.paramValues.set(parameter.id, parameter.enumVals[value].value);
     } else {
       node.paramValues.set(parameter.id, value);
     }
     node.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
+    graph.modified = true;
   }
 }
