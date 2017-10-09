@@ -8,15 +8,18 @@ import * as path from 'path';
 import * as r from 'rethinkdb';
 import { URL } from 'url';
 import { ensureDbsExist, ensureTablesExist } from './db/helpers';
+import S3Storage from './S3Storage';
+import Storage from './Storage';
 
 const ReGrid = require('rethinkdb-regrid');
 const fallback = require('express-history-api-fallback');
 const yeast = require('yeast');
 
-dotenv.config();
+dotenv.config({ path: '.env-secure' });
 
 let conn: r.Connection;
 let bucket: any;
+let storage: Storage;
 
 const app = express();
 app.use(bodyParser.json());
@@ -72,42 +75,50 @@ app.get('/api/images', async (req, res, next) => {
 });
 
 app.get('/api/images/:id', async (req, res, next) => {
-  const record = await bucket.getMetadata(req.params.id);
-  const rs = bucket.createReadStream({ id: req.params.id });
-  res.set('Content-Type', record.metadata.contentType);
-  res.set('X-Content-Name', record.metadata.filename);
-  rs.pipe(res);
+  if (process.env.STORAGE_ACCESS_KEY) {
+    // putFile(req.params.id, )
+  } else {
+    const record = await bucket.getMetadata(req.params.id);
+    const rs = bucket.createReadStream({ id: req.params.id });
+    res.set('Content-Type', record.metadata.contentType);
+    res.set('X-Content-Name', record.metadata.filename);
+    rs.pipe(res);
+  }
 });
 
 const upload = multer({ dest: 'uploads/' });
 app.post('/api/images', upload.single('attachment'), async (req, res) => {
-  const id = await r.uuid().run(conn);
-  const ws = bucket.createWriteStream({
-    filename: id,
-    metadata: {
-      filename: req.file.originalname,
-      contentType: req.file.mimetype,
-      mark: true, // For garbage collection.
-    },
-  });
-  fs.createReadStream(req.file.path).pipe(ws);
-  ws.on('error', (e: any) => {
-    console.error(e);
-    fs.unlink(req.file.path, () => {
-      res.status(500).json({ err: 'upload' });
-    });
-  });
-  ws.on('finish', async () => {
-    const fn = await bucket.getFile({ filename: id });
-    // Delete the temp file.
-    fs.unlink(req.file.path, () => {
-      res.json({
-        name: req.file.originalname,
+  if (process.env.STORAGE_ACCESS_KEY) {
+    storage.putImage(req.file, res);
+  } else {
+    const id = await r.uuid().run(conn);
+    const ws = bucket.createWriteStream({
+      filename: id,
+      metadata: {
+        filename: req.file.originalname,
         contentType: req.file.mimetype,
-        id: fn.id,
+        mark: true, // For garbage collection.
+      },
+    });
+    fs.createReadStream(req.file.path).pipe(ws);
+    ws.on('error', (e: any) => {
+      console.error(e);
+      fs.unlink(req.file.path, () => {
+        res.status(500).json({ err: 'upload' });
       });
     });
-  });
+    ws.on('finish', async () => {
+      const fn = await bucket.getFile({ filename: id });
+      // Delete the temp file.
+      fs.unlink(req.file.path, () => {
+        res.json({
+          name: req.file.originalname,
+          contentType: req.file.mimetype,
+          id: fn.id,
+        });
+      });
+    });
+  }
 });
 
 // Webpack client proxy
@@ -151,6 +162,8 @@ async function nextDocId() {
 }
 
 async function start() {
+  storage = new S3Storage();
+
   const dbUrl = new URL(process.env.RETHINKDB_URL);
   // logger.info(`Connecting to RethinkDB at host: ${dbUrl.hostname}, port: ${dbUrl.port}`);
   conn = await r.connect({

@@ -242,7 +242,7 @@ void main() {
     }
   }
 
-  public loadTexture(file: Blob, callback: (texture: WebGLTexture) => void) {
+  public loadTexture(url: string, callback: (texture: WebGLTexture) => void) {
     const gl = this.gl;
 
     const texture = gl.createTexture();
@@ -266,11 +266,8 @@ void main() {
       callback(texture);
     };
 
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      image.src = (event.target as any).result;
-    };
-    reader.readAsDataURL(file);
+    image.crossOrigin = '';
+    image.src = url;
   }
 
   private compileShader(type: number, source: string): WebGLShader {

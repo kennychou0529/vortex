@@ -29,13 +29,17 @@ export default class ImageProperty extends Component<Props, State> {
 
   public componentWillMount() {
     const { parameter, node } = this.props;
-    const key = node.paramValues.get(parameter.id);
-    Axios.get(`/api/images/${key}`).then(resp => {
-      const name = resp.headers['x-content-name'];
-      if (name) {
-        this.setState({ imageName: name });
-      }
-    });
+    const url = node.paramValues.get(parameter.id);
+    if (url) {
+      Axios.head(url).then(resp => {
+        const name = resp.headers['x-amz-meta-name'];
+        if (name) {
+          this.setState({ imageName: name });
+        } else if (name) {
+          this.setState({ imageName: null });
+        }
+      });
+    }
   }
 
   public render({ parameter, node }: Props, { imageName }: State) {
@@ -71,16 +75,17 @@ export default class ImageProperty extends Component<Props, State> {
       const formData = new FormData();
       formData.append('attachment', file);
       Axios.post('/api/images', formData).then(resp => {
-        renderer.loadTexture(file, texture => {
+        renderer.loadTexture(resp.data.url, texture => {
           node.glResources.textures.set(parameter.id, texture);
-          node.paramValues.set(parameter.id, resp.data.id);
+          node.paramValues.set(parameter.id, resp.data.url);
           graph.modified = true;
+          node.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
         });
       });
     } else {
       node.paramValues.set(parameter.id, null);
       graph.modified = true;
+      node.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
     }
-    node.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
   }
 }

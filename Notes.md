@@ -1,9 +1,15 @@
 # TODO:
 
 * Garbage collection for image references.
-* Finish 'resources' tracking.
+* Finish 'GLResources' tracking.
 * Make brick edges smoother - gamma correction?
-* Upload graphs
+* Cloud storage:
+  * List recent documents
+  * List all my documents
+  * Save should prompt for name
+  * Track user identity
+  * Fork project
+  * Nav bar with credits, docs, etc.
 * Type conversions for node outputs
   * UV not fully supported
   * See if we can remove some of the type params that are passed in
@@ -13,8 +19,6 @@
 * Deleting connectors
 * Finish compass rose - center button should center the diagram
 * Undo / Redo
-* Save to cloud (url)
-  * Generate unique url - server component
 * Export image
 * Log scale controls
 * Standardize 'Resources' across all operators

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "../dist/server/",
+    "outDir": "../dist/",
     "sourceMap": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,

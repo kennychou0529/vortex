@@ -1,4 +1,3 @@
-import Axios from 'axios';
 import { observable } from 'mobx';
 import { DataType, Operator } from '../operators';
 import GLResources from '../render/GLResources';
@@ -193,15 +192,11 @@ export class GraphNode {
   public loadTextures(renderer: Renderer) {
     for (const param of this.operator.paramList) {
       if (param.type === DataType.IMAGE && this.paramValues.has(param.id)) {
-        const imageId = this.paramValues.get(param.id);
-        if (imageId) {
-          Axios.get(`/api/images/${imageId}`, {
-            responseType: 'blob',
-          }).then(resp => {
-            renderer.loadTexture(resp.data, texture => {
-              this.glResources.textures.set(param.id, texture);
-              this.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
-            });
+        const imageUrl = this.paramValues.get(param.id);
+        if (imageUrl) {
+          renderer.loadTexture(imageUrl, texture => {
+            this.glResources.textures.set(param.id, texture);
+            this.notifyChange(ChangeType.PARAM_VALUE_CHANGED);
           });
         }
       }

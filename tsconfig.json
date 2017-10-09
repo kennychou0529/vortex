@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
+    "outDir": "./dist/client/",
     "sourceMap": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
@@ -16,6 +16,9 @@
     },
     "types": [
       "webpack-env"
+    ],
+    "typeRoots": [
+      "node_modules/@types"
     ]
   },
   "include": [
