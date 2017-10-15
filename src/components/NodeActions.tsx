@@ -54,9 +54,9 @@ export default class NodeActions extends Component<Props, State> {
           </button>
         </section>
         <div className="spacer" />
-        <button onClick={this.onClickShowSource}>Source...</button>
+        <button onClick={this.onClickShowSource}>Source&hellip;</button>
         <div className="spacer" />
-        <button onClick={this.onClickShowExport}>Export...</button>
+        <button onClick={this.onClickShowExport}>Export&hellip;</button>
         <Modal className="shader-source" open={showSource} onHide={this.onHideSource} >
           <Modal.Header>Generated shader code for {node.operator.name}:{node.id}</Modal.Header>
           <Modal.Body>

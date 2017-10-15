@@ -22,6 +22,7 @@
     justify-content: flex-end;
     > .disc {
       border-radius: 6px 0 0 6px;
+      border-right-width: 0;
     }
     > .caption {
       right: 10px;
@@ -32,6 +33,7 @@
     justify-content: flex-start;
     > .disc {
       border-radius: 0 6px 6px 0;
+      border-left-width: 0;
     }
     > .caption {
       left: 8px;

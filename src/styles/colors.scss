@@ -15,7 +15,11 @@ $connectorStroke: #4c4;
 $connectorOutlineStroke: #000;
 $connectorShadowStroke: #000;
 
+$headerBg: #222;
+$headerColor: #eee;
+
 $modalBg: transparentize(#335, .7);
+$modalText: #000;
 $modalDialogBg: $panelBg;
 $modalBorder: #000;
 $modalShadow: transparentize(#000, .3);
@@ -26,3 +30,13 @@ $buttonBg: linear-gradient(to bottom, lighten($panelBg, 1%), darken($panelBg, 9%
 $buttonActiveBg: linear-gradient(to bottom, darken($panelBg, 15%), darken($panelBg, 5%));
 $buttonSelectedBg: linear-gradient(to bottom, darken($selectedBg, 10%), darken($selectedBg, 5%));
 $buttonBorderColor: darken($panelBg, 30%);
+
+$buttonDarkBg: linear-gradient(to bottom, lighten($headerBg, 25%), lighten($headerBg, 15%));
+$buttonDarkActiveBg: linear-gradient(to bottom, lighten($headerBg, 35%), lighten($headerBg, 25%));
+$buttonDarkSelectedBg: linear-gradient(to bottom, darken($selectedBg, 20%), darken($selectedBg, 30%));
+$buttonDarkBorderColor: #000;
+$buttonDarkTextColor: #ccc;
+
+$buttonLoginGoogleBg: #dd4b39;
+$buttonLoginGitHubBg: #464646;
+$buttonLoginFacebookBg: #3b5998;

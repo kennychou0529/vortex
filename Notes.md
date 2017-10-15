@@ -5,11 +5,7 @@
 * Make brick edges smoother - gamma correction?
 * Cloud storage:
   * List recent documents
-  * List all my documents
-  * Save should prompt for name
   * Track user identity
-  * Fork project
-  * Nav bar with credits, docs, etc.
 * Type conversions for node outputs
   * UV not fully supported
   * See if we can remove some of the type params that are passed in

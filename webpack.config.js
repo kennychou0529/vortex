@@ -9,7 +9,7 @@ module.exports = {
     main: [ './src/index.tsx' ],
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist/client'),
     publicPath: '/dist/',
     filename: '[name].bundle.js',
     chunkFilename: '[name]-[chunkhash].js',
@@ -34,7 +34,7 @@ module.exports = {
       { // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
         enforce: 'pre',
         test: /\.js$/,
-        include: [ path.resolve(__dirname, 'client') ],
+        include: [ path.resolve(__dirname, 'src') ],
         loader: 'source-map-loader',
       },
       {

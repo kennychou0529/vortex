@@ -1,5 +1,17 @@
 #app {
   display: flex;
-  flex: 1;
+  flex-direction: column;
   align-items: stretch;
+  flex: 1;
+
+  > header {
+    display: flex;
+    align-items: center;
+  }
+
+  > section {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+  }
 }

@@ -1,23 +1,16 @@
 import bind from 'bind-decorator';
 import { Component, h } from 'preact';
-import { Graph } from '../graph';
 import { Operator } from '../operators';
-import GraphActions from './catalog/GraphActions';
 import OperatorCatalog from './catalog/OperatorCatalog';
 import OperatorDetails from './catalog/OperatorDetails';
 
 import './ToolPanel.scss';
 
-interface Props {
-  graph: Graph;
-  onSave: () => void;
-}
-
 interface State {
   operator: Operator;
 }
 
-export default class ToolPanel extends Component<Props, State> {
+export default class ToolPanel extends Component<undefined, State> {
   constructor() {
     super();
     this.state = {
@@ -25,18 +18,17 @@ export default class ToolPanel extends Component<Props, State> {
     };
   }
 
-  public render({ graph, onSave }: Props, { operator }: State) {
+  public render(_: any, { operator }: State) {
     return (
       <aside id="tool-panel">
-        <GraphActions graph={graph} onSave={onSave} />
+        <section className="note">
+          Drag an operator to the graph:
+        </section>
         <OperatorCatalog
             selected={operator}
             onSelect={this.onSelectorOperator}
         />
         <OperatorDetails operator={operator} />
-        <section className="about">
-          <a href="https://github.com/viridia/vortex">Source Code</a>
-        </section>
       </aside>
     );
   }

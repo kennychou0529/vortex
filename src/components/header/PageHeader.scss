@@ -1,0 +1,136 @@
+@import '../../styles/colors';
+
+.page-header {
+  background: $headerBg;
+  color: $headerColor;
+  padding: 8px;
+  align-items: center;
+
+  > .title {
+    font-size: 20px;
+    font-weight: bold;
+
+    &.modified {
+      color: darken($headerColor, 15%);
+    }
+  }
+
+  > .doc-name {
+    color: darken($headerColor, 40%);
+    margin: 0 4px 0 8px;
+  }
+
+  > .name-input {
+    flex: 1;
+    background-color: $headerBg;
+    vertical-align: middle;
+    padding: 9px 4px 7px 4px;
+    margin: 0 12px 0 0;
+    color: darken($headerColor, 30%);
+    border: none;
+    border-radius: 4px;
+    outline: none;
+
+    &.modified {
+      color: darken($headerColor, 15%);
+    }
+
+    &:focus {
+      color: darken($headerColor, 5%);
+      background-color: lighten($headerBg, 10%);
+    }
+  }
+
+  .github-link {
+    margin-right: 12px;
+    > img {
+      height: 28px;
+      opacity: .7;
+    }
+  }
+
+  > .spacer {
+    flex: 1;
+  }
+
+  > button {
+    margin-left: 8px;
+  }
+
+  button {
+    border-color: $buttonDarkBorderColor;
+    background-image: $buttonDarkBg;
+    color: $buttonDarkTextColor;
+
+    &:active {
+      background-image: $buttonDarkActiveBg;
+    }
+
+    &.selected {
+      background-image: $buttonDarkSelectedBg;
+    }
+
+    &[disabled] {
+      opacity: .7;
+    }
+  }
+}
+
+.modal-dialog.login {
+  .login-buttons {
+    display: flex;
+    flex-direction: column;
+  }
+
+  a.login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 2px;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    width: 12em;
+    padding: 12px;
+    margin-bottom: 4px;
+    text-decoration: none;
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &.google {
+      background: $buttonLoginGoogleBg;
+      &:active {
+        background: lighten($buttonLoginGoogleBg, 5%);
+      }
+    }
+
+    &.github {
+      background: $buttonLoginGitHubBg;
+      &:active {
+        background: lighten($buttonLoginGitHubBg, 5%);
+      }
+    }
+
+    &.facebook {
+      background: $buttonLoginFacebookBg;
+      &:active {
+        background: lighten($buttonLoginFacebookBg, 5%);
+      }
+    }
+
+    > .logo {
+      height: 18px;
+      margin-right: 8px;
+    }
+  }
+
+  .note {
+    font-size: 13px;
+    align-self: center;
+    width: 40em;
+    flex: 1;
+    text-align: center;
+    color: lighten($modalText, 30%);
+  }
+}

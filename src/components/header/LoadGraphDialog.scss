@@ -1,0 +1,54 @@
+@import '../../styles/colors';
+
+.modal-dialog.load {
+  width: 30em;
+
+  .graph-table {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex: 1 1 auto;
+
+    > header {
+      display: flex;
+      font-weight: bold;
+    }
+
+    .graph-table-body {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      overflow-y: auto;
+      background-color: $listBg;
+      border: 1px inset;
+      min-height: 10em;
+      max-height: 10em;
+    }
+
+    .graph-entry {
+      display: flex;
+      flex: 0 0 auto;
+      cursor: pointer;
+      user-select: none;
+
+      &:hover {
+        background-color: $listBgHover;
+      }
+
+      &.selected {
+        background-color: $listBgSelected;
+      }
+    }
+
+    .name {
+      padding: 4px;
+      width: 70%;
+    }
+
+    .date {
+      width: 30%;
+      text-align: right;
+      padding: 4px;
+    }
+  }
+}

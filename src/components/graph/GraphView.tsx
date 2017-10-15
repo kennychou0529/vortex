@@ -186,10 +186,12 @@ export default class GraphView extends Component<Props, State> {
   private onDrop(e: DragEvent) {
     const data = e.dataTransfer.getData('application/x-vortex-operator');
     if (data) {
+      this.props.graph.clearSelection();
       const op = this.context.registry.get(data);
       const node = new GraphNode(op);
       node.x = quantize(e.clientX - this.base.offsetLeft - this.state.xScroll - 45);
       node.y = quantize(e.clientY - this.base.offsetTop - this.state.yScroll - 60);
+      node.selected = true;
       this.props.graph.add(node);
     }
   }

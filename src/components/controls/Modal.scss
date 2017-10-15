@@ -30,6 +30,7 @@
   bottom: 0;
   right: 0;
   background-color: $modalBg;
+  color: $modalText;
   z-index: 100;
   opacity: 0;
 
@@ -75,7 +76,7 @@
       display: flex;
       flex-direction: column;
       padding: 12px;
-      flex: 1;
+      flex: 1 1 auto;
     }
 
     > footer {

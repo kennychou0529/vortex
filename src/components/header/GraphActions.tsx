@@ -1,46 +1,56 @@
 import bind from 'bind-decorator';
-// import * as classNames from 'classnames';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
 import { Graph } from '../../graph';
+import User from '../../user/User';
 import Modal from '../controls/Modal';
+import LoadGraphDialog from './LoadGraphDialog';
 
 import './GraphActions.scss';
 
 interface Props {
   graph: Graph;
+  graphId: string;
   onSave: () => void;
+  onNew: () => void;
 }
 
 interface State {
   showConfirmClear: boolean;
   showDownload: boolean;
+  showLoad: boolean;
   repeat: number;
 }
 
 @observer
 export default class GraphActions extends Component<Props, State> {
   private downloadEl: HTMLAnchorElement;
-  private graphNameEl: HTMLInputElement;
 
   constructor() {
     super();
     this.state = {
       showConfirmClear: false,
       showDownload: false,
+      showLoad: false,
       repeat: 1,
     };
   }
 
-  public render({ graph }: Props, { showConfirmClear, showDownload, repeat }: State) {
+  public render(
+      { graph, graphId }: Props,
+      { showConfirmClear, showDownload, showLoad, repeat }: State) {
+    const user: User = this.context.user;
     return (
       <section className="graph-actions">
         <a ref={(el: HTMLAnchorElement) => { this.downloadEl = el; }} style={{ display: 'none' }} />
         <section className="button-group">
-          <button onClick={this.onClickLoad}>Load...</button>
-          <button onClick={this.onClickSave} disabled={!graph.modified}>Save</button>
-          <button onClick={this.onClickDownload}>Download...</button>
-          <button onClick={this.onClickClear}>Clear</button>
+          <button onClick={this.onClickNew}>New</button>
+          {user.isLoggedIn !== false && <button onClick={this.onClickLoad}>Load&hellip;</button>}
+          {graphId
+            ? <button onClick={this.onClickSave}>Fork</button>
+            : <button onClick={this.onClickSave}>Save</button>
+          }
+          <button onClick={this.onClickDownload}>Download</button>
         </section>
         <Modal className="confirm" open={showConfirmClear} onHide={this.onHideConfirmClear} >
           <Modal.Header>Clear graph</Modal.Header>
@@ -50,22 +60,7 @@ export default class GraphActions extends Component<Props, State> {
             <button className="close" onClick={this.onClickConfirmClear}>Clear</button>
           </Modal.Footer>
         </Modal>
-        <Modal className="download" open={showDownload} onHide={this.onHideDownload} >
-          <Modal.Header>Download graph</Modal.Header>
-          <Modal.Body>
-            Name of this graph:
-            <input
-                ref={(el: HTMLInputElement) => { this.graphNameEl = el; }}
-                type="text"
-                value={graph.name}
-                autofocus={true}
-            />
-          </Modal.Body>
-          <Modal.Footer className="modal-buttons">
-            <button className="close" onClick={this.onHideDownload}>Cancel</button>
-            <button className="close" onClick={this.onClickConfirmDownload}>Download</button>
-          </Modal.Footer>
-        </Modal>
+        <LoadGraphDialog open={showLoad} onHide={this.onHideLoad} />
       </section>
     );
   }
@@ -74,7 +69,7 @@ export default class GraphActions extends Component<Props, State> {
   private onClickLoad(e: MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    // this.setState({ showSource: true });
+    this.setState({ showLoad: true });
   }
 
   @bind
@@ -88,12 +83,17 @@ export default class GraphActions extends Component<Props, State> {
   private onClickDownload(e: MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    this.setState({ showDownload: true });
+    const { graph } = this.props;
+    const text = JSON.stringify(graph.toJs(), null, 2);
+    this.downloadEl.setAttribute(
+        'href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
+    this.downloadEl.setAttribute('download', graph.name + '.vortex.json');
+    this.downloadEl.click();
   }
 
   @bind
-  private onClickClear() {
-    this.setState({ showConfirmClear: true });
+  private onClickNew() {
+    this.props.onNew();
   }
 
   @bind
@@ -114,20 +114,7 @@ export default class GraphActions extends Component<Props, State> {
   }
 
   @bind
-  private onClickConfirmDownload() {
-    const { graph } = this.props;
-    graph.name = this.graphNameEl.value;
-    this.setState({ showDownload: false });
-
-    const text = JSON.stringify(graph.toJs(), null, 2);
-    this.downloadEl.setAttribute(
-        'href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
-    this.downloadEl.setAttribute('download', graph.name + '.vor.json');
-    this.downloadEl.click();
-  }
-
-  @bind
-  private onHideDownload() {
-    this.setState({ showDownload: false });
+  private onHideLoad() {
+    this.setState({ showLoad: false });
   }
 }

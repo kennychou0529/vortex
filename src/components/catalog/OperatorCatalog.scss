@@ -24,9 +24,11 @@
     }
 
     > .group {
-      width: 30%;
+      min-width: 5em;
       padding-right: 8px;
       text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     > .name {

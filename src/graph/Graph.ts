@@ -10,11 +10,13 @@ import { Terminal } from './Terminal';
 const DOC_WIDTH = 4000;
 
 export class Graph {
-  public name: string;
-  public id: string;
-  @observable public nodes: GraphNode[];
+  @observable public name: string;
+  @observable public author: string;
+  @observable public id: string;
+  @observable.shallow public nodes: GraphNode[];
   @observable public bounds: Bounds;
-  @observable public modified: boolean;
+  @observable public modified: boolean = false;
+  @observable public ownedByUser: boolean = false;
 
   private nodeCount = 0;
 
@@ -142,6 +144,10 @@ export class Graph {
     this.modified = true;
   }
 
+  @computed public get asJson() {
+    return this.toJs();
+  }
+
   public toJs(): any {
     const connections: any[] = [];
     this.nodes.forEach(node => {
@@ -167,7 +173,6 @@ export class Graph {
     };
   }
 
-  // TODO: schema validation
   public fromJs(json: any, registry: Registry) {
     if (typeof json.name === 'string') {
       this.name = json.name;
