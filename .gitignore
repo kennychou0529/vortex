@@ -7,3 +7,4 @@ log/
 npm-debug.log
 .env
 .env-secure
+vortex-bundle.zip
