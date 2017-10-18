@@ -344,7 +344,7 @@ app.use(express.static(root));
 app.use(fallback('index.html', { root }));
 
 async function start() {
-  if (process.env.AWS_ACCESS_KEY) {
+  if (process.env.STORAGE_BUCKET_IMAGES) {
     imageStore = new S3Store();
   }
 

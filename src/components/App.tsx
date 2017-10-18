@@ -214,7 +214,7 @@ export default class App extends Component<Props, State> {
 
   private graphFromJs(graph: Graph, data: any) {
     graph.fromJs(data, this.registry);
-    for (const node of this.state.graph.nodes) {
+    for (const node of graph.nodes) {
       node.loadTextures(this.renderer);
     }
   }
