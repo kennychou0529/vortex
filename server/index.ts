@@ -20,6 +20,7 @@ import S3Store from './db/S3Store';
 
 const fallback = require('express-history-api-fallback');
 const graphSchema = require('./graph.schema.json');
+const { redirectToHTTPS } = require('express-http-to-https');
 
 dotenv.config();
 
@@ -35,12 +36,15 @@ const jwtOpts = {
 };
 
 function makeCallbackUrl(pathname: string, next?: string): string {
-  const url = new URL(`http://${process.env.HOST}${pathname}`);
+  const url = new URL(`http://placeholder`);
   if (process.env.USE_HTTPS) {
     url.protocol = 'https';
   }
   url.hostname = process.env.HOSTNAME;
-  url.port = process.env.PORT;
+  url.pathname = pathname;
+  if (process.env.PUBLIC_PORT && process.env.PUBLIC_PORT !== '80') {
+    url.port = process.env.PUBLIC_PORT;
+  }
   if (next) {
     url.search = `next=${encodeURIComponent(next)}`;
   }
@@ -64,6 +68,7 @@ function createToken(emails: Array<{ value: string }>, displayName: string): Use
 }
 
 const app = express();
+app.use(redirectToHTTPS([/localhost:(\d{4})/]));
 app.use(bodyParser.json());
 app.use(compression());
 app.use(passport.initialize());
