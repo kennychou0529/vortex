@@ -15,6 +15,8 @@ import ToolPanel from './ToolPanel';
 
 import './App.scss';
 
+console.log((window as any).__DEBUG__);
+
 const Combokeys: any = require('combokeys');
 const pause: any = require('combokeys/plugins/pause');
 

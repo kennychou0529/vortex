@@ -1,7 +1,5 @@
 # TODO:
 
-* Cycle detection
-* Quantize initial placement.
 * Editing existing connectors
 * Deleting connectors
 * Download image

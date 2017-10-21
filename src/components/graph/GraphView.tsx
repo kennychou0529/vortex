@@ -16,9 +16,9 @@ interface Props {
 interface State {
   xScroll: number;
   yScroll: number;
-  dragOrigin?: Terminal;
-  dragTarget?: Terminal;
-  dragX: number;
+  dragOrigin?: Terminal;    // The output terminal which is the origin of the drag
+  dragTarget?: Terminal;    // The input terminal which is the origin of the drag
+  dragX: number;            // The current drag coordinates
   dragY: number;
   dragOver: boolean;
 }

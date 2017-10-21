@@ -148,6 +148,36 @@ export class Graph {
     return this.toJs();
   }
 
+  /** Return true if adding a connection between the given terminals would create a cycle. */
+  public detectCycle(a: Terminal, b: Terminal): boolean {
+    if (a.output === b.output) {
+      return false;
+    }
+    if (a.output && !b.output) {
+      return this.detectCycle(b, a);
+    }
+    const input = a;
+    const output = b;
+    const visited = new Set<number>();
+    const toVisit: GraphNode[] = [];
+    visited.add(output.node.id);
+    toVisit.push(input.node);
+    while (toVisit.length > 0) {
+      const node = toVisit.pop();
+      if (visited.has(node.id)) {
+        return true;
+      }
+      visited.add(node.id);
+      for (const term of node.outputs) {
+        for (const connection of term.connections) {
+          toVisit.push(connection.dest.node);
+        }
+      }
+    }
+
+    return false;
+  }
+
   public toJs(): any {
     const connections: any[] = [];
     this.nodes.forEach(node => {

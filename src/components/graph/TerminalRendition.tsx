@@ -62,10 +62,13 @@ export default class TerminalRendition extends Component<Props, State> {
 
   @bind
   private onDragEnter(e: DragEvent) {
-    const { node, terminal } = this.props;
+    const { node, terminal, graph } = this.props;
     const origin = this.context.getDragOrigin();
     if (origin && origin.node !== node) {
       if (e.dataTransfer.types.indexOf(terminal.output ? DragType.INPUT : DragType.OUTPUT) >= 0) {
+        if (graph.detectCycle(origin, terminal)) {
+          return;
+        }
         this.setState({ active: true });
         this.context.setDragTarget(terminal);
         e.preventDefault();
