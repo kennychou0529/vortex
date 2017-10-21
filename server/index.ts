@@ -325,6 +325,9 @@ if (process.env.NODE_ENV !== 'production') {
   config.entry.main.splice(0, 0, 'webpack/hot/dev-server');
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
   config.plugins.push(new webpack.NamedModulesPlugin());
+  config.plugins.push(new webpack.DefinePlugin({
+    __DEBUG__: process.env.NODE_ENV !== 'production',
+  }));
 
   const compiler = webpack(config);
   app.use(webpackMiddleware(compiler, {

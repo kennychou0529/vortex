@@ -1,21 +1,25 @@
 # TODO:
 
-* Garbage collection for image references.
+* Cycle detection
+* Quantize initial placement.
+* Editing existing connectors
+* Deleting connectors
+* Download image
+* Document size
 * Finish 'GLResources' tracking.
+* Garbage collection for image references.
 * Make brick edges smoother - gamma correction?
 * Cloud storage:
   * List recent documents
-  * Track user identity
+  * Make a local store option for images (probably regrid)
+  * Don't require login for local storage
+  * Admin panel for user count, resource usage
 * Type conversions for node outputs
   * UV not fully supported
   * See if we can remove some of the type params that are passed in
 * Limit operator dragging to document size
-* Quantize initial placement.
-* Editing existing connectors
-* Deleting connectors
 * Finish compass rose - center button should center the diagram
 * Undo / Redo
-* Export image
 * Log scale controls
 * Standardize 'Resources' across all operators
 * Move 'render' to Operator class

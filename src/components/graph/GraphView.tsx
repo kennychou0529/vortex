@@ -2,16 +2,12 @@ import bind from 'bind-decorator';
 import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
-import { Graph, GraphNode, Terminal } from '../../graph';
+import { Graph, GraphNode, quantize, Terminal } from '../../graph';
 import CompassRose from '../controls/CompassRose';
 import ConnectionRendition from './ConnectionRendition';
 import NodeRendition from './NodeRendition';
 
 import './GraphView.scss';
-
-function quantize(n: number): number {
-  return Math.floor(n * 16) / 16;
-}
 
 interface Props {
   graph: Graph;

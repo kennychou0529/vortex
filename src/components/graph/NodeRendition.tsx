@@ -3,15 +3,11 @@ import * as classNames from 'classnames';
 import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
-import { Graph, GraphNode } from '../../graph';
+import { Graph, GraphNode, quantize } from '../../graph';
 import RenderedImage from '../RenderedImage';
 import TerminalRendition from './TerminalRendition';
 
 import './NodeRendition.scss';
-
-function quantize(n: number): number {
-  return Math.floor(n / 16) * 16;
-}
 
 interface Props {
   node: GraphNode;
