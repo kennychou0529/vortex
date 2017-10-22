@@ -1,4 +1,9 @@
 body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -12,23 +17,3 @@ body {
   align-items: stretch;
   flex: 1;
 }
-
-// #inspector {
-//   position: relative;
-//   display: flex;
-//   flex-direction: column;
-//   order: 2;
-//   background-color: #ccc;
-//   min-width: 200px;
-// }
-//
-// #graph {
-//   .node {
-//     > .label {
-//       color: #ddd;
-//       position: absolute;
-//       left: 105%;
-//       top: 40px;
-//     }
-//   }
-// }

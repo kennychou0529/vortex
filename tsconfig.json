@@ -9,7 +9,6 @@
     "jsxFactory": "h",
     "target": "es6",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "baseUrl": "..",
     "paths": {
       "shaders": ["client/src/shaders"]
