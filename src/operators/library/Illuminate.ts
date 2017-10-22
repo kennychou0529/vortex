@@ -56,25 +56,25 @@ class Illuminate extends Operator {
       max: 100,
       precision: 0,
       increment: 1,
-      default: 0,
+      default: 10,
     },
     {
       id: 'ambient',
       name: 'Ambient Color',
       type: DataType.RGBA,
-      default: [1.0, 1.0, 1.0, 1.0],
+      default: [0.0, 0.0, 0.0, 1.0],
     },
     {
       id: 'diffuse',
       name: 'Diffuse Color',
       type: DataType.RGBA,
-      default: [1.0, 1.0, 1.0, 1.0],
+      default: [0.5, 0.5, 0.5, 1.0],
     },
     {
       id: 'specular',
       name: 'Specular Color',
       type: DataType.RGBA,
-      default: [1.0, 1.0, 1.0, 1.0],
+      default: [0.5, 0.5, 0.5, 1.0],
     },
   ];
 

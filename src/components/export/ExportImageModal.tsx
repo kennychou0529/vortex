@@ -1,4 +1,5 @@
 import bind from 'bind-decorator';
+import * as download from 'downloadjs';
 // import * as classNames from 'classnames';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
@@ -22,7 +23,6 @@ interface State {
 export default class ExportImageModal extends Component<Props, State> {
   private static readonly sizes = [64, 128, 256, 512, 1024, 2048];
 
-  private downloadEl: HTMLAnchorElement;
   private image: RenderedImage;
 
   constructor() {
@@ -35,7 +35,6 @@ export default class ExportImageModal extends Component<Props, State> {
   public render({ node, show, onHide }: Props, { size }: State) {
     return (
       <Modal className="export-image" open={show} onHide={onHide} >
-        <a ref={(el: HTMLAnchorElement) => { this.downloadEl = el; }} style={{ display: 'none' }} />
         <Modal.Header>Generated shader code for {node.operator.name}:{node.id}</Modal.Header>
         <Modal.Body>
           <RenderedImage node={node} width={size} height={size} ref={el => { this.image = el; }}/>
@@ -56,14 +55,10 @@ export default class ExportImageModal extends Component<Props, State> {
 
   @bind
   private onClickDownload(e: MouseEvent) {
-    // e.preventDefault();
     const { node } = this.props;
-    // console.log(this.downloadEl);
-    const data = this.image.canvas.toDataURL('image/png')
-        .replace('data:image/png', 'data:application/octet-stream');
-    this.downloadEl.setAttribute('href', data);
-    this.downloadEl.setAttribute('download', `${node.name}-${node.id}.png`);
-    this.downloadEl.click();
+    this.image.canvas.toBlob(img => {
+      download(img, `${node.name}-${node.id}.png`, 'image/png');
+    }, 'image/png');
   }
 
   @bind

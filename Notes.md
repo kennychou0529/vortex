@@ -1,7 +1,7 @@
 # TODO:
 
-* Download image
-* Document size
+* Download rendered image
+* Start testing with FF?
 * Finish 'GLResources' tracking.
 * Garbage collection for image references.
 * Make brick edges smoother - gamma correction?
@@ -13,6 +13,7 @@
 * Type conversions for node outputs
   * UV not fully supported
   * See if we can remove some of the type params that are passed in
+* For illuminate, don't show alpha sliders.
 * Limit operator dragging to document size
 * Finish compass rose - center button should center the diagram
 * Undo / Redo
