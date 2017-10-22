@@ -34,7 +34,7 @@ export default class ColorProperty extends Component<Props, undefined> {
         <ColorPicker
             ref={(el: ColorPicker) => { this.colorPicker = el; }}
             onChange={this.onChange}
-            alpha={true}
+            alpha={!parameter.noAlpha}
         />
       </section>
     );
