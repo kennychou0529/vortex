@@ -8,7 +8,7 @@ interface Resources {
   shader: ShaderResource;
 }
 
-class Noise extends Operator {
+class Cellular extends Operator {
   public readonly outputs: Output[] = [{
     id: 'out',
     name: 'Out',
@@ -37,10 +37,20 @@ class Noise extends Operator {
       name: 'Z Offset',
       type: DataType.FLOAT,
       min: 0,
-      max: 200,
-      precision: 1,
-      increment: 0.1,
+      max: 10,
+      precision: 2,
+      increment: 0.05,
       default: 0,
+    },
+    {
+      id: 'jitter',
+      name: 'Jitter',
+      type: DataType.FLOAT,
+      min: 0,
+      max: 1,
+      precision: 2,
+      increment: 0.01,
+      default: 1,
     },
     {
       id: 'scale_value',
@@ -48,33 +58,19 @@ class Noise extends Operator {
       type: DataType.FLOAT,
       min: .01,
       max: 2,
-      default: 0.7,
-      precision: 2,
-    },
-    {
-      id: 'start_band',
-      name: 'Start Band',
-      type: DataType.INTEGER,
-      min: 1,
-      max: 12,
       default: 1,
-    },
-    {
-      id: 'end_band',
-      name: 'End Band',
-      type: DataType.INTEGER,
-      min: 1,
-      max: 12,
-      default: 8,
-    },
-    {
-      id: 'persistence',
-      name: 'Persistence',
-      type: DataType.FLOAT,
-      min: 0,
-      max: 1,
-      default: 0.5,
       precision: 2,
+    },
+    {
+      id: 'func',
+      name: 'Function',
+      type: DataType.INTEGER,
+      enumVals: [
+        { name: 'F1', value: 0 },
+        { name: 'F2', value: 1 },
+        { name: 'F2 - F1', value: 2 },
+      ],
+      default: 0,
     },
     {
       id: 'color',
@@ -94,18 +90,20 @@ class Noise extends Operator {
     },
   ];
   public readonly description = `
-Generates a periodic Perlin noise texture.
-* **Scale X** is the overall scaling factor along the x-axis.
-* **Scale Y** is the overall scaling factor along the y-axis.
-* **Z Offset** is the z-coordinate within the 3D noise space.
+Generates a periodic Worley noise texture.
+* **Scale X** is the number of cells along the x-axis.
+* **Scale Y** is the number of cells along the y-axis.
+* **Offset Z** is the z-coordinate in the 3D noise space.
+* **Jitter** controls the amount of randomness in determining cell center positions.
 * **Value Scale** is a multiplier on the output.
-* **Start Band** and **End Band** control the range of frequency bands. Each band represents
-  one octave of noise.
-* **Persistance** determines the amplitude falloff from one frequencey band to the next.
+* **Function** controls how the color is computed using the distance to the cell center point:
+  * **F1** is the distance to the nearest cell center point.
+  * **F2** is the distance to the *second* nearest cell center point.
+  * **F2 - F1** is the difference between those two distances.
 `;
 
   constructor() {
-    super('generator', 'Noise', 'pattern_noise');
+    super('generator', 'Cellular', 'generator_cellular');
   }
 
   // Render a node with the specified renderer.
@@ -122,11 +120,10 @@ Generates a periodic Perlin noise texture.
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
-      assembly.addCommon('steppers.glsl', require('./shaders/steppers.glsl'));
       assembly.addCommon('permute.glsl', require('./shaders/permute.glsl'));
-      assembly.addCommon('pnoise.glsl', require('./shaders/pnoise.glsl'));
+      assembly.addCommon('pworley.glsl', require('./shaders/pworley.glsl'));
       assembly.addCommon('gradient-color.glsl', require('./shaders/gradient-color.glsl'));
-      assembly.addCommon('periodic-noise.glsl', require('./shaders/periodic-noise.glsl'));
+      assembly.addCommon('cellular.glsl', require('./shaders/cellular.glsl'));
       assembly.finish(node);
     }
 
@@ -136,14 +133,13 @@ Generates a periodic Perlin noise texture.
       assembly.uniform(node, 'scale_x'),
       assembly.uniform(node, 'scale_y'),
       assembly.uniform(node, 'offset_z'),
+      assembly.uniform(node, 'jitter'),
       assembly.uniform(node, 'scale_value'),
-      assembly.uniform(node, 'start_band'),
-      assembly.uniform(node, 'end_band'),
-      assembly.uniform(node, 'persistence'),
+      assembly.uniform(node, 'func'),
       assembly.ident(`${colorName}_colors`, DataType.OTHER),
       assembly.ident(`${colorName}_positions`, DataType.OTHER),
     ];
-    return assembly.call('periodicNoise', args, DataType.RGBA);
+    return assembly.call('cellularNoise', args, DataType.RGBA);
   }
 
   // Release any GL resources we were holding on to.
@@ -155,4 +151,4 @@ Generates a periodic Perlin noise texture.
   }
 }
 
-export default new Noise();
+export default new Cellular();

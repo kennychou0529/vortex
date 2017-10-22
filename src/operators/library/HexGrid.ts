@@ -84,6 +84,14 @@ class HexGrid extends Operator {
   ];
   public readonly description = `
 Generates a tiled pattern of hexagons.
+* **Count X** number of hexagons in the X direction.
+* **Count Y** number of hexagons in the Y direction.
+* **Margin** controls spacing between hexagons.
+* **Roundness** controls roundness of hexagon corners.
+* **Blur** controls softness of hexagon edges.
+* **Offset X** shifts the whole pattern in the X direction.
+* **Offset Y** shifts the whole pattern in the Y direction.
+* **Corner Shape** allows sharp, mitered or rounded corners.
 `;
 
   constructor() {

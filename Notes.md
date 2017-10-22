@@ -1,49 +1,32 @@
 # TODO:
 
-* Download rendered image
+* Blur
+* Blur requires buffered inputs
 * Start testing with FF?
 * Finish 'GLResources' tracking.
-* Garbage collection for image references.
 * Make brick edges smoother - gamma correction?
+* For illuminate, don't show alpha sliders.
 * Cloud storage:
   * List recent documents
+  * Garbage collection for image references.
   * Make a local store option for images (probably regrid)
   * Don't require login for local storage
   * Admin panel for user count, resource usage
 * Type conversions for node outputs
   * UV not fully supported
   * See if we can remove some of the type params that are passed in
-* For illuminate, don't show alpha sliders.
 * Limit operator dragging to document size
 * Finish compass rose - center button should center the diagram
 * Undo / Redo
-* Log scale controls
+* Log scale controls - shininess is a good example
 * Standardize 'Resources' across all operators
 * Move 'render' to Operator class
-* Output type conversion - currently assumes all outputs are vec4.
-* Save to server - generate unique url - need accounts?
+* Output type conversion - clean up and make consistent.
 * Enter key to close dialogs.
 * Possibly unify code for creating and editing connections - former uses DnD, latter uses mouse
   events.
 
 * https://github.com/Jam3/glsl-fast-gaussian-blur
-* https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
-* https://stackoverflow.com/questions/11112321/how-to-save-canvas-as-png-image
-
-# Schemas
-  * graphs
-    * id
-    * creator
-    * createdAt
-    * updatedAt
-    * name
-    * data
-  * images
-    * id
-    * graph
-    * name
-    * mimeType
-    * data
 
 # Operators to do:
   * Transforms:
@@ -55,11 +38,10 @@
     * Color Correct
     * Color Adjust
     * Combine
-    * Emboss
+    * Emboss - simpler than illuminate.
     * Math
     * Bump Map
   * Generators:
-    * Cellular / Worley
     * Checker
     * Function
     * Tartan
@@ -76,3 +58,14 @@
     <feMorphology>
     <feOffset>
     <feTurbulence>
+
+for (int x = 0; x < 2; x +=1) {
+  for (int y = 0; y < 2; y += 1) {
+    float minVal = 10000.0;
+    float minVal2 = 10000.0;
+    for (int z = 0; z < 2; z += 1) {
+    }
+  }
+}
+
+[1, 2] [3, 4]

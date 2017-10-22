@@ -80,6 +80,11 @@ class Illuminate extends Operator {
 
   public readonly description = `
 Illuminate the input texture.
+* **Azimuth** and **Elevation** control the direction of the light source.
+* **Shininess** controls the falloff for the specular highlight.
+* **Ambient Color** lights all surfaces regardless of their orientation.
+* **Diffuse Color** only lights surfaces oriented towards the light source.
+* **Specular Color** affects the color of the specular highlight.
 `;
 
   constructor() {
