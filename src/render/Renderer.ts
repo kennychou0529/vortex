@@ -3,11 +3,6 @@ import { GraphNode } from '../graph';
 import { DataType } from '../operators';
 import GLResources from './GLResources';
 
-export interface ShaderResource {
-  program: WebGLProgram;
-  fragment: WebGLShader;
-}
-
 /** Renders a node into an HTML canvas element. */
 export default class Renderer {
   private canvas: HTMLCanvasElement;
@@ -67,25 +62,25 @@ void main() {
   }
 
   public executeShaderProgram(
-      resource: ShaderResource,
-      setShaderVars?: (gl: WebGLRenderingContext) => void) {
+    node: GraphNode,
+    setShaderVars?: (gl: WebGLRenderingContext) => void) {
 
     // This will happen if the shader failed to compile.
-    if (resource === null) {
+    if (node.glResources.program === null) {
       return;
     }
 
     const gl = this.gl;
 
-    gl.useProgram(resource.program);
+    gl.useProgram(node.glResources.program);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffers[this.tiling]);
 
     // Set up the vertex buffer
-    const vertexPosition = gl.getAttribLocation(resource.program, 'aVertexPosition');
+    const vertexPosition = gl.getAttribLocation(node.glResources.program, 'aVertexPosition');
     gl.vertexAttribPointer(vertexPosition, 2, gl.FLOAT, false, 4 * 4, 0);
     gl.enableVertexAttribArray(vertexPosition);
 
-    const textureCoords = gl.getAttribLocation(resource.program, 'aTextureCoords');
+    const textureCoords = gl.getAttribLocation(node.glResources.program, 'aTextureCoords');
     if (textureCoords >= 0) {
       // If there's no generators connected, then no texture coords.
       gl.vertexAttribPointer(textureCoords, 2, gl.FLOAT, false, 4 * 4, 2 * 4);
@@ -170,7 +165,7 @@ void main() {
     }
   }
 
-  public compileShaderProgram(fsSource: string): ShaderResource {
+  public compileShaderProgram(fsSource: string, node: GraphNode): void {
     const gl = this.gl;
     const fragmentShader = this.compileShader(gl.FRAGMENT_SHADER, fsSource);
     if (!fragmentShader) {
@@ -203,10 +198,8 @@ void main() {
       return null;
     }
 
-    return {
-      program: shaderProgram,
-      fragment: fragmentShader,
-    };
+    node.glResources.fragment = fragmentShader;
+    node.glResources.program = shaderProgram;
   }
 
   public deleteResources(resources: GLResources) {
@@ -214,13 +207,7 @@ void main() {
     this.deleteTextureResources(resources);
   }
 
-  public deleteShaderProgram(resource: ShaderResource) {
-    const gl = this.gl;
-    gl.deleteProgram(resource.program);
-    gl.deleteShader(resource.fragment);
-  }
-
-  public deleteShaderResources(resources: ShaderResource) {
+  public deleteShaderResources(resources: GLResources) {
     const gl = this.gl;
     if (resources) {
       if (resources.program) {
@@ -228,7 +215,7 @@ void main() {
         resources.program = null;
       }
       if (resources.fragment) {
-        gl.deleteProgram(resources.fragment);
+        gl.deleteShader(resources.fragment);
         resources.fragment = null;
       }
     }

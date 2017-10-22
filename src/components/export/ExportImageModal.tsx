@@ -35,7 +35,7 @@ export default class ExportImageModal extends Component<Props, State> {
   public render({ node, show, onHide }: Props, { size }: State) {
     return (
       <Modal className="export-image" open={show} onHide={onHide} >
-        <Modal.Header>Generated shader code for {node.operator.name}:{node.id}</Modal.Header>
+        <Modal.Header>Generated image for {node.operator.name}:{node.id}</Modal.Header>
         <Modal.Body>
           <RenderedImage node={node} width={size} height={size} ref={el => { this.image = el; }}/>
         </Modal.Body>

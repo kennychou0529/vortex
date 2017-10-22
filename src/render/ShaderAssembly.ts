@@ -13,7 +13,7 @@ export default class ShaderAssembly {
   private common = new Set<string>();
   private extensions = new Set<string>();
   private assignmentList: Assignment[] = [];
-  private cachedValues = new Set<string>();
+  // private cachedValues = new Set<string>();
   private out: string[] = [
     '#version 300 es',
     'precision mediump float;\n',
@@ -118,24 +118,24 @@ export default class ShaderAssembly {
     const outputTerminal = inputTerminal.connection.source;
     const outputNode = outputTerminal.node;
     const outputDefn = outputNode.operator.getOutput(outputTerminal.id);
-    const outputType = this.glType(outputDefn.type);
+    // const outputType = this.glType(outputDefn.type);
     let result: Expr;
     // TODO: This logic is wrong in two ways.
-    // need to take into account uv.
+    // need to take into account that uv might be different - compare uv expressions.
     // number of output connecions is not relevant.
-    if (outputTerminal.connections.length > 1) {
-      const cachedValueId = `${outputNode.operator.localPrefix(node.id)}_${outputTerminal.id}`;
-      if (!this.cachedValues.has(cachedValueId)) {
-        this.cachedValues.add(cachedValueId);
-        this.assign(
-          cachedValueId,
-          outputType,
-          outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id, uv));
-      }
-      result = this.ident(cachedValueId, outputDefn.type);
-    } else {
-      result = outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id, uv);
-    }
+    // if (outputTerminal.connections.length > 1) {
+    //   const cachedValueId = `${outputNode.operator.localPrefix(node.id)}_${outputTerminal.id}`;
+    //   if (!this.cachedValues.has(cachedValueId)) {
+    //     this.cachedValues.add(cachedValueId);
+    //     this.assign(
+    //       cachedValueId,
+    //       outputType,
+    //       outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id, uv));
+    //   }
+    //   result = this.ident(cachedValueId, outputDefn.type);
+    // } else {
+    result = outputNode.operator.readOutputValue(this, outputNode, outputTerminal.id, uv);
+    // }
     if (input.type !== outputDefn.type) {
       result = this.typeCast(result, input.type);
     }

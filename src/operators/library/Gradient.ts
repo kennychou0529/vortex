@@ -1,12 +1,7 @@
 import { DataType, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
-import Renderer, { ShaderResource } from '../../render/Renderer';
 import ShaderAssembly from '../../render/ShaderAssembly';
-
-interface Resources {
-  shader: ShaderResource;
-}
 
 class Gradient extends Operator {
   public readonly outputs: Output[] = [{
@@ -52,25 +47,6 @@ Generates a simple gradient.
 
   constructor() {
     super('generator', 'Gradient', 'generator_gradient');
-  }
-
-  // Render a node with the specified renderer.
-  public render(renderer: Renderer, node: GraphNode, resources: Resources) {
-    if (!resources.shader) {
-      resources.shader = renderer.compileShaderProgram(this.build(node));
-    }
-
-    renderer.executeShaderProgram(resources.shader, gl => {
-      renderer.setShaderUniforms(node, resources.shader.program);
-    });
-  }
-
-  // Release any GL resources we were holding on to.
-  public cleanup(renderer: Renderer, node: GraphNode, resources: Resources) {
-    if (resources.shader) {
-      renderer.deleteShaderProgram(resources.shader);
-      delete resources.shader;
-    }
   }
 
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {

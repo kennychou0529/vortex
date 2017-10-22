@@ -6,11 +6,15 @@ import { GraphNode } from '../graph';
 import Modal from './controls/Modal';
 import ExportImageModal from './export/ExportImageModal';
 
+const lockImg: string = require('../../images/lock.png');
+
 import './NodeActions.scss';
 
 interface Props {
   node: GraphNode;
   onSetTiling: (tiling: number) => void;
+  locked: boolean;
+  onLock: (lock: boolean) => void;
 }
 
 interface State {
@@ -30,7 +34,7 @@ export default class NodeActions extends Component<Props, State> {
     };
   }
 
-  public render({ node }: Props, { showSource, showExport, repeat }: State) {
+  public render({ node, locked }: Props, { showSource, showExport, repeat }: State) {
     return (
       <section className="node-actions">
         <section className="button-group">
@@ -53,6 +57,13 @@ export default class NodeActions extends Component<Props, State> {
               3x3
           </button>
         </section>
+        <div className="spacer" />
+        <button
+            className={classNames({ selected: locked })}
+            onClick={this.toggleLock}
+        >
+          <img className="lock" src={lockImg} width="12" style={{ opacity: '.6' }} />
+        </button>
         <div className="spacer" />
         <button onClick={this.onClickShowSource}>Source&hellip;</button>
         <div className="spacer" />
@@ -113,5 +124,10 @@ export default class NodeActions extends Component<Props, State> {
   private setRepeat(repeat: number) {
     this.setState({ repeat });
     this.props.onSetTiling(repeat);
+  }
+
+  @bind
+  private toggleLock() {
+    this.props.onLock(!this.props.locked);
   }
 }

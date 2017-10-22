@@ -24,10 +24,29 @@ export abstract class Operator {
   }
 
   // Render a node with the specified renderer.
-  public abstract render(renderer: Renderer, node: GraphNode, resources: any): void;
+  public renderNode(renderer: Renderer, node: GraphNode): void {
+    if (!node.glResources.program) {
+      renderer.compileShaderProgram(this.build(node), node);
+    }
+
+    const program: WebGLProgram = node.glResources.program;
+    if (program) {
+      renderer.executeShaderProgram(node, gl => {
+        // Set the uniforms for this node and all upstream nodes.
+        renderer.setShaderUniforms(node, program);
+        if (this.inputs.length > 0) {
+          node.visitUpstreamNodes((upstream, termId) => {
+            renderer.setShaderUniforms(upstream, program);
+          });
+        }
+      });
+    }
+  }
 
   // Release any GL resources we were holding on to.
-  public abstract cleanup(renderer: Renderer, node: GraphNode, resources: any): void;
+  public cleanup(renderer: Renderer, node: GraphNode): void {
+    renderer.deleteResources(node.glResources);
+  }
 
   /** Locate an operator input by id. */
   public getInput(id: string): Input {

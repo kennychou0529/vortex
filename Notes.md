@@ -2,10 +2,11 @@
 
 * Blur
 * Blur requires buffered inputs
-* Start testing with FF?
+* Safari support
 * Finish 'GLResources' tracking.
 * Make brick edges smoother - gamma correction?
 * For illuminate, don't show alpha sliders.
+* Cached signals not working.
 * Cloud storage:
   * List recent documents
   * Garbage collection for image references.
@@ -17,6 +18,7 @@
   * See if we can remove some of the type params that are passed in
 * Limit operator dragging to document size
 * Finish compass rose - center button should center the diagram
+* Upload JSON files
 * Undo / Redo
 * Log scale controls - shininess is a good example
 * Standardize 'Resources' across all operators
@@ -31,7 +33,6 @@
 # Operators to do:
   * Transforms:
     * Mirror
-    * Rotate
     * Stitch (used to blend images that aren't repeating)
   * Filters:
     * Blur
@@ -48,24 +49,13 @@
     * Waves
 
   * SVG filter types:
-    <feColorMatrix>
-    <feComponentTransfer>
-    <feComposite>
-    <feConvolveMatrix>
-    <feDisplacementMap>
-    <feImage>
-    <feMerge>
-    <feMorphology>
-    <feOffset>
-    <feTurbulence>
-
-for (int x = 0; x < 2; x +=1) {
-  for (int y = 0; y < 2; y += 1) {
-    float minVal = 10000.0;
-    float minVal2 = 10000.0;
-    for (int z = 0; z < 2; z += 1) {
-    }
-  }
-}
-
-[1, 2] [3, 4]
+    * feColorMatrix
+    * feComponentTransfer
+    * feComposite
+    * feConvolveMatrix
+    * feDisplacementMap
+    * feImage
+    * feMerge
+    * feMorphology
+    * feOffset
+    * feTurbulence

@@ -42,7 +42,6 @@ export class GraphNode {
 
   // GL resources allocated by the operator for this node.
   public glResources: GLResources;
-  private resources: any;
 
   // List of entities that need to be notified when any of the node properties change.
   private watchers: Set<Watcher> = new Set();
@@ -50,7 +49,6 @@ export class GraphNode {
 
   constructor(operator: Operator) {
     this.operator = operator;
-    this.resources = {};
     if (operator.inputs) {
       const spacing = Math.min(36, 120 / operator.inputs.length);
       let y = Math.floor((120 - operator.inputs.length * spacing) / 2);
@@ -75,11 +73,11 @@ export class GraphNode {
   }
 
   public render(renderer: Renderer) {
-    this.operator.render(renderer, this, this.resources);
+    this.operator.renderNode(renderer, this);
   }
 
   public destroy(renderer: Renderer) {
-    this.operator.cleanup(renderer, this, this.resources);
+    this.operator.cleanup(renderer, this);
   }
 
   public findInputTerminal(id: string): InputTerminal {

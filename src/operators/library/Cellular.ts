@@ -1,12 +1,7 @@
 import { DataType, Operator, Output, Parameter } from '..';
 import { GraphNode } from '../../graph';
 import { Expr } from '../../render/Expr';
-import Renderer, { ShaderResource } from '../../render/Renderer';
 import ShaderAssembly from '../../render/ShaderAssembly';
-
-interface Resources {
-  shader: ShaderResource;
-}
 
 class Cellular extends Operator {
   public readonly outputs: Output[] = [{
@@ -106,17 +101,6 @@ Generates a periodic Worley noise texture.
     super('generator', 'Cellular', 'generator_cellular');
   }
 
-  // Render a node with the specified renderer.
-  public render(renderer: Renderer, node: GraphNode, resources: Resources) {
-    if (!resources.shader) {
-      resources.shader = renderer.compileShaderProgram(this.build(node));
-    }
-
-    renderer.executeShaderProgram(resources.shader, gl => {
-      renderer.setShaderUniforms(node, resources.shader.program);
-    });
-  }
-
   public readOutputValue(assembly: ShaderAssembly, node: GraphNode, out: string, uv: Expr): Expr {
     if (assembly.start(node)) {
       assembly.declareUniforms(this, node.id, this.params);
@@ -140,14 +124,6 @@ Generates a periodic Worley noise texture.
       assembly.ident(`${colorName}_positions`, DataType.OTHER),
     ];
     return assembly.call('cellularNoise', args, DataType.RGBA);
-  }
-
-  // Release any GL resources we were holding on to.
-  public cleanup(renderer: Renderer, node: GraphNode, resources: Resources) {
-    if (resources.shader) {
-      renderer.deleteShaderProgram(resources.shader);
-      delete resources.shader;
-    }
   }
 }
 
