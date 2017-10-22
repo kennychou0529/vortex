@@ -28,11 +28,13 @@ export default class TerminalRendition extends Component<Props, State> {
     };
   }
 
-  public render({ terminal }: Props, { active }: State) {
+  public render({ node, terminal }: Props, { active }: State) {
     const output = terminal.output;
     return (
       <div
           className={classNames('terminal', { in: !output, out: output, active })}
+          data-id={terminal.id}
+          data-node={node.id}
           style={{ left: `${terminal.x}px`, top: `${terminal.y}px` }}
           draggable={true}
           onDragStart={this.onDragStart}

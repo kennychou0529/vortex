@@ -91,7 +91,7 @@ export class GraphNode {
   }
 
   public findTerminal(id: string): Terminal {
-    return this.findInputTerminal(id) || this.findInputTerminal(id);
+    return this.findInputTerminal(id) || this.findOutputTerminal(id);
   }
 
   /** Visit all nodes which transitively feed into this node's inputs.

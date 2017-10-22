@@ -2,7 +2,7 @@ import bind from 'bind-decorator';
 import { action } from 'mobx';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
-import { Graph, GraphNode, quantize, Terminal } from '../../graph';
+import { Connection, Graph, GraphNode, OutputTerminal, quantize, Terminal } from '../../graph';
 import CompassRose from '../controls/CompassRose';
 import ConnectionRendition from './ConnectionRendition';
 import NodeRendition from './NodeRendition';
@@ -20,7 +20,8 @@ interface State {
   dragTarget?: Terminal;    // The input terminal which is the origin of the drag
   dragX: number;            // The current drag coordinates
   dragY: number;
-  dragOver: boolean;
+  dragValid: boolean;
+  editConnection: Connection;
 }
 
 @observer
@@ -36,7 +37,8 @@ export default class GraphView extends Component<Props, State> {
       dragTarget: null,
       dragX: 0,
       dragY: 0,
-      dragOver: false,
+      dragValid: false,
+      editConnection: null,
     };
   }
 
@@ -51,7 +53,7 @@ export default class GraphView extends Component<Props, State> {
   }
 
   public render({ graph }: Props, { xScroll, yScroll }: State): any {
-    const bounds = graph.bounds.clone().expand(50, 50);
+    const bounds = graph.bounds;
     return (
       <section
           id="graph"
@@ -59,6 +61,8 @@ export default class GraphView extends Component<Props, State> {
           onDragOver={this.onDragOver}
           onDragLeave={this.onDragLeave}
           onDrop={this.onDrop}
+          onMouseMove={this.onMouseMove}
+          onMouseUp={this.onMouseUp}
       >
         <section className="backdrop" onMouseDown={this.onMouseDown} />
         <div
@@ -70,11 +74,12 @@ export default class GraphView extends Component<Props, State> {
               <NodeRendition key={node.id} node={node} graph={graph} onScroll={this.onScroll} />))}
           <svg
               xmlns="http://www.w3.org/2000/svg"
-              viewBox={`0 0 ${bounds.width} ${bounds.height}`}
+              style={{ position: 'absolute', left: `${bounds.xMin}px`, top: `${bounds.yMin}px` }}
+              viewBox={`${bounds.xMin} ${bounds.yMin} ${bounds.width} ${bounds.height}`}
               className="connectors"
               width={bounds.width}
               height={bounds.height}
-              onMouseDown={this.onConnectionMouseDown}
+              onMouseDown={this.onCanvasMouseDown}
           >
             {graph.nodes.map(node => this.renderNodeConnections(node))}
             {this.renderDragConnection()}
@@ -90,11 +95,16 @@ export default class GraphView extends Component<Props, State> {
     for (const output of node.outputs) {
       for (const connection of output.connections) {
         const input = connection.dest;
+        if (connection === this.state.editConnection) {
+          continue;
+        }
         result.push(
           <ConnectionRendition
               key={`${node.id}_${output.id}_${input.node.id}_${input.id}`}
               ts={connection.source}
               te={connection.dest}
+              connection={connection}
+              onEdit={this.onEditConnection}
           />);
       }
     }
@@ -102,11 +112,11 @@ export default class GraphView extends Component<Props, State> {
   }
 
   private renderDragConnection(): JSX.Element {
-    const { dragOrigin, dragTarget, dragX, dragY, dragOver } = this.state;
+    const { dragOrigin, dragTarget, dragX, dragY, dragValid } = this.state;
     // In order for there to be a drag preview:
     // There must either be both an origin or a target
-    // Or there must be a valid drag coordinate (dragOver) and either an origin or target
-    if (dragOrigin || dragTarget && ((dragOrigin && dragTarget) || dragOver)) {
+    // Or there must be a valid drag coordinate (dragValid) and either an origin or target
+    if (dragOrigin || dragTarget && ((dragOrigin && dragTarget) || dragValid)) {
       let dragStart: Terminal;
       let dragEnd: Terminal;
       // Input on the left, output on the right.
@@ -139,7 +149,67 @@ export default class GraphView extends Component<Props, State> {
   }
 
   @bind
-  private onConnectionMouseDown(e: MouseEvent) {
+  private onMouseMove(e: MouseEvent) {
+    // We can't use HTML5 DnD on SVG elements, so do it the hard way
+    if (this.state.editConnection) {
+      const { graph } = this.props;
+      const { dragOrigin } = this.state;
+      const target = e.target as HTMLElement;
+      const classes = (target.getAttribute('class') || '').split(/\s+/);
+      if (classes.indexOf('terminal') >= 0) {
+        const terminal = this.props.graph.findTerminal(
+            parseInt(target.dataset.node, 10),
+            target.dataset.id);
+        if (terminal) {
+          console.log(terminal.output, dragOrigin.output);
+        }
+        if (terminal &&
+            terminal.output !== dragOrigin.output &&
+            !graph.detectCycle(dragOrigin, terminal)) {
+          this.setState({
+            dragTarget: terminal,
+          });
+          return;
+        }
+      }
+
+      this.setState({
+        dragX: e.clientX - this.base.offsetLeft - this.state.xScroll,
+        dragY: e.clientY - this.base.offsetTop - this.state.yScroll,
+        dragValid: true,
+        dragTarget: null,
+      });
+    }
+  }
+
+  @action.bound
+  private onMouseUp(e: MouseEvent) {
+    // We can't use HTML5 DnD on SVG elements, so do it the hard way
+    const { editConnection, dragOrigin, dragTarget } = this.state;
+    if (editConnection && dragOrigin) {
+      if (dragTarget === null) {
+        editConnection.source.disconnect(editConnection);
+        editConnection.dest.connection = null;
+      } else {
+        const { graph } = this.props;
+        editConnection.source.disconnect(editConnection);
+        editConnection.dest.connection = null;
+        if (dragOrigin.output) {
+          graph.connectTerminals(dragOrigin as OutputTerminal, dragTarget);
+        } else {
+          graph.connectTerminals(dragTarget as OutputTerminal, dragOrigin);
+        }
+      }
+      this.setState({
+        editConnection: null,
+        dragOrigin: null,
+        dragValid: false,
+      });
+    }
+  }
+
+  @bind
+  private onCanvasMouseDown(e: MouseEvent) {
     e.preventDefault();
     this.props.graph.clearSelection();
   }
@@ -157,7 +227,7 @@ export default class GraphView extends Component<Props, State> {
     this.setState({
       dragX: e.clientX - this.base.offsetLeft - this.state.xScroll,
       dragY: e.clientY - this.base.offsetTop - this.state.yScroll,
-      dragOver: true,
+      dragValid: true,
     });
   }
 
@@ -169,13 +239,13 @@ export default class GraphView extends Component<Props, State> {
     this.setState({
       dragX: e.clientX - this.base.offsetLeft - this.state.xScroll,
       dragY: e.clientY - this.base.offsetTop - this.state.yScroll,
-      dragOver: true,
+      dragValid: true,
     });
   }
 
   @bind
   private onDragLeave(e: DragEvent) {
-    this.setState({ dragOver: false });
+    this.setState({ dragValid: false });
   }
 
   @action.bound
@@ -204,7 +274,7 @@ export default class GraphView extends Component<Props, State> {
 
   @bind
   private onSetDragOrigin(terminal: Terminal) {
-    this.setState({ dragOrigin: terminal, dragOver: false });
+    this.setState({ dragOrigin: terminal, dragValid: false });
     if (terminal) {
       this.setState({
         dragX: terminal.x + terminal.node.x,
@@ -216,5 +286,27 @@ export default class GraphView extends Component<Props, State> {
   @bind
   private onSetDragTarget(terminal: Terminal) {
     this.setState({ dragTarget: terminal });
+  }
+
+  @bind
+  private onEditConnection(connection: Connection, output: boolean) {
+    console.log('edit connection', output);
+    if (output) {
+      this.setState({
+        editConnection: connection,
+        dragOrigin: connection.source,
+        dragTarget: null,
+        dragX: connection.dest.node.x + connection.dest.x,
+        dragY: connection.dest.node.y + connection.dest.y,
+      });
+    } else {
+      this.setState({
+        editConnection: connection,
+        dragOrigin: connection.dest,
+        dragTarget: null,
+        dragX: connection.source.node.x + connection.source.x,
+        dragY: connection.source.node.y + connection.source.y,
+      });
+    }
   }
 }

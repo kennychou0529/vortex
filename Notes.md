@@ -1,7 +1,5 @@
 # TODO:
 
-* Editing existing connectors
-* Deleting connectors
 * Download image
 * Document size
 * Finish 'GLResources' tracking.
@@ -24,6 +22,8 @@
 * Output type conversion - currently assumes all outputs are vec4.
 * Save to server - generate unique url - need accounts?
 * Enter key to close dialogs.
+* Possibly unify code for creating and editing connections - former uses DnD, latter uses mouse
+  events.
 
 * https://github.com/Jam3/glsl-fast-gaussian-blur
 * https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob

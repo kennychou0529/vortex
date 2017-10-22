@@ -2,7 +2,7 @@ import bind from 'bind-decorator';
 import * as classNames from 'classnames';
 import { Component, h } from 'preact';
 import { observer } from 'preact-mobx';
-import { Terminal } from '../../graph';
+import { Connection, Terminal } from '../../graph';
 
 import './ConnectionRendition.scss';
 
@@ -14,12 +14,14 @@ interface Props {
   xe?: number;
   ye?: number;
   pending?: boolean;
+  connection?: Connection;
+  onEdit?: (conn: Connection, output: boolean) => void;
 }
 
 @observer
 export default class ConnectionRendition extends Component<Props, undefined> {
   public render({ ts, xs, ys, te, xe, ye, pending }: Props) {
-    // This just forces MobX to re-render us when a node gets deleted.
+    // Just a way to force MobX to re-render us when a node gets deleted.
     if (ts && ts.node.deleted || te && te.node.deleted) {
       return;
     }
@@ -46,6 +48,16 @@ export default class ConnectionRendition extends Component<Props, undefined> {
   private onMouseDown(e: MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    console.log('wire click');
+    const { ts, te, connection, onEdit } = this.props;
+    if (ts && te && connection && onEdit) {
+      const svgDoc = this.base.parentNode as SVGSVGElement;
+      const clientRect = svgDoc.getBoundingClientRect();
+      const x = e.x - clientRect.left + svgDoc.viewBox.baseVal.x;
+      const y = e.y - clientRect.top + svgDoc.viewBox.baseVal.y;
+      const de = (x - te.x - te.node.x - 10) ** 2 + (y - te.y - te.node.y - 10) ** 2;
+      const ds = (x - ts.x - ts.node.x - 15) ** 2 + (y - ts.y - ts.node.y - 15) ** 2;
+      // console.log(ds, de, ds > de);
+      onEdit(connection, ds > de);
+    }
   }
 }

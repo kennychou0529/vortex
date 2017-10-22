@@ -326,7 +326,7 @@ if (process.env.NODE_ENV !== 'production') {
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
   config.plugins.push(new webpack.NamedModulesPlugin());
   config.plugins.push(new webpack.DefinePlugin({
-    __DEBUG__: process.env.NODE_ENV !== 'production',
+    __DEBUG__: JSON.stringify(process.env.NODE_ENV !== 'production'),
   }));
 
   const compiler = webpack(config);

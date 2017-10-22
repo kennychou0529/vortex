@@ -15,7 +15,9 @@ import ToolPanel from './ToolPanel';
 
 import './App.scss';
 
-console.log((window as any).__DEBUG__);
+// TODO: Remove requirement for being logged in when running locally.
+// declare var __DEBUG__: boolean;
+// console.log(__DEBUG__);
 
 const Combokeys: any = require('combokeys');
 const pause: any = require('combokeys/plugins/pause');
